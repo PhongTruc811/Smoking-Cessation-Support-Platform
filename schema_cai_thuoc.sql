@@ -9,6 +9,7 @@ CREATE TABLE Roles (
 
 CREATE TABLE Users (
     UserID INT PRIMARY KEY IDENTITY(1,1),
+    Username VARCHAR(50) NOT NULL UNIQUE,
     FullName NVARCHAR(50),
     Email VARCHAR(100) NOT NULL UNIQUE,
     PasswordHash VARCHAR(100) NOT NULL,
@@ -33,8 +34,9 @@ CREATE TABLE MembershipPackages (
     PackageID INT PRIMARY KEY IDENTITY(1,1),
     PackageName NVARCHAR(100),
     Description NVARCHAR(255),
-    Price DECIMAL(10,2),
-    DurationInDays INT
+    Price DECIMAL(10,2) NOT NULL,
+    DurationInDays INT NOT NULL,
+    IsActive BIT DEFAULT 1
 );
 
 CREATE TABLE UserMemberships (
@@ -43,7 +45,7 @@ CREATE TABLE UserMemberships (
     PackageID INT,
     StartDate DATETIME DEFAULT GETDATE(),
     EndDate DATE,
-    Status NVARCHAR(50),
+    Status NVARCHAR(50) -- 'Pending', 'Completed', 'Failed',
     PaymentMethod NVARCHAR(50),
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (PackageID) REFERENCES MembershipPackages(PackageID)
@@ -57,18 +59,19 @@ CREATE TABLE SmokingProfiles (
     UserID INT UNIQUE,
     CigarettesPerDay INT,
     CostPerPack DECIMAL(10,2),
-    YearsSmoked INT,
-    AddictionLevel NVARCHAR(50),
+    WeekSmoked INT,
+    Note NVARCHAR(MAX),
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
 CREATE TABLE QuitPlans (
     PlanID INT PRIMARY KEY IDENTITY(1,1),
     UserID INT,
-    Reason NVARCHAR(500),
-    StartDate DATE,
+    Reason NVARCHAR(MAX) NOT NULL,
+    StartDate DATE NOT NULL,
     TargetEndDate DATE,
     CreatedAt DATETIME DEFAULT GETDATE(),
+    Status VARCHAR(20) NOT NULL, -- 'In Progess', 'Completed', 'Failed'
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
@@ -79,6 +82,7 @@ CREATE TABLE QuitPlanStages (
     Description NVARCHAR(255),
     StartDate DATE,
     EndDate DATE,
+    IsCompleted BIT DEFAULT 0,
     FOREIGN KEY (PlanID) REFERENCES QuitPlans(PlanID)
 );
 
@@ -87,7 +91,6 @@ CREATE TABLE QuitProgressLogs (
     UserID INT,
     LogDate DATE,
     CigarettesSmoked INT,
-    Mood NVARCHAR(100),
     HealthNote NVARCHAR(MAX),
     Notes NVARCHAR(MAX),
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
@@ -102,22 +105,25 @@ CREATE TABLE Notifications (
     Message NVARCHAR(MAX),
     SentAt DATETIME DEFAULT GETDATE(),
     Type NVARCHAR(50),
+    IsRead BIT DEFAULT 0,
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
 CREATE TABLE Badges (
     BadgeID INT PRIMARY KEY IDENTITY(1,1),
     BadgeName NVARCHAR(100),
-    Description NVARCHAR(255)
+    Description NVARCHAR(255),
+    ImageUrl VARCHAR(255)
 );
 
 CREATE TABLE UserBadges (
-    UserBadgeID INT PRIMARY KEY IDENTITY(1,1),
-    UserID INT,
-    BadgeID INT,
-    AwardedAt DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (BadgeID) REFERENCES Badges(BadgeID)
+    UserId UNIQUEIDENTIFIER NOT NULL,
+    BadgeId UNIQUEIDENTIFIER NOT NULL,
+    AchievedDate DATETIME DEFAULT GETDATE(),
+    IsShared BIT DEFAULT 0,
+    PRIMARY KEY (UserId, BadgeId),
+    FOREIGN KEY (UserId) REFERENCES Users(UserId),
+    FOREIGN KEY (BadgeId) REFERENCES AchievementBadges(BadgeId)
 );
 
 -- ===============================
@@ -129,11 +135,13 @@ CREATE TABLE Posts (
     Title NVARCHAR(255),
     Content NVARCHAR(MAX),
     CreatedAt DATETIME DEFAULT GETDATE(),
+    IsPublished BIT DEFAULT 1,
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
 CREATE TABLE Comments (
     CommentID INT PRIMARY KEY IDENTITY(1,1),
+    ParentCommentId UNIQUEIDENTIFIER, -- Các bình luận lồng nhau
     PostID INT,
     UserID INT,
     Content NVARCHAR(MAX),
