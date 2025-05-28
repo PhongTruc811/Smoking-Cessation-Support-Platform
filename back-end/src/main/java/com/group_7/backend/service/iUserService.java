@@ -1,6 +1,6 @@
 package com.group_7.backend.service;
 
-import com.group_7.antismoking.dto.UserDto;
+import com.group_7.backend.dto.UserDto;
 
 import java.util.List;
 
@@ -10,4 +10,5 @@ public interface iUserService {
     List<UserDto> getAllUsers();
     UserDto updateUser(Integer userId, UserDto userDTO);
     void deleteUser(Integer userId);
+    UserDto authenticate(String usernameOrEmail, String password);
 }
