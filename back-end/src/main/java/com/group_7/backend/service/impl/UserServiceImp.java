@@ -1,7 +1,7 @@
 package com.group_7.backend.service.impl;
 
 import com.group_7.backend.dto.UserDto;
-import com.group_7.backend.model.User;
+import com.group_7.backend.entity.User;
 import com.group_7.backend.exception.ResourceNotFoundException;
 import com.group_7.backend.mapper.UserMapper;
 import com.group_7.backend.repository.UserRepository;

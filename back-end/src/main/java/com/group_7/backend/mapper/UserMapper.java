@@ -2,7 +2,7 @@ package com.group_7.backend.mapper;
 
 
 import com.group_7.backend.dto.UserDto;
-import com.group_7.backend.model.User;
+import com.group_7.backend.entity.User;
 
 public class UserMapper {
     public static UserDto toDTO(User user) {
