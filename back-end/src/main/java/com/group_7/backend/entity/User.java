@@ -15,29 +15,32 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class User {
     @Id
+    @Column(name = "UserID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(name = "Username",nullable = false, unique = true, length = 50)
     private String username;
 
-    @Column(length = 50)
+    @Column(name = "FullName",length = 50)
     private String fullName;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(name = "Email",nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(nullable = false, length = 100)
-    private String passwordHash;
+    @Column(name = "Password",nullable = false, length = 100)
+    private String password;
 
+    @Column(name = "DOB")
     private LocalDate dob;
 
+    @Column(name = "Gender", length = 1)
     private String gender; // 'M' or 'F' or 'O' (others)
 
-    @Column(nullable = false)
+    @Column(name = "Status")
     private Boolean status = true;
 
-    @Column(nullable = false)
+    @Column(name = "CreatedAt")
     private LocalDateTime createdAt = LocalDateTime.now();
 
 }

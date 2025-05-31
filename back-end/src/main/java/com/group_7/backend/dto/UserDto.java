@@ -17,8 +17,6 @@ public class UserDto {
     private LocalDate dob;
     private String gender;
     private Boolean status;
-    // Không trả về passwordHash vì bảo mật
+    // Không trả về password vì bảo mật
 
-    // Getter, Setter
-    // ...
 }

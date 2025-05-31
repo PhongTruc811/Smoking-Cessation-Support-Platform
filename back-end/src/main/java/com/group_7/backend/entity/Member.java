@@ -6,9 +6,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
 public class Member extends User implements Serializable {
 
 }

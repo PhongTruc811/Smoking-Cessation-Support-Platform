@@ -11,11 +11,10 @@ import java.util.List;
 public class BackEndApplication {
 
     public static void main(String[] args) {
-        //SpringApplication.run(BackEndApplication.class, args);
 
-
-
+        SpringApplication.run(BackEndApplication.class, args);
     }
+
 
 
 }
