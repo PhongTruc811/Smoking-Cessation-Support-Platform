@@ -2,18 +2,23 @@ package com.group_7.backend.controller;
 
 import com.group_7.backend.dto.UserDto;
 import com.group_7.backend.service.IUserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
     private final IUserService userService;
-    public UserController(IUserService userService) { this.userService = userService; }
+
+    public UserController(IUserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto, @RequestParam String password) {
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto, @RequestParam String password) {
         return ResponseEntity.ok(userService.createUser(userDto, password));
     }
 
@@ -28,7 +33,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Integer id, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@Valid @PathVariable Integer id, @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.updateUser(id, userDto));
     }
 
