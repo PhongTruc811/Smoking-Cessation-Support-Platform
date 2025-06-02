@@ -5,29 +5,19 @@ USE AntiSmoking
 -- ===============================
 -- 1. Users, Roles, UserRoles
 -- ===============================
-CREATE TABLE Roles (
-    RoleID INT PRIMARY KEY IDENTITY(1,1),
-    RoleName NVARCHAR(50) NOT NULL UNIQUE
-);
+GO
 
 CREATE TABLE Users (
     UserID INT PRIMARY KEY IDENTITY(1,1),
-    Username VARCHAR(50) NOT NULL UNIQUE,
+    Username VARCHAR(30) NOT NULL UNIQUE,
     FullName NVARCHAR(50),
-    Email VARCHAR(100) NOT NULL UNIQUE,
+    Email VARCHAR(50) NOT NULL UNIQUE,
     Password VARCHAR(100) NOT NULL,
     DOB DATE,
     Gender CHAR(1),
     Status BIT DEFAULT 1,
+    Role VARCHAR(30),
     CreatedAt DATETIME DEFAULT GETDATE()
-);
-
-CREATE TABLE UserRoles (
-    UserID INT,
-    RoleID INT,
-    PRIMARY KEY (UserID, RoleID),
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
 );
 
 -- ===============================
@@ -36,7 +26,7 @@ CREATE TABLE UserRoles (
 CREATE TABLE MembershipPackages (
     PackageID INT PRIMARY KEY IDENTITY(1,1),
     PackageName NVARCHAR(100),
-    Description NVARCHAR(255),
+    Description NVARCHAR(MAX),
     Price DECIMAL(10,2) NOT NULL,
     DurationInDays INT NOT NULL,
     IsActive BIT DEFAULT 1
@@ -91,12 +81,12 @@ CREATE TABLE QuitPlanStages (
 
 CREATE TABLE QuitProgressLogs (
     LogID INT PRIMARY KEY IDENTITY(1,1),
-    UserID INT,
-    LogDate DATE,
+    StageID INT NOT NULL UNIQUE,  -- Mỗi stage chỉ có 1 log
+    LogDate DATE DEFAULT GETDATE(),
     CigarettesSmoked INT,
     HealthNote NVARCHAR(MAX),
     Notes NVARCHAR(MAX),
-    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+    FOREIGN KEY (StageID) REFERENCES QuitPlanStages(StageID)
 );
 
 -- ===============================
@@ -219,22 +209,14 @@ CREATE TABLE ActivityLogs (
 
 GO
 -- SAMPLE DATA
--- 1. Roles (vai trò)
-INSERT INTO Roles (RoleName) VALUES ('USER'), ('COACH'), ('ADMIN');
+
 
 -- 2. Users (tài khoản)
-INSERT INTO Users (Username, FullName, Email, Password, DOB, Gender, Status)
+INSERT INTO Users (Username, FullName, Email, Password, DOB, Gender, Status, Role)
 VALUES 
-('user1', N'Nguyễn Văn A', 'vana@gmail.com', '123', '1990-05-01', 'M', 1),
-('coach1', N'Trần Thị B', 'thib@gmail.com', '123', '1985-09-10', 'F', 1),
-('admin1', N'Phạm Văn C', 'vanc@gmail.com', 'admin', '1980-12-20', 'M', 1);
-
--- 3. UserRoles (gán quyền)
-INSERT INTO UserRoles (UserID, RoleID)
-VALUES 
-(1, 1), 
-(2, 2), 
-(3, 3); 
+('user1', N'Nguyễn Văn A', 'vana@gmail.com', '123456', '1990-05-01', 'M', 1, 'MEMBER'),
+('coach1', N'Trần Thị B', 'thib@gmail.com', '123456', '1985-09-10', 'F', 1, 'COACH'),
+('admin1', N'Phạm Văn C', 'vanc@gmail.com', 'admin123', '1980-12-20', 'M', 1, 'ADMIN');
 
 -- 4. MembershipPackages (gói thành viên)
 INSERT INTO MembershipPackages (PackageName, Description, Price, DurationInDays)
