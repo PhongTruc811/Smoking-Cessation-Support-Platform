@@ -18,11 +18,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable()) // hoặc cấu hình cors.allowAll
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/login",
-                                "/api/register",
+                                "/api/auth/**",
                                 "/v3/api-docs/**",
+                                //"api/**", //Chỉ để test api
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()

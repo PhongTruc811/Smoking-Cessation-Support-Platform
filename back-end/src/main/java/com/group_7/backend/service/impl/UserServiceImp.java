@@ -101,6 +101,7 @@ public class UserServiceImp implements IUserService {
         user.setGender(request.getGender());
         user.setStatus(true);
         user.setCreatedAt(LocalDateTime.now());
+        user.setRole("MEMBER");
 
         // Mã hóa mật khẩu (later)
         // passwordEncoder.encode(request.getPassword());

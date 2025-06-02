@@ -15,6 +15,7 @@ public class UserMapper {
         dto.setDob(user.getDob());
         dto.setGender(user.getGender());
         dto.setStatus(user.getStatus());
+        dto.setRole(user.getRole());
         return dto;
     }
 
@@ -28,6 +29,7 @@ public class UserMapper {
         user.setDob(dto.getDob());
         user.setGender(dto.getGender());
         user.setStatus(dto.getStatus());
+        user.setRole(dto.getRole());
         return user;
     }
 }

@@ -17,6 +17,7 @@ public class UserDto {
     private LocalDate dob;
     private String gender;
     private Boolean status;
+    private String role;
     // Không trả về password vì bảo mật
 
 }
