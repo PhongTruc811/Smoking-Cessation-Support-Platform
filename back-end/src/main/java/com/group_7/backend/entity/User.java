@@ -19,13 +19,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
-    @Column(name = "Username",nullable = false, unique = true, length = 50)
+    @Column(name = "Username",nullable = false, unique = true, length = 30)
     private String username;
 
-    @Column(name = "FullName",length = 50)
+    @Column(name = "FullName", columnDefinition = "NVARCHAR(50)")
     private String fullName;
 
-    @Column(name = "Email",nullable = false, unique = true, length = 100)
+    @Column(name = "Email",nullable = false, unique = true, length = 50)
     private String email;
 
     @Column(name = "Password",nullable = false, length = 100)
@@ -39,6 +39,9 @@ public class User {
 
     @Column(name = "Status")
     private Boolean status = true;
+
+    @Column(name = "Role", columnDefinition = "VARCHAR(30)")
+    private String role;
 
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt = LocalDateTime.now();

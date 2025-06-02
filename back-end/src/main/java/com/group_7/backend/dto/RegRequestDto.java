@@ -10,7 +10,7 @@ public class RegRequestDto {
     @Size(min = 5, max = 30, message = "Username phải từ 5-30 ký tự")
     private String username;
 
-    @Size(min = 6, message = "Password phải có ít nhất 6 ký tự")
+    @Size(min = 5, max = 50, message = "Họ tên phải có từ 5-50 ký tự ")
     private String fullName;
 
     @NotBlank(message = "Password không được để trống")
@@ -23,5 +23,6 @@ public class RegRequestDto {
 
     private LocalDate dob;
 
+    @Pattern(regexp = "^[MFO]$", message = "Giới tính chỉ nhận M, F hoặc O")
     private String gender;
 }
