@@ -1,5 +1,7 @@
 package com.group_7.backend.entity;
 
+import com.group_7.backend.entity.enums.UserGenderEnum;
+import com.group_7.backend.entity.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +19,7 @@ public class User {
     @Id
     @Column(name = "UserID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer userId;
+    private long userId;
 
     @Column(name = "Username",nullable = false, unique = true, length = 30)
     private String username;
@@ -34,16 +36,20 @@ public class User {
     @Column(name = "DOB")
     private LocalDate dob;
 
-    @Column(name = "Gender", length = 1)
-    private String gender; // 'M' or 'F' or 'O' (others)
-
     @Column(name = "Status")
     private Boolean status = true;
 
-    @Column(name = "Role", columnDefinition = "VARCHAR(30)")
-    private String role;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Gender", length = 10)
+    private UserGenderEnum gender;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Role", length = 30)
+    private UserRoleEnum role;
 
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private SmokingProfile smokingProfile;
 }

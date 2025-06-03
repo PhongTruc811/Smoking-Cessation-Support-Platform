@@ -1,5 +1,6 @@
 package com.group_7.backend.dto;
 
+import com.group_7.backend.entity.enums.UserGenderEnum;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import java.time.LocalDate;
@@ -23,6 +24,5 @@ public class RegRequestDto {
 
     private LocalDate dob;
 
-    @Pattern(regexp = "^[MFO]$", message = "Giới tính chỉ nhận M, F hoặc O")
-    private String gender;
+    private UserGenderEnum gender;
 }

@@ -23,7 +23,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/v3/api-docs/**",
-                                //"api/**", //Chỉ để test api
+                                //"/api/**", //Chỉ để test api
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()

@@ -3,6 +3,7 @@ package com.group_7.backend.service.impl;
 import com.group_7.backend.dto.RegRequestDto;
 import com.group_7.backend.dto.UserDto;
 import com.group_7.backend.entity.User;
+import com.group_7.backend.entity.enums.UserRoleEnum;
 import com.group_7.backend.exception.ResourceNotFoundException;
 import com.group_7.backend.mapper.UserMapper;
 import com.group_7.backend.repository.UserRepository;
@@ -37,7 +38,7 @@ public class UserServiceImp implements IUserService {
     }
 
     @Override
-    public UserDto getUserById(Integer userId) {
+    public UserDto getUserById(long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return UserMapper.toDTO(user);
     }
@@ -48,7 +49,7 @@ public class UserServiceImp implements IUserService {
     }
 
     @Override
-    public UserDto updateUser(Integer userId, UserDto userDTO) {
+    public UserDto updateUser(long userId, UserDto userDTO) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         user.setFullName(userDTO.getFullName());
         user.setDob(userDTO.getDob());
@@ -60,7 +61,7 @@ public class UserServiceImp implements IUserService {
     }
 
     @Override
-    public void deleteUser(Integer userId) {
+    public void deleteUser(long userId) {
         if (!userRepository.existsById(userId)) throw new ResourceNotFoundException("User not found");
         userRepository.deleteById(userId);
     }
@@ -101,7 +102,7 @@ public class UserServiceImp implements IUserService {
         user.setGender(request.getGender());
         user.setStatus(true);
         user.setCreatedAt(LocalDateTime.now());
-        user.setRole("MEMBER");
+        user.setRole(UserRoleEnum.MEMBER);
 
         // Mã hóa mật khẩu (later)
         // passwordEncoder.encode(request.getPassword());

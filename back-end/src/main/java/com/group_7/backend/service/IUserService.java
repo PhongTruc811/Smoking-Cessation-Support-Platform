@@ -7,10 +7,10 @@ import java.util.List;
 
 public interface IUserService {
     UserDto createUser(UserDto userDTO, String plainPassword);
-    UserDto getUserById(Integer userId);
+    UserDto getUserById(long userId);
     List<UserDto> getAllUsers();
-    UserDto updateUser(Integer userId, UserDto userDTO);
-    void deleteUser(Integer userId);
+    UserDto updateUser(long userId, UserDto userDTO);
+    void deleteUser(long userId);
     UserDto authenticate(String usernameOrEmail, String password);
     UserDto register(RegRequestDto request);
 }
