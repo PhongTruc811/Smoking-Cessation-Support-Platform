@@ -14,7 +14,7 @@ CREATE TABLE Users (
     Email VARCHAR(50) NOT NULL UNIQUE,
     Password VARCHAR(100) NOT NULL,
     DOB DATE,
-    Gender CHAR(1),
+    Gender CHAR(10),
     Status BIT DEFAULT 1,
     Role VARCHAR(30),
     CreatedAt DATETIME DEFAULT GETDATE()
@@ -214,9 +214,9 @@ GO
 -- 2. Users (tài khoản)
 INSERT INTO Users (Username, FullName, Email, Password, DOB, Gender, Status, Role)
 VALUES 
-('user1', N'Nguyễn Văn A', 'vana@gmail.com', '123456', '1990-05-01', 'M', 1, 'MEMBER'),
-('coach1', N'Trần Thị B', 'thib@gmail.com', '123456', '1985-09-10', 'F', 1, 'COACH'),
-('admin1', N'Phạm Văn C', 'vanc@gmail.com', 'admin123', '1980-12-20', 'M', 1, 'ADMIN');
+('user1', N'Nguyễn Văn An', 'vana@gmail.com', '123456', '1990-05-01', 'MALE', 1, 'MEMBER'),
+('coach1', N'Trần Thị Bình', 'thib@gmail.com', '123456', '1985-09-10', 'FEMALE', 1, 'COACH'),
+('admin1', N'Phạm Văn Cường', 'vanc@gmail.com', 'admin123', '1980-12-20', 'MALE', 1, 'ADMIN');
 
 -- 4. MembershipPackages (gói thành viên)
 INSERT INTO MembershipPackages (PackageName, Description, Price, DurationInDays)
