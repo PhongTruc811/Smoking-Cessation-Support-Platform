@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginReponseDto {
+public class LoginResponseDto {
     String message;
     UserDto user;
     //Về sau thêm token khi dùng JWT

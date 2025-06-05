@@ -7,19 +7,19 @@ import java.time.LocalDate;
 
 @Data
 public class RegRequestDto {
-    @NotBlank(message = "Username không được để trống")
-    @Size(min = 5, max = 30, message = "Username phải từ 5-30 ký tự")
+    @NotBlank(message = "Username must not be empty")
+    @Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")
     private String username;
 
-    @Size(min = 5, max = 50, message = "Họ tên phải có từ 5-50 ký tự ")
+    @Size(min = 5, max = 50, message = "Full name must be between 5 and 50 characters")
     private String fullName;
 
-    @NotBlank(message = "Password không được để trống")
-    @Size(min = 6, message = "Password phải có ít nhất 6 ký tự")
+    @NotBlank(message = "Password must not be empty")
+    @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
-    @NotBlank(message = "Email không được để trống")
-    @Email(message = "Email không đúng định dạng")
+    @NotBlank(message = "Email must not be empty")
+    @Email(message = "Email format is invalid")
     private String email;
 
     private LocalDate dob;

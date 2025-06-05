@@ -1,13 +1,16 @@
 package com.group_7.backend.controller;
 
-import com.group_7.backend.dto.LoginReponseDto;
 import com.group_7.backend.dto.LoginRequestDto;
+import com.group_7.backend.dto.LoginResponseDto;
 import com.group_7.backend.dto.RegRequestDto;
 import com.group_7.backend.dto.UserDto;
 import com.group_7.backend.service.IUserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,13 +22,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginReponseDto> login(@Valid @RequestBody LoginRequestDto request) {
+    public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto request) {
         UserDto user = userService.authenticate(request.getUsernameOrEmail(), request.getPassword());
         if (user == null) {
             return ResponseEntity.status(401)
-                    .body(new LoginReponseDto("Login failed: Invalid credentials", null));
+                    .body(new LoginResponseDto("Login failed: Invalid credentials", null));
         }
-        return ResponseEntity.ok(new LoginReponseDto("Login successful", user));
+        return ResponseEntity.ok(new LoginResponseDto("Login successful", user));
     }
 
     @PostMapping("/register")

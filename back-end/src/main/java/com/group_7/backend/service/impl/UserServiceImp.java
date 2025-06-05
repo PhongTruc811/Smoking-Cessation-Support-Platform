@@ -86,11 +86,11 @@ public class UserServiceImp implements IUserService {
     public UserDto register(RegRequestDto request) {
         // Kiểm tra duplicate username
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new IllegalArgumentException("Username đã tồn tại");
+            throw new IllegalArgumentException("Username already exists");
         }
         // Kiểm tra duplicate email
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email đã được sử dụng");
+            throw new IllegalArgumentException("Email already exists");
         }
 
         // Tạo entity User
