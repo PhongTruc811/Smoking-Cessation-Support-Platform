@@ -1,5 +1,6 @@
 package com.group_7.backend.service.impl;
 
+import com.group_7.backend.dto.JwtResponseDto;
 import com.group_7.backend.dto.RegRequestDto;
 import com.group_7.backend.dto.UserDto;
 import com.group_7.backend.entity.User;
@@ -8,6 +9,8 @@ import com.group_7.backend.exception.ResourceNotFoundException;
 import com.group_7.backend.mapper.UserMapper;
 import com.group_7.backend.repository.UserRepository;
 import com.group_7.backend.service.IUserService;
+import com.group_7.backend.util.JwtTokenProvider;
+import io.jsonwebtoken.Jwt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +23,13 @@ import java.util.stream.Collectors;
 public class UserServiceImp implements IUserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private JwtTokenProvider jwtTokenProvider;
 
-    public UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                          JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override

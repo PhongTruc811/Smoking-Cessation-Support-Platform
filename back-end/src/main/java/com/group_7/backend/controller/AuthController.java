@@ -1,34 +1,33 @@
 package com.group_7.backend.controller;
 
-import com.group_7.backend.dto.LoginRequestDto;
-import com.group_7.backend.dto.LoginResponseDto;
-import com.group_7.backend.dto.RegRequestDto;
-import com.group_7.backend.dto.UserDto;
+import com.group_7.backend.dto.*;
 import com.group_7.backend.service.IUserService;
+import com.group_7.backend.util.JwtTokenProvider;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
     private final IUserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthController(IUserService userService) {
+    public AuthController(IUserService userService, JwtTokenProvider jwtTokenProvider) {
         this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto request) {
         UserDto user = userService.authenticate(request.getUsernameOrEmail(), request.getPassword());
         if (user == null) {
+            //Trả về LoginResponse chứa lỗi
             return ResponseEntity.status(401)
                     .body(new LoginResponseDto("Login failed: Invalid credentials", null));
         }
-        return ResponseEntity.ok(new LoginResponseDto("Login successful", user));
+        String token= jwtTokenProvider.generateToken(user.getUsername());
+        return ResponseEntity.ok(new JwtResponseDto(token));//Trả về Response chứa token
     }
 
     @PostMapping("/register")
