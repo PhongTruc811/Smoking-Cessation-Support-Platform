@@ -1,6 +1,5 @@
 package com.group_7.backend.service.impl;
 
-import com.group_7.backend.dto.JwtResponseDto;
 import com.group_7.backend.dto.RegRequestDto;
 import com.group_7.backend.dto.UserDto;
 import com.group_7.backend.entity.User;
@@ -10,13 +9,14 @@ import com.group_7.backend.mapper.UserMapper;
 import com.group_7.backend.repository.UserRepository;
 import com.group_7.backend.service.IUserService;
 import com.group_7.backend.util.JwtTokenProvider;
-import io.jsonwebtoken.Jwt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -108,7 +108,10 @@ public class UserServiceImp implements IUserService {
         user.setGender(request.getGender());
         user.setStatus(true);
         user.setCreatedAt(LocalDateTime.now());
-        user.setRole(UserRoleEnum.MEMBER);
+        //Mặc định role của user mới là MEMBER
+        Set<String> roles = new HashSet<>();
+        roles.add(UserRoleEnum.MEMBER.name());
+        user.setRoles(roles);
 
         // Mã hóa mật khẩu (later)
         // passwordEncoder.encode(request.getPassword());

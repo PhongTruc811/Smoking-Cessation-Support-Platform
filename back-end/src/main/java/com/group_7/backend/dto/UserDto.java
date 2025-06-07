@@ -1,12 +1,12 @@
 package com.group_7.backend.dto;
 
 import com.group_7.backend.entity.enums.UserGenderEnum;
-import com.group_7.backend.entity.enums.UserRoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -19,7 +19,7 @@ public class UserDto {
     private LocalDate dob;
     private UserGenderEnum gender;
     private Boolean status;
-    private UserRoleEnum role;
+    private Set<String> roles;
     // Không trả về password vì bảo mật
 
 }
