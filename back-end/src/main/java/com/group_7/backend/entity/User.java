@@ -1,6 +1,7 @@
 package com.group_7.backend.entity;
 
 import com.group_7.backend.entity.enums.UserGenderEnum;
+import com.group_7.backend.entity.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 @Table(name = "Users")
@@ -43,8 +43,9 @@ public class User {
     @Column(name = "Gender", length = 10)
     private UserGenderEnum gender;
 
-    @Column(name = "Roles", length = 30)
-    private Set<String> roles;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Role", length = 30)
+    private UserRoleEnum role;
 
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt = LocalDateTime.now();

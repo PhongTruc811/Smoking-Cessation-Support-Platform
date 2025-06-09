@@ -1,5 +1,6 @@
 package com.group_7.backend.entity;
 
+import com.group_7.backend.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

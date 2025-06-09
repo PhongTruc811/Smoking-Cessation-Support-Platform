@@ -1,7 +1,11 @@
 package com.group_7.backend.entity;
 
+import com.group_7.backend.entity.QuitPlanStage;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
 @Entity

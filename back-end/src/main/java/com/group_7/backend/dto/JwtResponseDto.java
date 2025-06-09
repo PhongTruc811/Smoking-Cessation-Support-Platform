@@ -5,11 +5,13 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class JwtResponseDto {
+public class JwtResponseDto extends RegRequestDto{
     private String accessToken;
     private String tokenType = "Bearer";
+    private UserDto user;
 
-    public JwtResponseDto(String accessToken) {
+    public JwtResponseDto(String accessToken, UserDto user) {
         this.accessToken = accessToken;
+        this.user = user;
     }
 }

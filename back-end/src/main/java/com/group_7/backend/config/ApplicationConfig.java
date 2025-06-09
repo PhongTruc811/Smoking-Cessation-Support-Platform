@@ -27,9 +27,7 @@ public class ApplicationConfig {
                 user.setFullName("Admin");
                 user.setGender(UserGenderEnum.MALE);
                 user.setEmail("admintesting@gmail.com");
-                Set<String> roles = new HashSet<>();
-                roles.add(UserRoleEnum.ADMIN.name());
-                user.setRoles(roles);
+                user.setRole(UserRoleEnum.ADMIN);
 
                 userRepository.save(user);
                 log.warn("Admin user added with default password");

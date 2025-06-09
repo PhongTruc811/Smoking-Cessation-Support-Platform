@@ -1,5 +1,6 @@
 package com.group_7.backend.exception;
 
+import com.group_7.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

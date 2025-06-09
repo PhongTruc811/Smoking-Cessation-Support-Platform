@@ -5,7 +5,10 @@ import com.group_7.backend.service.IUserService;
 import com.group_7.backend.util.JwtTokenProvider;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -24,10 +27,10 @@ public class AuthController {
         if (user == null) {
             //Trả về LoginResponse chứa lỗi
             return ResponseEntity.status(401)
-                    .body(new LoginResponseDto("Login failed: Invalid credentials", null));
+                    .body(new ResponseDto("success","Login failed: Invalid credentials"));
         }
         String token= jwtTokenProvider.generateToken(user.getUsername());
-        return ResponseEntity.ok(new JwtResponseDto(token));//Trả về Response chứa token
+        return ResponseEntity.ok(new JwtResponseDto(token,user));//Trả về JwtResponse chứa token và user info
     }
 
     @PostMapping("/register")
