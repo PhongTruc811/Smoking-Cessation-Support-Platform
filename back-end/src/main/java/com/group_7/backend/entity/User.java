@@ -4,15 +4,19 @@ import com.group_7.backend.entity.enums.UserGenderEnum;
 import com.group_7.backend.entity.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "Users")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
@@ -50,6 +54,26 @@ public class User {
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    //------------------------------------------------------------------------------
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private SmokingProfile smokingProfile;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserMembership> userMemberships = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<QuitPlan> quitPlans = new HashSet<>();
+
+    //User này có SmokingProfile và ngược lại
+    public void setSmokingProfile(SmokingProfile smokingProfile) {
+        smokingProfile.setUser(this);
+        this.smokingProfile = smokingProfile;
+    }
+
+    //User có những QuitPlan và QuitPlan đó thuộc về User này
+    public void setQuitPlan(QuitPlan plan) {
+        plan.setUser(this);
+        this.quitPlans.add(plan);
+    }
+
 }

@@ -12,7 +12,7 @@ CREATE TABLE Users (
     Username VARCHAR(30) NOT NULL UNIQUE,
     FullName NVARCHAR(50),
     Email VARCHAR(50) NOT NULL UNIQUE,
-    Password VARCHAR(100) NOT NULL,
+    Password VARCHAR(255) NOT NULL,
     DOB DATE,
     Gender CHAR(10),
     Status BIT DEFAULT 1,
@@ -37,7 +37,6 @@ CREATE TABLE UserMemberships (
     UserID INT,
     PackageID INT,
     StartDate DATETIME DEFAULT GETDATE(),
-    EndDate DATE,
     Status NVARCHAR(50), -- 'Pending', 'Completed', 'Failed',
     PaymentMethod NVARCHAR(50),
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
@@ -134,11 +133,12 @@ CREATE TABLE Posts (
 
 CREATE TABLE Comments (
     CommentID INT PRIMARY KEY IDENTITY(1,1),
-    ParentCommentId UNIQUEIDENTIFIER, -- Các bình luận lồng nhau
+    ParentCommentId INT NULL, -- Cho phép lồng nhau
     PostID INT,
     UserID INT,
     Content NVARCHAR(MAX),
     CreatedAt DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (ParentCommentId) REFERENCES Comments(CommentID), -- FK tự tham chiếu
     FOREIGN KEY (PostID) REFERENCES Posts(PostID),
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );

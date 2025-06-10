@@ -1,14 +1,15 @@
 package com.group_7.backend.entity;
 
-import com.group_7.backend.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
 @Table(name = "SmokingProfiles")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class SmokingProfile {
@@ -17,7 +18,7 @@ public class SmokingProfile {
     @Column(name = "SmokingProfileID")
     private long smokingProfileId;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserID", referencedColumnName = "UserID", unique = true)
     private User user;
 
@@ -30,6 +31,6 @@ public class SmokingProfile {
     @Column(name = "WeekSmoked")
     private Integer weekSmoked;
 
-    @Column(name = "Note")
+    @Column(name = "Note", columnDefinition = "NVARCHAR(MAX)")
     private String note;
 }
