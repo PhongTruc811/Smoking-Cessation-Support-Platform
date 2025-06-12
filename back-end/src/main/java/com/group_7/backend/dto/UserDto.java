@@ -2,13 +2,12 @@ package com.group_7.backend.dto;
 
 import com.group_7.backend.entity.enums.UserGenderEnum;
 import com.group_7.backend.entity.enums.UserRoleEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {

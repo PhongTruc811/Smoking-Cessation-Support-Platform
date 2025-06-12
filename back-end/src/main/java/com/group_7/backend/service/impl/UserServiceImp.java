@@ -13,49 +13,48 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImp implements IUserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UserMapper userMapper;
 
     public UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                          JwtTokenProvider jwtTokenProvider) {
+                          JwtTokenProvider jwtTokenProvider, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.userMapper = userMapper;
     }
 
-    @Override
-    public UserDto createUser(UserDto userDTO, String plainPassword) {
+    public UserDto create(UserDto userDTO, String plainPassword) {
         if (userRepository.existsByUsername(userDTO.getUsername()) || userRepository.existsByEmail(userDTO.getEmail())) {
             throw new IllegalArgumentException("Username or Email already exists");
         }
-        User user = UserMapper.toEntity(userDTO);
+        User user = userMapper.toUser(userDTO);
         user.setPassword(plainPassword);
         user = userRepository.save(user);
-        return UserMapper.toDTO(user);
+        return userMapper.toUserDto(user);
     }
 
     @Override
-    public UserDto getUserById(long userId) {
+    public UserDto getById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return UserMapper.toDTO(user);
+        return userMapper.toUserDto(user);
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
-        return userRepository.findAll().stream().map(UserMapper::toDTO).collect(Collectors.toList());
+    public List<UserDto> getAll() {
+        return userRepository.findAll().stream().map(userMapper::toUserDto).collect(Collectors.toList());
     }
 
     @Override
-    public UserDto updateUser(long userId, UserDto userDTO) {
+    public UserDto update(Long userId, UserDto userDTO) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         user.setFullName(userDTO.getFullName());
         user.setDob(userDTO.getDob());
@@ -63,16 +62,15 @@ public class UserServiceImp implements IUserService {
         user.setStatus(userDTO.getStatus());
         // Không update username/email ở đây (thường), có thể bổ sung nếu muốn
         user = userRepository.save(user);
-        return UserMapper.toDTO(user);
+        return userMapper.toUserDto(user);
     }
 
     @Override
-    public void deleteUser(long userId) {
+    public void delete(Long userId) {
         if (!userRepository.existsById(userId)) throw new ResourceNotFoundException("User not found");
         userRepository.deleteById(userId);
     }
 
-    @Override
     public UserDto authenticate(String usernameOrEmail, String password) {
         Optional<User> userOpt = userRepository.findByUsername(usernameOrEmail);
         if (userOpt.isEmpty()) {
@@ -85,7 +83,7 @@ public class UserServiceImp implements IUserService {
         if (!password.matches(user.getPassword())) {
             throw new IllegalArgumentException("Invalid username/email or password");
         }
-        return UserMapper.toDTO(user);
+        return userMapper.toUserDto(user);
     }
 
     @Override
@@ -118,6 +116,6 @@ public class UserServiceImp implements IUserService {
         // Lưu DB
         User savedUser = userRepository.save(user);
 
-        return UserMapper.toDTO(savedUser);
+        return userMapper.toUserDto(savedUser);
     }
 }

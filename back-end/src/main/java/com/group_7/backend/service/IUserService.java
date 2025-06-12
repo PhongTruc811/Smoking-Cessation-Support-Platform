@@ -5,12 +5,8 @@ import com.group_7.backend.dto.UserDto;
 
 import java.util.List;
 
-public interface IUserService {
-    UserDto createUser(UserDto userDTO, String plainPassword);
-    UserDto getUserById(long userId);
-    List<UserDto> getAllUsers();
-    UserDto updateUser(long userId, UserDto userDTO);
-    void deleteUser(long userId);
+public interface IUserService extends IBaseService<UserDto, Long>{
+    UserDto create(UserDto userDTO, String plainPassword);
     UserDto authenticate(String usernameOrEmail, String password);
     UserDto register(RegRequestDto request);
 }

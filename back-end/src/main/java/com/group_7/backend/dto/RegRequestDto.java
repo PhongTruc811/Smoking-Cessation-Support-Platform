@@ -25,6 +25,7 @@ public class RegRequestDto {
     @Email(message = "Email format is invalid")
     private String email;
 
+    //TODO: thêm ràng buộc nhỏ hơn hiện tại
     private LocalDate dob;
 
     private UserGenderEnum gender;

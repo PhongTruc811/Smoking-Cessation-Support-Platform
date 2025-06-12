@@ -225,10 +225,10 @@ VALUES
 (N'Gói hội viên', N'Hỗ trợ coach và thống kê nâng cao', 200000, 90);
 
 -- 5. UserMemberships (member đăng ký gói)
-INSERT INTO UserMemberships (UserID, PackageID, StartDate, EndDate, Status, PaymentMethod)
+INSERT INTO UserMemberships (UserID, PackageID, StartDate, Status, PaymentMethod)
 VALUES 
-(1, 1, GETDATE(), DATEADD(day,30,GETDATE()), 'Completed', N'VNPay'),
-(2, 2, GETDATE(), DATEADD(day,90,GETDATE()), 'Completed', N'VNPay');
+(1, 1, GETDATE(), 'Completed', N'VNPay'),
+(2, 2, GETDATE(), 'Completed', N'VNPay');
 
 -- 6. SmokingProfiles (hồ sơ hút thuốc)
 INSERT INTO SmokingProfiles (UserID, CigarettesPerDay, CostPerPack, WeekSmoked, Note)

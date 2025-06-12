@@ -20,9 +20,6 @@ public class QuitPlanStage {
     @Column(name = "StageID")
     private long stageId;
 
-    @Column(name = "PlanID")
-    private long planId;
-
     @Column(name = "StageName", length = 100)
     private String stageName;
 
