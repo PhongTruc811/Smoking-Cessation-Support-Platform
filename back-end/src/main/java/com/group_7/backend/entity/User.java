@@ -55,22 +55,29 @@ public class User {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     //------------------------------------------------------------------------------
+    //Thông tin hút thuốc của USER
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private SmokingProfile smokingProfile;
 
+    //Các memberhip USER mua
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserMembership> userMemberships = new HashSet<>();
 
+    //Các kế hoạch cai thuốc của USER
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<QuitPlan> quitPlans = new HashSet<>();
 
-    //User này có SmokingProfile và ngược lại
+    //Like của USER trong posts/comments
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Like> likes = new HashSet<>();
+
+    //USER này có SmokingProfile và ngược lại
     public void setSmokingProfile(SmokingProfile smokingProfile) {
         smokingProfile.setUser(this);
         this.smokingProfile = smokingProfile;
     }
 
-    //User có những QuitPlan và QuitPlan đó thuộc về User này
+    //USER có những QuitPlan và QuitPlan đó thuộc về USER này
     public void setQuitPlan(QuitPlan plan) {
         plan.setUser(this);
         this.quitPlans.add(plan);

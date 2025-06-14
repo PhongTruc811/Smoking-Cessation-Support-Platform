@@ -1,7 +1,8 @@
 package com.group_7.backend.service.impl;
 
-import com.group_7.backend.dto.RegRequestDto;
+import com.group_7.backend.dto.request.RegRequestDto;
 import com.group_7.backend.dto.UserDto;
+import com.group_7.backend.dto.request.UserRequestDto;
 import com.group_7.backend.entity.User;
 import com.group_7.backend.entity.enums.UserRoleEnum;
 import com.group_7.backend.exception.ResourceNotFoundException;
@@ -32,16 +33,6 @@ public class UserServiceImp implements IUserService {
         this.userMapper = userMapper;
     }
 
-    public UserDto create(UserDto userDTO, String plainPassword) {
-        if (userRepository.existsByUsername(userDTO.getUsername()) || userRepository.existsByEmail(userDTO.getEmail())) {
-            throw new IllegalArgumentException("Username or Email already exists");
-        }
-        User user = userMapper.toUser(userDTO);
-        user.setPassword(plainPassword);
-        user = userRepository.save(user);
-        return userMapper.toUserDto(user);
-    }
-
     @Override
     public UserDto getById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -54,12 +45,12 @@ public class UserServiceImp implements IUserService {
     }
 
     @Override
-    public UserDto update(Long userId, UserDto userDTO) {
+    public UserDto update(Long userId, UserRequestDto userDTO) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setEmail(userDTO.getEmail());
         user.setFullName(userDTO.getFullName());
         user.setDob(userDTO.getDob());
         user.setGender(userDTO.getGender());
-        user.setStatus(userDTO.getStatus());
         // Không update username/email ở đây (thường), có thể bổ sung nếu muốn
         user = userRepository.save(user);
         return userMapper.toUserDto(user);

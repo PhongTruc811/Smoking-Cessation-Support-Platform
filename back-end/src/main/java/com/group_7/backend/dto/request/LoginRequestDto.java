@@ -1,11 +1,9 @@
-package com.group_7.backend.dto;
+package com.group_7.backend.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginRequestDto {

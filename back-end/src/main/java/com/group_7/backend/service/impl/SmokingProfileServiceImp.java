@@ -51,12 +51,6 @@ public class SmokingProfileServiceImp implements ISmokingProfileService {
         SmokingProfile profile = smokingProfileRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("SmokingProfile not found with id: " + id));
 
-        if (dto.getUserId() != 0 && (profile.getUser() == null || profile.getUser().getUserId() != dto.getUserId())) {
-            User user = userRepository.findById(dto.getUserId())
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
-            profile.setUser(user);
-        }
-
         profile.setCigarettesPerDay(dto.getCigarettesPerDay());
         profile.setCostPerPack(dto.getCostPerPack());
         profile.setWeekSmoked(dto.getWeekSmoked());
@@ -84,6 +78,7 @@ public class SmokingProfileServiceImp implements ISmokingProfileService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
         SmokingProfile entity = smokingProfileMapper.toEntity(dto);
         entity.setUser(user);
+
         SmokingProfile saved = smokingProfileRepository.save(entity);
         return smokingProfileMapper.toDto(saved);
     }

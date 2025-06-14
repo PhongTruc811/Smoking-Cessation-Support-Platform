@@ -1,14 +1,17 @@
-package com.group_7.backend.dto;
+package com.group_7.backend.dto.request;
 
 import com.group_7.backend.entity.enums.UserGenderEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class RegRequestDto {
     @NotBlank(message = "Username must not be empty")
     @Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")

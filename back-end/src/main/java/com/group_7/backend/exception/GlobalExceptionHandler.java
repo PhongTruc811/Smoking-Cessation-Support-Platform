@@ -3,6 +3,7 @@ package com.group_7.backend.exception;
 import com.group_7.backend.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,5 +28,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity handleIllegalArgumentException(IllegalArgumentException exception) {
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
+        //String message = ex.getMostSpecificCause().getMessage(); //Thông báo lỗi chi tiết
+        String message = "Invalid request: Please check your input data types and format."; //Thông báo custom
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 }

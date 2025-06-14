@@ -1,6 +1,8 @@
 package com.group_7.backend.controller;
 
 import com.group_7.backend.dto.UserDto;
+import com.group_7.backend.dto.request.UserRequestDto;
+import com.group_7.backend.dto.response.ResponseDto;
 import com.group_7.backend.service.IUserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -17,29 +19,34 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto, @RequestParam String password) {
-        return ResponseEntity.ok(userService.create(userDto, password));
-    }
-
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable long id) {
-        return ResponseEntity.ok(userService.getById(id));
+    public ResponseEntity<ResponseDto> getUser(@PathVariable long id) {
+        return ResponseEntity.ok(
+                new ResponseDto("success", "User fetched successfully", userService.getById(id))
+        );
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAll());
+    public ResponseEntity<ResponseDto> getAllUsers() {
+        return ResponseEntity.ok(
+                new ResponseDto("success", "All users fetched successfully", userService.getAll())
+        );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@Valid @PathVariable long id, @RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userService.update(id, userDto));
+    public ResponseEntity<ResponseDto> updateUser(
+            @Valid @PathVariable long id,
+            @RequestBody UserRequestDto userDto) {
+        return ResponseEntity.ok(
+                new ResponseDto("success", "User updated successfully", userService.update(id, userDto))
+        );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable long id) {
+    public ResponseEntity<ResponseDto> deleteUser(@PathVariable long id) {
         userService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(
+                new ResponseDto("success", "User deleted successfully", null)
+        );
     }
 }

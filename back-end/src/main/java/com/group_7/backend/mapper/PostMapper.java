@@ -1,18 +1,22 @@
 package com.group_7.backend.mapper;
 
-import com.group_7.backend.dto.SmokingProfileDto;
-import com.group_7.backend.entity.SmokingProfile;
+import com.group_7.backend.dto.PostDto;
+import com.group_7.backend.entity.Post;
 import com.group_7.backend.entity.User;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
-public interface SmokingProfileMapper {
-    @Mapping(target = "userId", source = "user.userId")
-    SmokingProfileDto toDto(SmokingProfile entity);
+public interface PostMapper {
 
-    @Mapping(target = "smokingProfileId", ignore = true)
+    @Mapping(target = "userId", source = "user.userId")
+    PostDto toResponseDto(Post entity);
+
     @Mapping(target = "user", source = "userId", qualifiedByName = "userFromId")
-    SmokingProfile toEntity(SmokingProfileDto dto);
+    @Mapping(target = "postId", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "comments", ignore = true)
+    @Mapping(target = "isPublished", source = "isPublished")
+    Post toEntity(PostDto dto);
 
     @Named("userFromId")
     default User userFromId(Long id) {

@@ -1,6 +1,10 @@
 package com.group_7.backend.controller;
 
 import com.group_7.backend.dto.*;
+import com.group_7.backend.dto.request.LoginRequestDto;
+import com.group_7.backend.dto.request.RegRequestDto;
+import com.group_7.backend.dto.response.JwtResponseDto;
+import com.group_7.backend.dto.response.ResponseDto;
 import com.group_7.backend.service.IUserService;
 import com.group_7.backend.util.JwtTokenProvider;
 import jakarta.validation.Valid;
@@ -30,13 +34,15 @@ public class AuthController {
                     .body(new ResponseDto("success","Login failed: Invalid credentials"));
         }
         String token= jwtTokenProvider.generateToken(user.getUsername());
-        return ResponseEntity.ok(new JwtResponseDto(token,user));//Trả về JwtResponse chứa token và user info
+        return ResponseEntity.ok(new JwtResponseDto("success","Login successfully!",token,user));//Trả về JwtResponse chứa token và user info
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> register(@Valid @RequestBody RegRequestDto request) {
+    public ResponseEntity<ResponseDto> register(@Valid @RequestBody RegRequestDto request) {
         UserDto user = userService.register(request);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(
+                new ResponseDto("success", "User registered successfully", user)
+        );
     }
 
     //curl -v -X POST http://localhost:8080/api/login -H "Content-Type: application/json" -d "{\"usernameOrEmail\":\"testuser\", \"password\":\"123456\"}"
