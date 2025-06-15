@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserMembershipRepository extends JpaRepository<UserMembership, Long> {
-    List<UserMembership> findByUserId(Long userId);
+    List<UserMembership> findByUserUserId(Long userId);
 
-    Optional<UserMembership> findTopByUserIdAndStatusOrderByStartDateDesc(Long userId, MembershipStatusEnum status);
+    Optional <UserMembership> findTopByUserUserIdAndStatusOrderByStartDateDesc(Long userId, MembershipStatusEnum status);
 }

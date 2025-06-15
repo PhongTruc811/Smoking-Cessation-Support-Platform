@@ -68,7 +68,7 @@ public class UserMembershipServiceImp implements IUserMembershipService {
     public List<UserMembershipDto> getByUserId(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-        return userMembershipRepository.findByUserId(user.getUserId())
+        return userMembershipRepository.findByUserUserId(user.getUserId())
                 .stream()
                 .map(userMembershipMapper::toDto)
                 .collect(Collectors.toList());
@@ -76,7 +76,7 @@ public class UserMembershipServiceImp implements IUserMembershipService {
 
     @Override
     public UserMembershipDto getCurrentMembership(Long userId) {
-        UserMembership current = userMembershipRepository.findTopByUserIdAndStatusOrderByStartDateDesc(userId, MembershipStatusEnum.ACTIVE)
+        UserMembership current = userMembershipRepository.findTopByUserUserIdAndStatusOrderByStartDateDesc(userId, MembershipStatusEnum.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException("There is no active membership found for this user"));
         return userMembershipMapper.toDto(current);
     }
