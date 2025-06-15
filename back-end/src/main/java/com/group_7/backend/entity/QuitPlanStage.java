@@ -23,7 +23,7 @@ public class QuitPlanStage {
     @Column(name = "StageName", length = 100)
     private String stageName;
 
-    @Column(name = "Description", length = 255)
+    @Column(name = "Description")
     private String description;
 
     @Column(name = "StartDate")

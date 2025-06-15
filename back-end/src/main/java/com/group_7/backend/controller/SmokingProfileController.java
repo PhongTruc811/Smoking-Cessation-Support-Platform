@@ -17,9 +17,7 @@ public class SmokingProfileController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDto> createSmokingProfile(
-            @Valid @RequestBody SmokingProfileDto smokingProfileDto,
-            @RequestParam String password) {
+    public ResponseEntity<ResponseDto> createSmokingProfile(@Valid @RequestBody SmokingProfileDto smokingProfileDto) {
         return ResponseEntity.ok(
                 new ResponseDto("success", "Smoking profile created successfully",
                         smokingProfileService.create(smokingProfileDto))
@@ -43,9 +41,7 @@ public class SmokingProfileController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDto> updateSmokingProfile(
-            @Valid @PathVariable long id,
-            @RequestBody SmokingProfileDto smokingProfileDto) {
+    public ResponseEntity<ResponseDto> updateSmokingProfile(@Valid @PathVariable long id, @RequestBody SmokingProfileDto smokingProfileDto) {
         return ResponseEntity.ok(
                 new ResponseDto("success", "Smoking profile updated successfully",
                         smokingProfileService.update(id, smokingProfileDto))

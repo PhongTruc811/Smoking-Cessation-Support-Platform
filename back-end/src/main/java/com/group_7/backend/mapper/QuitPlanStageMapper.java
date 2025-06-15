@@ -6,6 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface QuitPlanStageMapper {
-    QuitPlanStageDto toDTO(QuitPlanStage entity);
+    QuitPlanStageDto toDto(QuitPlanStage entity);
     QuitPlanStage toEntity(QuitPlanStageDto dto);
 }

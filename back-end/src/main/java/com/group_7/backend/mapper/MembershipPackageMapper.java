@@ -6,6 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface MembershipPackageMapper {
-    MembershipPackageDto toDTO(MembershipPackage entity);
+    MembershipPackageDto toDto(MembershipPackage entity);
     MembershipPackage toEntity(MembershipPackageDto dto);
 }
