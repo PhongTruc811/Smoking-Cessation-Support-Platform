@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="AntiSmoke" uuid="c24c2478-5769-4ecf-b106-fe204c1daa5f">
+    <data-source source="LOCAL" name="AntiSmoke" uuid="7e871ca4-10d4-45ce-b1d2-7985b1ab8184">
       <driver-ref>sqlserver.ms</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>

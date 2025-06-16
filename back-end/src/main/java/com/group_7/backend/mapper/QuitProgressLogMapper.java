@@ -6,6 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface QuitProgressLogMapper {
-    QuitProgressLogDto toDTO(QuitProgressLog entity);
+    QuitProgressLogDto toDto(QuitProgressLog entity);
     QuitProgressLog toEntity(QuitProgressLogDto dto);
 }

@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,21 +42,23 @@ public class UserMembershipServiceImp implements IUserMembershipService {
     @Override
     @Transactional
     public UserMembershipDto create(UserMembershipDto dto) {
+        //Kiểm tra user hay gói membership đã có
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
         MembershipPackage membershipPackage = membershipPackageRepository.findById(dto.getMembershipPackageId())
                 .orElseThrow(() -> new ResourceNotFoundException("MembershipPackage not found with id: " + dto.getMembershipPackageId()));
-
+        Optional<UserMembership> checkUser = userMembershipRepository.findTopByUserUserIdAndStatusOrderByStartDateDesc(dto.getUserId(), MembershipStatusEnum.ACTIVE);
+        if (checkUser!=null) throw new IllegalArgumentException("This user currently have active membership");
         UserMembership userMembership = new UserMembership();
         userMembership.setUser(user);
         userMembership.setMembershipPackage(membershipPackage);
-        userMembership.setStartDate(LocalDateTime.now());
+        userMembership.setStartDate(LocalDate.now());
         userMembership.setPaymentMethod(dto.getPaymentMethod());
         userMembership.setStatus(MembershipStatusEnum.ACTIVE);
 
         // Chỉnh ngày hết hạn
         if (membershipPackage.getDurationInDays() > 0) {
-            LocalDate endDate = userMembership.getStartDate().toLocalDate().plusDays(membershipPackage.getDurationInDays());
+            LocalDate endDate = userMembership.getStartDate().plusDays(membershipPackage.getDurationInDays());
             userMembership.setEndDate(endDate);
         }
 

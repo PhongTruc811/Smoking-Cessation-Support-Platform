@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -16,10 +15,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserMembershipDto {
     private long id;
-    private LocalDateTime startDate;
+    private LocalDate startDate;
     private LocalDate endDate;
-
-    @NotNull(message = "Status must not be empty")
     private MembershipStatusEnum status;
 
     @NotNull(message = "Payment method must not be null")
