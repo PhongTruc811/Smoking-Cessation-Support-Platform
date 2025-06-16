@@ -76,8 +76,7 @@ public class SmokingProfileServiceImp implements ISmokingProfileService {
         }
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
-        SmokingProfile entity = smokingProfileMapper.toEntity(dto);
-        entity.setUser(user);
+        SmokingProfile entity = smokingProfileMapper.toEntity(dto, user);
 
         SmokingProfile saved = smokingProfileRepository.save(entity);
         return smokingProfileMapper.toDto(saved);

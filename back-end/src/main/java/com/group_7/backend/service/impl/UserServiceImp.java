@@ -36,12 +36,12 @@ public class UserServiceImp implements IUserService {
     @Override
     public UserDto getById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return userMapper.toUserDto(user);
+        return userMapper.toDto(user);
     }
 
     @Override
     public List<UserDto> getAll() {
-        return userRepository.findAll().stream().map(userMapper::toUserDto).collect(Collectors.toList());
+        return userRepository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
@@ -53,7 +53,7 @@ public class UserServiceImp implements IUserService {
         user.setGender(userDTO.getGender());
         // Không update username/email ở đây (thường), có thể bổ sung nếu muốn
         user = userRepository.save(user);
-        return userMapper.toUserDto(user);
+        return userMapper.toDto(user);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class UserServiceImp implements IUserService {
         if (!password.matches(user.getPassword())) {
             throw new IllegalArgumentException("Invalid username/email or password");
         }
-        return userMapper.toUserDto(user);
+        return userMapper.toDto(user);
     }
 
     @Override
@@ -107,6 +107,6 @@ public class UserServiceImp implements IUserService {
         // Lưu DB
         User savedUser = userRepository.save(user);
 
-        return userMapper.toUserDto(savedUser);
+        return userMapper.toDto(savedUser);
     }
 }

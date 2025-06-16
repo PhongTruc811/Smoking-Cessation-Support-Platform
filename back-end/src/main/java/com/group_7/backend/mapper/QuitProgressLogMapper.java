@@ -2,10 +2,35 @@ package com.group_7.backend.mapper;
 
 import com.group_7.backend.dto.QuitProgressLogDto;
 import com.group_7.backend.entity.QuitProgressLog;
-import org.mapstruct.Mapper;
+import com.group_7.backend.entity.QuitPlanStage;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface QuitProgressLogMapper {
-    QuitProgressLogDto toDto(QuitProgressLog entity);
-    QuitProgressLog toEntity(QuitProgressLogDto dto);
+@Component
+public class QuitProgressLogMapper {
+
+    // Entity -> DTO
+    public QuitProgressLogDto toDto(QuitProgressLog entity) {
+        if (entity == null) return null;
+        QuitProgressLogDto dto = new QuitProgressLogDto();
+        dto.setLogId(entity.getLogId());
+        dto.setStageId(entity.getQuitPlanStage() != null ? entity.getQuitPlanStage().getStageId() : 0);
+        dto.setLogDate(entity.getLogDate());
+        dto.setCigarettesSmoked(entity.getCigarettesSmoked());
+        dto.setHealthNote(entity.getHealthNote());
+        dto.setNotes(entity.getNotes());
+        return dto;
+    }
+
+    // DTO -> Entity (cần truyền QuitPlanStage)
+    public QuitProgressLog toEntity(QuitProgressLogDto dto, QuitPlanStage quitPlanStage) {
+        if (dto == null) return null;
+        QuitProgressLog entity = new QuitProgressLog();
+        entity.setLogId(dto.getLogId());
+        entity.setQuitPlanStage(quitPlanStage);
+        entity.setLogDate(dto.getLogDate());
+        entity.setCigarettesSmoked(dto.getCigarettesSmoked());
+        entity.setHealthNote(dto.getHealthNote());
+        entity.setNotes(dto.getNotes());
+        return entity;
+    }
 }

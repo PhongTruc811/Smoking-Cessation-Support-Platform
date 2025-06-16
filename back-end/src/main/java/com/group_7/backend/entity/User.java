@@ -37,7 +37,7 @@ public class User {
     @Column(name = "Password",nullable = false, length = 100)
     private String password;
 
-    @Column(name = "DOB")
+    @Column(name = "Dob")
     private LocalDate dob;
 
     @Column(name = "Status")

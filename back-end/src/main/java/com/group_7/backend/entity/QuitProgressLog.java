@@ -35,4 +35,8 @@ public class QuitProgressLog {
 
     @Column(name = "Notes", columnDefinition = "NVARCHAR(MAX)")
     private String notes;
+
+    public void setQuitPlanStage(QuitPlanStage quitPlanStage) {
+        this.quitPlanStage = quitPlanStage;
+    }
 }

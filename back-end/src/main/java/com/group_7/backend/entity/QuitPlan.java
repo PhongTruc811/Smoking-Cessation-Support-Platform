@@ -14,8 +14,6 @@ import java.util.Set;
 
 /**
  * Đại diện cho một kế hoạch cai thuốc của người dùng.
- * Đây là phía sở hữu (owning side) của quan hệ N-1 với User.
- * Đồng thời là phía nghịch đảo (inverse side) của quan hệ 1-N với QuitPlanStage.
  */
 @Entity
 @Table(name = "QuitPlans")

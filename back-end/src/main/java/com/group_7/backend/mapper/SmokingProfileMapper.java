@@ -3,22 +3,34 @@ package com.group_7.backend.mapper;
 import com.group_7.backend.dto.SmokingProfileDto;
 import com.group_7.backend.entity.SmokingProfile;
 import com.group_7.backend.entity.User;
-import org.mapstruct.*;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface SmokingProfileMapper {
-    @Mapping(target = "userId", source = "user.userId")
-    SmokingProfileDto toDto(SmokingProfile entity);
+@Component
+public class SmokingProfileMapper {
 
-    @Mapping(target = "smokingProfileId", ignore = true)
-    @Mapping(target = "user", source = "userId", qualifiedByName = "userFromId")
-    SmokingProfile toEntity(SmokingProfileDto dto);
+    // Entity -> DTO
+    public SmokingProfileDto toDto(SmokingProfile entity) {
+        if (entity == null) return null;
+        SmokingProfileDto dto = new SmokingProfileDto();
+        dto.setSmokingProfileId(entity.getSmokingProfileId());
+        dto.setUserId(entity.getUser() != null ? entity.getUser().getUserId() : 0);
+        dto.setCigarettesPerDay(entity.getCigarettesPerDay());
+        dto.setCostPerPack(entity.getCostPerPack());
+        dto.setWeekSmoked(entity.getWeekSmoked());
+        dto.setNote(entity.getNote());
+        return dto;
+    }
 
-    @Named("userFromId")
-    default User userFromId(Long id) {
-        if (id == null) return null;
-        User user = new User();
-        user.setUserId(id);
-        return user;
+    // DTO -> Entity (user cần truyền vào hoặc set sau, vì chỉ có userId trong dto)
+    public SmokingProfile toEntity(SmokingProfileDto dto, User user) {
+        if (dto == null) return null;
+        SmokingProfile entity = new SmokingProfile();
+        entity.setSmokingProfileId(dto.getSmokingProfileId());
+        entity.setUser(user);
+        entity.setCigarettesPerDay(dto.getCigarettesPerDay());
+        entity.setCostPerPack(dto.getCostPerPack());
+        entity.setWeekSmoked(dto.getWeekSmoked());
+        entity.setNote(dto.getNote());
+        return entity;
     }
 }

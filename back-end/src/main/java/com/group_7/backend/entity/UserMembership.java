@@ -11,8 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * Entity trung gian, chứa thông tin về việc một User đăng ký một MembershipPackage.
- * Đây là phía sở hữu (owning side) cho cả hai mối quan hệ Many-to-One.
+ * Entity trung gian, chứa thông tin một User đăng ký một MembershipPackage.
  */
 @Entity
 @Table(name = "UserMemberships")

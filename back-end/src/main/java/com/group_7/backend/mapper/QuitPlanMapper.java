@@ -2,13 +2,62 @@ package com.group_7.backend.mapper;
 
 import com.group_7.backend.dto.QuitPlanDto;
 import com.group_7.backend.entity.QuitPlan;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import com.group_7.backend.entity.QuitPlanStage;
+import com.group_7.backend.entity.User;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface QuitPlanMapper {
-    QuitPlanDto toDto(QuitPlan entity);
+import java.util.Set;
+import java.util.stream.Collectors;
 
-    @Mapping(target = "createdAt", ignore = true)
-    QuitPlan toEntity(QuitPlanDto dto);
+@Component
+public class QuitPlanMapper {
+
+    private final QuitPlanStageMapper quitPlanStageMapper;
+
+    public QuitPlanMapper(QuitPlanStageMapper quitPlanStageMapper) {
+        this.quitPlanStageMapper = quitPlanStageMapper;
+    }
+
+    // Entity -> DTO
+    public QuitPlanDto toDto(QuitPlan entity) {
+        if (entity == null) return null;
+        QuitPlanDto dto = new QuitPlanDto();
+        dto.setId(entity.getId());
+        dto.setUserId(entity.getUser() != null ? entity.getUser().getUserId() : 0);
+        dto.setReason(entity.getReason());
+        dto.setStartDate(entity.getStartDate());
+        dto.setTargetEndDate(entity.getTargetEndDate());
+        dto.setCreatedAt(entity.getCreatedAt());
+        dto.setStatus(entity.getStatus());
+        if (entity.getQuitPlanStages() != null) {
+            dto.setQuitPlanStages(
+                    entity.getQuitPlanStages()
+                            .stream()
+                            .map(quitPlanStageMapper::toDto)
+                            .collect(Collectors.toList())
+            );
+        }
+        return dto;
+    }
+
+    // DTO -> Entity (cần truyền User, các stage sẽ được map riêng)
+    public QuitPlan toEntity(QuitPlanDto dto, User user) {
+        if (dto == null) return null;
+        QuitPlan entity = new QuitPlan();
+        entity.setId(dto.getId());
+        entity.setUser(user);
+        entity.setReason(dto.getReason());
+        entity.setStartDate(dto.getStartDate());
+        entity.setTargetEndDate(dto.getTargetEndDate());
+        entity.setCreatedAt(dto.getCreatedAt());
+        entity.setStatus(dto.getStatus());
+        // Stages: chuyển List<QuitPlanStageDto> thành Set<QuitPlanStage>
+        if (dto.getQuitPlanStages() != null) {
+            Set<QuitPlanStage> stages = dto.getQuitPlanStages().stream()
+                    .map(stageDto -> quitPlanStageMapper.toEntity(stageDto, entity))
+                    .collect(Collectors.toSet());
+            entity.setQuitPlanStages(stages);
+        }
+        return entity;
+    }
 }

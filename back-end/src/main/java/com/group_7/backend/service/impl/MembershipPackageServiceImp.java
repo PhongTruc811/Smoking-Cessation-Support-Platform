@@ -6,6 +6,7 @@ import com.group_7.backend.exception.ResourceNotFoundException;
 import com.group_7.backend.mapper.MembershipPackageMapper;
 import com.group_7.backend.repository.MembershipPackageRepository;
 import com.group_7.backend.service.IMembershipPackageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ public class MembershipPackageServiceImp implements IMembershipPackageService {
 
     private final MembershipPackageRepository membershipPackageRepository;
     private final MembershipPackageMapper membershipPackageMapper;
+
 
     public MembershipPackageServiceImp(
             MembershipPackageRepository membershipPackageRepository,
