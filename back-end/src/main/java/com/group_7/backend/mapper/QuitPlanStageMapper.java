@@ -25,7 +25,6 @@ public class QuitPlanStageMapper {
     public QuitPlanStage toEntity(QuitPlanStageDto dto, QuitPlan quitPlan) {
         if (dto == null) return null;
         QuitPlanStage entity = new QuitPlanStage();
-        entity.setStageId(dto.getStageId());
         entity.setStageName(dto.getStageName());
         entity.setDescription(dto.getDescription());
         entity.setStartDate(dto.getStartDate());

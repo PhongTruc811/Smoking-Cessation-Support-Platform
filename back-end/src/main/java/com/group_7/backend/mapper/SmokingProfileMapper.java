@@ -25,7 +25,6 @@ public class SmokingProfileMapper {
     public SmokingProfile toEntity(SmokingProfileDto dto, User user) {
         if (dto == null) return null;
         SmokingProfile entity = new SmokingProfile();
-        entity.setSmokingProfileId(dto.getSmokingProfileId());
         entity.setUser(user);
         entity.setCigarettesPerDay(dto.getCigarettesPerDay());
         entity.setCostPerPack(dto.getCostPerPack());

@@ -47,8 +47,10 @@ public class UserMembershipServiceImp implements IUserMembershipService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
         MembershipPackage membershipPackage = membershipPackageRepository.findById(dto.getMembershipPackageId())
                 .orElseThrow(() -> new ResourceNotFoundException("MembershipPackage not found with id: " + dto.getMembershipPackageId()));
+        //Kiểm tra user đã có gói membership kích hoạt
         Optional<UserMembership> checkUser = userMembershipRepository.findTopByUserUserIdAndStatusOrderByStartDateDesc(dto.getUserId(), MembershipStatusEnum.ACTIVE);
         if (checkUser!=null) throw new IllegalArgumentException("This user currently have active membership");
+
         UserMembership userMembership = new UserMembership();
         userMembership.setUser(user);
         userMembership.setMembershipPackage(membershipPackage);
@@ -63,7 +65,8 @@ public class UserMembershipServiceImp implements IUserMembershipService {
         }
 
         UserMembership saved = userMembershipRepository.save(userMembership);
-        return userMembershipMapper.toDto(saved);
+        return userMembershipMapper.
+                toDto(saved);
     }
 
     @Override

@@ -52,7 +52,7 @@ public class MembershipPackageServiceImp implements IMembershipPackageService {
         packageEntity.setDescription(dto.getDescription());
         packageEntity.setDurationInDays(dto.getDurationInDays());
         packageEntity.setPackageName(dto.getPackageName());
-
+        packageEntity.setActive(dto.isActive());
         MembershipPackage saved = membershipPackageRepository.save(packageEntity);
         return membershipPackageMapper.toDto(saved);
     }
@@ -69,7 +69,6 @@ public class MembershipPackageServiceImp implements IMembershipPackageService {
     @Transactional
     public MembershipPackageDto create(MembershipPackageDto dto) {
         MembershipPackage entity = membershipPackageMapper.toEntity(dto);
-        MembershipPackage saved = membershipPackageRepository.save(entity);
-        return membershipPackageMapper.toDto(saved);
+        return membershipPackageMapper.toDto(membershipPackageRepository.save(entity));
     }
 }

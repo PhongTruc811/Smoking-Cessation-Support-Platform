@@ -23,12 +23,10 @@ public class MembershipPackageMapper {
     public MembershipPackage toEntity(MembershipPackageDto dto) {
         if (dto == null) return null;
         MembershipPackage entity = new MembershipPackage();
-        entity.setId(dto.getId());
         entity.setPackageName(dto.getPackageName());
         entity.setDescription(dto.getDescription());
         entity.setPrice(dto.getPrice());
         entity.setDurationInDays(dto.getDurationInDays());
-        entity.setActive(dto.isActive());
         return entity;
     }
 }

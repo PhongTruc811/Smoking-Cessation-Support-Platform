@@ -1,20 +1,20 @@
 package com.group_7.backend.repository;
 
 import com.group_7.backend.entity.Like;
+import com.group_7.backend.entity.Post;
+import com.group_7.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.List;
 
 @Repository
 public interface LikeRepository extends JpaRepository<Like, Long> {
-    long countByPost_PostId(Long postId);
-    long countByComment_CommentId(Long commentId);
+    int countByPostPostId(Long postId);
 
-    Optional<Like> findByUser_UserIdAndPost_PostId(Long userId, Long postId);
-    Optional<Like> findByUser_UserIdAndComment_CommentId(Long userId, Long commentId);
+    boolean existsByPostAndUser(Post post, User user);
 
-    List<Like> findByPost_PostId(Long postId);
-    List<Like> findByComment_CommentId(Long commentId);
+    boolean existsByPostPostIdAndUser_UserId(Long postId, Long userId);
+
+    Optional<Like> findByPostAndUser(Post post, User user);
 }

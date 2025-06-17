@@ -44,7 +44,6 @@ public class QuitPlanMapper {
     public QuitPlan toEntity(QuitPlanDto dto, User user) {
         if (dto == null) return null;
         QuitPlan entity = new QuitPlan();
-        entity.setId(dto.getId());
         entity.setUser(user);
         entity.setReason(dto.getReason());
         entity.setStartDate(dto.getStartDate());

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SmokingProfileRepository extends JpaRepository<SmokingProfile, Long> {
-    SmokingProfile findByUser_UserId(Long userId);
-    boolean existsByUser_UserId(Long userId);
+    SmokingProfile findByUserUserId(Long userId);
+    boolean existsByUserUserId(Long userId);
 }

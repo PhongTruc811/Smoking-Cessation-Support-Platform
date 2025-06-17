@@ -71,7 +71,7 @@ public class SmokingProfileServiceImp implements ISmokingProfileService {
     @Override
     @Transactional
     public SmokingProfileDto create(SmokingProfileDto dto) {
-        if (smokingProfileRepository.existsByUser_UserId(dto.getUserId())) {
+        if (smokingProfileRepository.existsByUserUserId(dto.getUserId())) {
             throw new IllegalArgumentException("Smoking profile for this user already exists");
         }
         User user = userRepository.findById(dto.getUserId())
@@ -84,7 +84,7 @@ public class SmokingProfileServiceImp implements ISmokingProfileService {
 
     @Override
     public SmokingProfileDto getByUserId(Long userId) {
-        SmokingProfile entity = smokingProfileRepository.findByUser_UserId(userId);
+        SmokingProfile entity = smokingProfileRepository.findByUserUserId(userId);
         if (entity == null) {
             throw new ResourceNotFoundException("SmokingProfile not found for user id: " + userId);
         }

@@ -25,12 +25,9 @@ public class PostMapper {
     public Post toEntity(PostDto dto, User user) {
         if (dto == null) return null;
         Post entity = new Post();
-        entity.setPostId(dto.getPostId());
         entity.setUser(user);
         entity.setTitle(dto.getTitle());
         entity.setContent(dto.getContent());
-        entity.setCreatedAt(dto.getCreatedAt());
-        entity.setIsPublished(dto.getIsPublished());
         return entity;
     }
 }
