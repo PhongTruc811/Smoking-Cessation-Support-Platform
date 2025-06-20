@@ -25,6 +25,7 @@ public class AuthController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    /*trả về JWT token + user info khi đăng nhập thành công*/
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto request) {
         UserDto user = userService.authenticate(request.getUsernameOrEmail(), request.getPassword());
