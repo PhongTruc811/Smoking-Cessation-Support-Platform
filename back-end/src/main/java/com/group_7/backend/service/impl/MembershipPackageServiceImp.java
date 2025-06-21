@@ -71,4 +71,14 @@ public class MembershipPackageServiceImp implements IMembershipPackageService {
         MembershipPackage entity = membershipPackageMapper.toEntity(dto);
         return membershipPackageMapper.toDto(membershipPackageRepository.save(entity));
     }
+
+    @Override
+    @Transactional
+    public MembershipPackageDto changeActive(Long id) {
+        MembershipPackage entity = membershipPackageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("MembershipPackage not found with id: " + id));
+        entity.setActive(!entity.isActive());
+        membershipPackageRepository.save(entity);
+        return membershipPackageMapper.toDto(entity);
+    }
 }

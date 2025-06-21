@@ -47,4 +47,11 @@ public class UserController {
                 new ResponseDto("success", "User deleted successfully", null)
         );
     }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<ResponseDto> changeUserStatus(@PathVariable long id) {
+        return ResponseEntity.ok(
+                new ResponseDto("success", "User updated successfully", userService.changeStatus(id))
+        );
+    }
 }

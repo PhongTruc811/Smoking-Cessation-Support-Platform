@@ -71,16 +71,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Like> likes = new HashSet<>();
 
-    //USER này có SmokingProfile và ngược lại
-    public void setSmokingProfile(SmokingProfile smokingProfile) {
-        smokingProfile.setUser(this);
-        this.smokingProfile = smokingProfile;
-    }
-
-    //USER có những QuitPlan và QuitPlan đó thuộc về USER này
-    public void setQuitPlan(QuitPlan plan) {
-        plan.setUser(this);
-        this.quitPlans.add(plan);
+    public void addQuitPlan(QuitPlan quitPlan) {
+        this.quitPlans.add(quitPlan);
     }
 
 }

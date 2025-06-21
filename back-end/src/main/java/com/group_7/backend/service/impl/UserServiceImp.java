@@ -12,6 +12,7 @@ import com.group_7.backend.service.IUserService;
 import com.group_7.backend.util.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,23 +46,35 @@ public class UserServiceImp implements IUserService {
     }
 
     @Override
-    public UserDto update(Long userId, UserRequestDto userDTO) {
+    @Transactional
+    public UserDto update(Long userId, UserRequestDto userDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        user.setEmail(userDTO.getEmail());
-        user.setFullName(userDTO.getFullName());
-        user.setDob(userDTO.getDob());
-        user.setGender(userDTO.getGender());
+        user.setEmail(userDto.getEmail());
+        user.setFullName(userDto.getFullName());
+        user.setDob(userDto.getDob());
+        user.setGender(userDto.getGender());
         // Không update username/email ở đây (thường), có thể bổ sung nếu muốn
         user = userRepository.save(user);
         return userMapper.toDto(user);
     }
 
     @Override
+    @Transactional
     public void delete(Long userId) {
         if (!userRepository.existsById(userId)) throw new ResourceNotFoundException("User not found");
         userRepository.deleteById(userId);
     }
 
+    @Override
+    @Transactional
+    public UserDto changeStatus(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setStatus(!user.getStatus());
+        userRepository.save(user);
+        return userMapper.toDto(user);
+    }
+
+    @Override
     public UserDto authenticate(String usernameOrEmail, String password) {
         Optional<User> userOpt = userRepository.findByUsername(usernameOrEmail);
         if (userOpt.isEmpty()) {
@@ -78,6 +91,7 @@ public class UserServiceImp implements IUserService {
     }
 
     @Override
+    @Transactional
     public UserDto register(RegRequestDto request) {
         // Kiểm tra duplicate username
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -109,4 +123,6 @@ public class UserServiceImp implements IUserService {
 
         return userMapper.toDto(savedUser);
     }
+
+
 }

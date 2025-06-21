@@ -43,7 +43,7 @@ public class QuitPlan {
     private LocalDate targetEndDate;
 
     @Column(name = "CreatedAt", updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Status", nullable = false, length = 20)
@@ -70,6 +70,12 @@ public class QuitPlan {
     public void removeStage(QuitPlanStage stage) {
         quitPlanStages.remove(stage);
         stage.setQuitPlan(null);
+    }
+
+    //Những QuitPlan thuộc User này và ngược lại
+    public void setUser(User user) {
+        this.user = user;
+        user.addQuitPlan(this);
     }
 
     @Override

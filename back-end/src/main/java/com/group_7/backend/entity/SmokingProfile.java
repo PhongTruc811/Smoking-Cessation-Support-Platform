@@ -33,4 +33,10 @@ public class SmokingProfile {
 
     @Column(name = "Note", columnDefinition = "NVARCHAR(MAX)")
     private String note;
+
+    //SmokingProfile thuộc USER này và ngược lại
+    public void setUser(User user) {
+        this.user = user;
+        user.setSmokingProfile(this);
+    }
 }

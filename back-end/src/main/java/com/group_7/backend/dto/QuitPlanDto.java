@@ -34,7 +34,7 @@ public class QuitPlanDto {
     @Future(message = "Target end date must be in the future")
     private LocalDate targetEndDate;
 
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @NotNull(message = "Status must not be empty")
     private QuitPlanStatusEnum status;
