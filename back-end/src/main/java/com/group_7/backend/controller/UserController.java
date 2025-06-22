@@ -1,11 +1,15 @@
 package com.group_7.backend.controller;
 
 import com.group_7.backend.dto.UserDto;
+import com.group_7.backend.dto.request.PasswordRequestDto;
 import com.group_7.backend.dto.request.UserRequestDto;
 import com.group_7.backend.dto.response.ResponseDto;
+import com.group_7.backend.entity.CustomUserDetail;
 import com.group_7.backend.service.IUserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +30,14 @@ public class UserController {
         );
     }
 
+    @GetMapping("/current-user")
+    public ResponseEntity<ResponseDto> getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetail customUserDetail = (CustomUserDetail) auth.getPrincipal();
+        return ResponseEntity.ok(
+                new ResponseDto("success", "User fetched successfully", userService.getById(customUserDetail.getId())));
+    }
+
     @GetMapping
     public ResponseEntity<ResponseDto> getAllUsers() {
         return ResponseEntity.ok(
@@ -34,7 +46,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDto> updateUser(@Valid @PathVariable long id, @RequestBody UserRequestDto userDto) {
+    public ResponseEntity<ResponseDto> updateUser(@PathVariable long id,@Valid @RequestBody UserRequestDto userDto) {
         return ResponseEntity.ok(
                 new ResponseDto("success", "User updated successfully", userService.update(id, userDto))
         );
@@ -48,10 +60,16 @@ public class UserController {
         );
     }
 
-    @PutMapping("/{id}/status")
+    @PutMapping("/{id}/change-status")
     public ResponseEntity<ResponseDto> changeUserStatus(@PathVariable long id) {
         return ResponseEntity.ok(
                 new ResponseDto("success", "User updated successfully", userService.changeStatus(id))
         );
+    }
+
+    @PutMapping("/{id}/change-password")
+    public ResponseEntity<ResponseDto> changePassword(@PathVariable long id,@Valid @RequestBody PasswordRequestDto passwordDto) {
+        userService.changePassword(id, passwordDto);
+        return ResponseEntity.ok(new ResponseDto("success","User updated successfully",null));
     }
 }

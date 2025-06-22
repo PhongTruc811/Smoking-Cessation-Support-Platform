@@ -52,7 +52,7 @@ public class User {
     private UserRoleEnum role;
 
     @Column(name = "CreatedAt")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDate createdAt = LocalDate.now();
 
     //------------------------------------------------------------------------------
     //Thông tin hút thuốc của USER

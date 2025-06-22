@@ -8,6 +8,7 @@ import com.group_7.backend.mapper.SmokingProfileMapper;
 import com.group_7.backend.repository.SmokingProfileRepository;
 import com.group_7.backend.repository.UserRepository;
 import com.group_7.backend.service.ISmokingProfileService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,7 @@ public class SmokingProfileServiceImp implements ISmokingProfileService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<SmokingProfileDto> getAll() {
         return smokingProfileRepository.findAll()
                 .stream()
@@ -47,6 +49,7 @@ public class SmokingProfileServiceImp implements ISmokingProfileService {
 
     @Override
     @Transactional
+    @PreAuthorize("#userId == authentication.principal.id")
     public SmokingProfileDto update(Long id, SmokingProfileDto dto) {
         SmokingProfile profile = smokingProfileRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("SmokingProfile not found with id: " + id));
@@ -70,6 +73,7 @@ public class SmokingProfileServiceImp implements ISmokingProfileService {
 
     @Override
     @Transactional
+    @PreAuthorize("#userId == authentication.principal.id")
     public SmokingProfileDto create(SmokingProfileDto dto) {
         if (smokingProfileRepository.existsByUserUserId(dto.getUserId())) {
             throw new IllegalArgumentException("Smoking profile for this user already exists");

@@ -1,5 +1,6 @@
 package com.group_7.backend.service.impl;
 
+import com.group_7.backend.dto.request.PasswordRequestDto;
 import com.group_7.backend.dto.request.RegRequestDto;
 import com.group_7.backend.dto.UserDto;
 import com.group_7.backend.dto.request.UserRequestDto;
@@ -10,11 +11,12 @@ import com.group_7.backend.mapper.UserMapper;
 import com.group_7.backend.repository.UserRepository;
 import com.group_7.backend.service.IUserService;
 import com.group_7.backend.util.JwtTokenProvider;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,18 +37,21 @@ public class UserServiceImp implements IUserService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or #userId == authentication.principal.id")
     public UserDto getById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return userMapper.toDto(user);
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<UserDto> getAll() {
         return userRepository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
+    @PreAuthorize("#userId == authentication.principal.id")
     public UserDto update(Long userId, UserRequestDto userDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         user.setEmail(userDto.getEmail());
@@ -60,6 +65,7 @@ public class UserServiceImp implements IUserService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(Long userId) {
         if (!userRepository.existsById(userId)) throw new ResourceNotFoundException("User not found");
         userRepository.deleteById(userId);
@@ -67,11 +73,25 @@ public class UserServiceImp implements IUserService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public UserDto changeStatus(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         user.setStatus(!user.getStatus());
         userRepository.save(user);
         return userMapper.toDto(user);
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize("#userId == authentication.principal.id")
+    public void changePassword(Long userId, PasswordRequestDto requestDto) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        if (user.getPassword().equals(requestDto.getCurrentPassword())) {
+            user.setPassword(requestDto.getNewPassword());
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("Wrong password");
+        }
     }
 
     @Override
@@ -110,7 +130,7 @@ public class UserServiceImp implements IUserService {
         user.setDob(request.getDob());
         user.setGender(request.getGender());
         user.setStatus(true);
-        user.setCreatedAt(LocalDateTime.now());
+        user.setCreatedAt(LocalDate.now());
         //Mặc định role của user mới là MEMBER
         user.setRole(UserRoleEnum.MEMBER);
 
@@ -123,6 +143,5 @@ public class UserServiceImp implements IUserService {
 
         return userMapper.toDto(savedUser);
     }
-
 
 }

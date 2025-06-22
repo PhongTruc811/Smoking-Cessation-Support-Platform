@@ -34,7 +34,7 @@ public class AuthController {
             return ResponseEntity.status(401)
                     .body(new ResponseDto("success","Login failed: Invalid credentials"));
         }
-        String token= jwtTokenProvider.generateToken(user.getUsername());
+        String token= jwtTokenProvider.generateToken(user.getUsername(), user.getRole().name());
         return ResponseEntity.ok(new JwtResponseDto("success","Login successfully!",token,user));//Trả về JwtResponse chứa token và user info
     }
 

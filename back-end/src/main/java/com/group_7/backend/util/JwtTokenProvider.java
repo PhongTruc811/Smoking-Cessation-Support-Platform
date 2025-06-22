@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.Date;
 
 @Component
@@ -19,15 +20,17 @@ public class JwtTokenProvider {
     private int jwtExpiration;
 
     //Tạo token cho user
-    public String generateToken(String username) {
+    public String generateToken(String username, String role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpiration);//Lấy thời hạn đã set từ app.properties
+        Claims claims = Jwts.claims().setSubject(username);
+        claims.put("Role", "ROLE_"+role);
         return Jwts.builder()
-                .setSubject(username)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret) //Kí token với secret key và generate
                 .setIssuer("AntiSmoking.com")
+                .setClaims(claims)
                 .compact();
     }
 

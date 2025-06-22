@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    //Lỗi validation cho các dữ liệu input
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity handleBadRequestException(MethodArgumentNotValidException exception) {
         String responseMessage = "";
@@ -45,7 +46,7 @@ public class GlobalExceptionHandler {
     //Các lỗi khác...
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleAllExceptions(Exception ex) {
-        return new ResponseEntity("Internal server error. Please contact admin.", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity("Internal server error: "+ ex.getMessage() + ". Please contact admin.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

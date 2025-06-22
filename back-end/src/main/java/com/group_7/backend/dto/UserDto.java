@@ -1,10 +1,12 @@
 package com.group_7.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.group_7.backend.entity.enums.UserGenderEnum;
 import com.group_7.backend.entity.enums.UserRoleEnum;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -15,10 +17,16 @@ public class UserDto {
     private String username;
     private String fullName;
     private String email;
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dob;
+
     private UserGenderEnum gender;
     private Boolean status;
     private UserRoleEnum role;
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate createdAt;
     // Không trả về password vì bảo mật
 
 }

@@ -16,6 +16,5 @@ public class ResponseDto {
     public ResponseDto(String status, String message) {
         this.status = status;
         this.message = message;
-        this.data = null;
     }
 }
