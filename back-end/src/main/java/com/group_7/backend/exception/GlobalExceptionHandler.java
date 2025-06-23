@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
     //Lỗi quyền truy cập ko hợp lệ
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
-        return new ResponseEntity("Access denied: " + ex.getMessage(), HttpStatus.FORBIDDEN);
+        return new ResponseEntity(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
     //Các lỗi khác...
     @ExceptionHandler(Exception.class)

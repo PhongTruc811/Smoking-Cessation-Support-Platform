@@ -7,6 +7,7 @@ import com.group_7.backend.mapper.MembershipPackageMapper;
 import com.group_7.backend.repository.MembershipPackageRepository;
 import com.group_7.backend.service.IMembershipPackageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +45,7 @@ public class MembershipPackageServiceImp implements IMembershipPackageService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public MembershipPackageDto update(Long id, MembershipPackageDto dto) {
         MembershipPackage packageEntity = membershipPackageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("MembershipPackage not found with id: " + id));
@@ -59,6 +61,7 @@ public class MembershipPackageServiceImp implements IMembershipPackageService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(Long id) {
         MembershipPackage entity = membershipPackageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("MembershipPackage not found with id: " + id));
@@ -67,6 +70,7 @@ public class MembershipPackageServiceImp implements IMembershipPackageService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public MembershipPackageDto create(MembershipPackageDto dto) {
         MembershipPackage entity = membershipPackageMapper.toEntity(dto);
         return membershipPackageMapper.toDto(membershipPackageRepository.save(entity));
@@ -74,6 +78,7 @@ public class MembershipPackageServiceImp implements IMembershipPackageService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public MembershipPackageDto changeActive(Long id) {
         MembershipPackage entity = membershipPackageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("MembershipPackage not found with id: " + id));

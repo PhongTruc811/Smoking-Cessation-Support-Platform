@@ -32,6 +32,7 @@ public class SmokingProfileServiceImp implements ISmokingProfileService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public SmokingProfileDto getById(Long id) {
         SmokingProfile entity = smokingProfileRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("SmokingProfile not found with id: " + id));
@@ -65,6 +66,7 @@ public class SmokingProfileServiceImp implements ISmokingProfileService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(Long id) {
         SmokingProfile entity = smokingProfileRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("SmokingProfile not found with id: " + id));

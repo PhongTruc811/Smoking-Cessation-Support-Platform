@@ -8,6 +8,7 @@ import com.group_7.backend.mapper.QuitPlanMapper;
 import com.group_7.backend.repository.QuitPlanRepository;
 import com.group_7.backend.repository.UserRepository;
 import com.group_7.backend.service.IQuitPlanService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ public class QuitPlanServiceImp implements IQuitPlanService {
     }
 
     @Override
+    @PreAuthorize("#userId == authentication.principal.id or hasAuthority('ROLE_ADMIN')")
     public QuitPlanDto getById(Long id) {
         QuitPlan entity = quitPlanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("QuitPlan not found with id: " + id));
@@ -37,6 +39,7 @@ public class QuitPlanServiceImp implements IQuitPlanService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<QuitPlanDto> getAll() {
         return quitPlanRepository.findAll()
                 .stream()
@@ -46,6 +49,7 @@ public class QuitPlanServiceImp implements IQuitPlanService {
 
     @Override
     @Transactional
+    @PreAuthorize("#userId == authentication.principal.id or hasAuthority('ROLE_ADMIN')")
     public QuitPlanDto create(QuitPlanDto dto) {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
@@ -56,6 +60,7 @@ public class QuitPlanServiceImp implements IQuitPlanService {
 
     @Override
     @Transactional
+    @PreAuthorize("#userId == authentication.principal.id or hasAuthority('ROLE_COACH')")
     public QuitPlanDto update(Long id, QuitPlanDto dto) {
         QuitPlan plan = quitPlanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("QuitPlan not found with id: " + id));
@@ -70,6 +75,7 @@ public class QuitPlanServiceImp implements IQuitPlanService {
 
     @Override
     @Transactional
+    @PreAuthorize("#userId == authentication.principal.id")
     public void delete(Long id) {
         QuitPlan entity = quitPlanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("QuitPlan not found with id: " + id));
@@ -77,6 +83,7 @@ public class QuitPlanServiceImp implements IQuitPlanService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_COACH')")
     public List<QuitPlanDto> getByUserId(Long userId) {
         return quitPlanRepository.findByUserUserId(userId)
                 .stream()

@@ -11,6 +11,7 @@ import com.group_7.backend.repository.MembershipPackageRepository;
 import com.group_7.backend.repository.UserMembershipRepository;
 import com.group_7.backend.repository.UserRepository;
 import com.group_7.backend.service.IUserMembershipService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,6 +71,7 @@ public class UserMembershipServiceImp implements IUserMembershipService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<UserMembershipDto> getByUserId(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
@@ -80,6 +82,7 @@ public class UserMembershipServiceImp implements IUserMembershipService {
     }
 
     @Override
+    @PreAuthorize("#userId == authentication.principal.id")
     public UserMembershipDto getCurrentMembership(Long userId) {
         UserMembership current = userMembershipRepository.findTopByUserUserIdAndStatusOrderByStartDateDesc(userId, MembershipStatusEnum.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException("There is no active membership found for this user"));
@@ -87,6 +90,7 @@ public class UserMembershipServiceImp implements IUserMembershipService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public UserMembershipDto getById(Long id) {
         UserMembership entity = userMembershipRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("UserMembership not found with id: " + id));
@@ -94,6 +98,7 @@ public class UserMembershipServiceImp implements IUserMembershipService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<UserMembershipDto> getAll() {
         return userMembershipRepository.findAll()
                 .stream()
@@ -103,6 +108,7 @@ public class UserMembershipServiceImp implements IUserMembershipService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public UserMembershipDto update(Long id, UserMembershipDto dto) {
         UserMembership entity = userMembershipRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("UserMembership not found with id: " + id));
@@ -113,6 +119,7 @@ public class UserMembershipServiceImp implements IUserMembershipService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(Long id) {
         UserMembership entity = userMembershipRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("UserMembership not found with id: " + id));

@@ -8,6 +8,7 @@ import com.group_7.backend.mapper.PostMapper;
 import com.group_7.backend.repository.PostRepository;
 import com.group_7.backend.repository.UserRepository;
 import com.group_7.backend.service.IPostService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -42,6 +43,7 @@ public class PostServiceImp implements IPostService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public PostDto create(PostDto dto) {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
@@ -52,6 +54,7 @@ public class PostServiceImp implements IPostService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public PostDto update(Long postId, PostDto dto) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));
@@ -64,6 +67,7 @@ public class PostServiceImp implements IPostService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));

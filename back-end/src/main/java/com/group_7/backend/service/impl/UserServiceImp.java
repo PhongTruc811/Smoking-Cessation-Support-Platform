@@ -37,7 +37,7 @@ public class UserServiceImp implements IUserService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('ROLE_ADMIN') or #userId == authentication.principal.id")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or #userId == authentication.principal.id")//Quyền cho admin hoặc chính user
     public UserDto getById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return userMapper.toDto(user);
