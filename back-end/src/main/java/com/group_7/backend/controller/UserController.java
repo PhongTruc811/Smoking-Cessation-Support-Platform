@@ -45,7 +45,7 @@ public class UserController {
         );
     }
 
-    @PutMapping("/{id/update-profile}")
+    @PutMapping("/{id}/update-profile")
     public ResponseEntity<ResponseDto> updateUser(@PathVariable long id,@Valid @RequestBody UserRequestDto userDto) {
         return ResponseEntity.ok(
                 new ResponseDto("success", "User updated successfully", userService.update(id, userDto))
