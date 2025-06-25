@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
     //Lỗi data type của request/input gửi
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
-        //String message = ex.getMostSpecificCause().getMessage(); //Thông báo lỗi chi tiết
+        //System.out.println( exception.getMostSpecificCause().getMessage() );//Thông báo lỗi chi tiết
         String message = "Invalid request: Please check your input data types and format."; //Thông báo custom
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }

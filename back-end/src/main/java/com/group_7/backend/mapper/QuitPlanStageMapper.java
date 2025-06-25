@@ -13,10 +13,10 @@ public class QuitPlanStageMapper {
         if (entity == null) return null;
         QuitPlanStageDto dto = new QuitPlanStageDto();
         dto.setStageId(entity.getStageId());
-        dto.setStageName(entity.getStageName());
+        dto.setStageNumber(entity.getStageNumber());
         dto.setDescription(entity.getDescription());
         dto.setStartDate(entity.getStartDate());
-        dto.setEndDate(entity.getEndDate());
+        dto.setDuration(entity.getDuration());
         dto.setIsCompleted(entity.getIsCompleted());
         return dto;
     }
@@ -25,11 +25,10 @@ public class QuitPlanStageMapper {
     public QuitPlanStage toEntity(QuitPlanStageDto dto, QuitPlan quitPlan) {
         if (dto == null) return null;
         QuitPlanStage entity = new QuitPlanStage();
-        entity.setStageName(dto.getStageName());
+        entity.setStageNumber(dto.getStageNumber());
         entity.setDescription(dto.getDescription());
         entity.setStartDate(dto.getStartDate());
-        entity.setEndDate(dto.getEndDate());
-        entity.setIsCompleted(dto.getIsCompleted());
+        entity.setDuration(dto.getDuration());
         entity.setQuitPlan(quitPlan);
         // quitProgressLog sẽ được set sau nếu cần, hoặc:
         return entity;

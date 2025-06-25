@@ -14,9 +14,8 @@ public class QuitProgressLogMapper {
         QuitProgressLogDto dto = new QuitProgressLogDto();
         dto.setLogId(entity.getLogId());
         dto.setStageId(entity.getQuitPlanStage() != null ? entity.getQuitPlanStage().getStageId() : 0);
-        dto.setLogDate(entity.getLogDate());
+        dto.setCreatedAt(entity.getCreatedAt());
         dto.setCigarettesSmoked(entity.getCigarettesSmoked());
-        dto.setHealthNote(entity.getHealthNote());
         dto.setNotes(entity.getNotes());
         return dto;
     }
@@ -27,9 +26,7 @@ public class QuitProgressLogMapper {
         QuitProgressLog entity = new QuitProgressLog();
         entity.setLogId(dto.getLogId());
         entity.setQuitPlanStage(quitPlanStage);
-        entity.setLogDate(dto.getLogDate());
         entity.setCigarettesSmoked(dto.getCigarettesSmoked());
-        entity.setHealthNote(dto.getHealthNote());
         entity.setNotes(dto.getNotes());
         return entity;
     }

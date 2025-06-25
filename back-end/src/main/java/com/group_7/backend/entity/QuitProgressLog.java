@@ -24,17 +24,14 @@ public class QuitProgressLog {
     @JoinColumn(name = "StageID", referencedColumnName = "StageID", nullable = false, unique = true)
     private QuitPlanStage quitPlanStage;
 
-    @Column(name = "LogDate")
-    private LocalDate logDate;
+    @Column(name = "CreatedAt")
+    private LocalDate createdAt = LocalDate.now();
 
     @Column(name = "CigarettesSmoked")
-    private Integer cigarettesSmoked;
-
-    @Column(name = "HealthNote", columnDefinition = "NVARCHAR(MAX)")
-    private String healthNote;
+    private Integer cigarettesSmoked = 0;
 
     @Column(name = "Notes", columnDefinition = "NVARCHAR(MAX)")
-    private String notes;
+    private String notes = null;
 
     public void setQuitPlanStage(QuitPlanStage quitPlanStage) {
         this.quitPlanStage = quitPlanStage;

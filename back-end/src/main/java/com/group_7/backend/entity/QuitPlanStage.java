@@ -20,8 +20,8 @@ public class QuitPlanStage {
     @Column(name = "StageID")
     private long stageId;
 
-    @Column(name = "StageName", length = 100)
-    private String stageName;
+    @Column(name = "StageNumber")
+    private int stageNumber;
 
     @Column(name = "Description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
@@ -29,8 +29,8 @@ public class QuitPlanStage {
     @Column(name = "StartDate")
     private LocalDate startDate;
 
-    @Column(name = "EndDate")
-    private LocalDate endDate;
+    @Column(name = "Duration")
+    private int duration;
 
     @Column(name = "IsCompleted")
     private Boolean isCompleted = false;

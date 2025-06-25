@@ -34,13 +34,13 @@ public class QuitPlanMapper {
                     entity.getQuitPlanStages()
                             .stream()
                             .map(quitPlanStageMapper::toDto)
-                            .collect(Collectors.toList())
+                            .collect(Collectors.toSet())
             );
         }
         return dto;
     }
 
-    // DTO -> Entity (cần truyền User, các stage sẽ được map riêng)
+    // DTO -> Entity
     public QuitPlan toEntity(QuitPlanDto dto, User user) {
         if (dto == null) return null;
         QuitPlan entity = new QuitPlan();
@@ -48,9 +48,6 @@ public class QuitPlanMapper {
         entity.setReason(dto.getReason());
         entity.setStartDate(dto.getStartDate());
         entity.setTargetEndDate(dto.getTargetEndDate());
-        entity.setCreatedAt(dto.getCreatedAt());
-        entity.setStatus(dto.getStatus());
-        // Stages: chuyển List<QuitPlanStageDto> thành Set<QuitPlanStage>
         if (dto.getQuitPlanStages() != null) {
             Set<QuitPlanStage> stages = dto.getQuitPlanStages().stream()
                     .map(stageDto -> quitPlanStageMapper.toEntity(stageDto, entity))

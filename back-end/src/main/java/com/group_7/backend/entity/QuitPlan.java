@@ -43,7 +43,7 @@ public class QuitPlan {
     private LocalDate targetEndDate;
 
     @Column(name = "CreatedAt", updatable = false)
-    private LocalDate createdAt;
+    private LocalDate createdAt = LocalDate.now();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Status", nullable = false, length = 20)

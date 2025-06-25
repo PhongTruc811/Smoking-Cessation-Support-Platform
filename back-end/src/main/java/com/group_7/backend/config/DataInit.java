@@ -140,26 +140,26 @@ public class DataInit implements ApplicationRunner {
         // 8. QuitPlanStages
         QuitPlanStage stage1 = new QuitPlanStage();
         stage1.setQuitPlan(plan1);
-        stage1.setStageName("Giảm dần");
+        stage1.setStageNumber(1);
         stage1.setDescription("Giảm số điếu mỗi ngày");
         stage1.setStartDate(LocalDate.of(2025,5,1));
-        stage1.setEndDate(LocalDate.of(2025,6,1));
+        stage1.setDuration(30);
         quitPlanStageRepository.save(stage1);
 
         QuitPlanStage stage2 = new QuitPlanStage();
         stage2.setQuitPlan(plan1);
-        stage2.setStageName("Ngừng hoàn toàn");
+        stage2.setStageNumber(2);
         stage2.setDescription("Không hút nữa");
         stage2.setStartDate(LocalDate.of(2025,6,2));
-        stage2.setEndDate(LocalDate.of(2025,7,1));
+        stage2.setDuration(30);
         quitPlanStageRepository.save(stage2);
 
         QuitPlanStage stage3 = new QuitPlanStage();
         stage3.setQuitPlan(plan2);
-        stage3.setStageName("Giảm buổi sáng");
+        stage3.setStageNumber(1);
         stage3.setDescription("Chỉ hút sau 10h sáng");
         stage3.setStartDate(LocalDate.of(2025,6,1));
-        stage3.setEndDate(LocalDate.of(2025,6,15));
+        stage3.setDuration(14);
         quitPlanStageRepository.save(stage3);
 
         // 11. Posts

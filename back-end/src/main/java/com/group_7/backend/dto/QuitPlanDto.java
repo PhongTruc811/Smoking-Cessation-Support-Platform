@@ -11,6 +11,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -36,12 +37,11 @@ public class QuitPlanDto {
 
     private LocalDate createdAt;
 
-    @NotNull(message = "Status must not be empty")
     private QuitPlanStatusEnum status;
 
     @Valid
     @NotEmpty(message = "Quit plan must have at least one stage")
-    private List<QuitPlanStageDto> quitPlanStages;
+    private Set<QuitPlanStageDto> quitPlanStages;
 
     // TODO: Add custom validator to ensure that targetEndDate > startDate
 }
