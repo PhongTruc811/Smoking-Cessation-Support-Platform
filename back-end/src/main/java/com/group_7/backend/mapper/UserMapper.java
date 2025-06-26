@@ -2,10 +2,19 @@ package com.group_7.backend.mapper;
 
 import com.group_7.backend.dto.UserDto;
 import com.group_7.backend.entity.User;
+import com.group_7.backend.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
+
+
+    private final SmokingProfileMapper smokingProfileMapper;
+
+    public UserMapper(SmokingProfileMapper smokingProfileMapper) {
+        this.smokingProfileMapper = smokingProfileMapper;
+    }
 
     // Entity -> DTO
     public UserDto toDto(User user) {
@@ -20,6 +29,7 @@ public class UserMapper {
         dto.setStatus(user.getStatus());
         dto.setRole(user.getRole());
         dto.setCreatedAt(user.getCreatedAt());
+        dto.setSmokingProfile(smokingProfileMapper.toDto(user.getSmokingProfile()));
         return dto;
     }
 

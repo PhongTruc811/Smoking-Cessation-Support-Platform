@@ -20,7 +20,7 @@ public class CommentDto {
     @NotNull
     private Long postId;
 
-    @NotBlank
+    @NotBlank(message = "Content must not be blank")
     private String content;
 
     private LocalDateTime createdAt;

@@ -6,6 +6,7 @@ import com.group_7.backend.entity.enums.QuitPlanStatusEnum;
 import com.group_7.backend.entity.enums.UserGenderEnum;
 import com.group_7.backend.entity.enums.UserRoleEnum;
 import com.group_7.backend.repository.*;
+import com.group_7.backend.service.impl.EmailSenderService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -26,9 +27,14 @@ public class DataInit implements ApplicationRunner {
     @Autowired private PostRepository postRepository;
     @Autowired private CommentRepository commentRepository;
     @Autowired private LikeRepository likeRepository;
+    @Autowired private EmailSenderService emailSenderService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+//        System.out.println("Gửi email:");
+//       emailSenderService.sendMessage("phongtruc811@gmail.com","AntiSmokingPlatform", "Chúc mừng bạn đã đạt được chuỗi 17 ngày không hút thuốc");
+//        emailSenderService.sendMessage("duongvuthaian@gmail.com","AQUA IS THE BEST", "GODDESS BLESSING!!!!!!");
+
 
         System.out.println("=== BẮT ĐẦU SEED DỮ LIỆU MẪU ===");
         if (userRepository.count() > 0) {

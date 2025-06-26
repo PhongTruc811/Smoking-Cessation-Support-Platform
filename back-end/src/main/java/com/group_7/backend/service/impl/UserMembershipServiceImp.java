@@ -57,7 +57,7 @@ public class UserMembershipServiceImp implements IUserMembershipService {
         userMembership.setMembershipPackage(membershipPackage);
         userMembership.setStartDate(LocalDate.now());
         userMembership.setPaymentMethod(dto.getPaymentMethod());
-        userMembership.setStatus(MembershipStatusEnum.ACTIVE);
+        userMembership.setStatus(MembershipStatusEnum.PENDING);
 
         // Chỉnh ngày hết hạn
         if (membershipPackage.getDurationInDays() > 0) {
@@ -124,5 +124,16 @@ public class UserMembershipServiceImp implements IUserMembershipService {
         UserMembership entity = userMembershipRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("UserMembership not found with id: " + id));
         userMembershipRepository.delete(entity);
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public UserMembershipDto updateStatus(Long id, MembershipStatusEnum status) {
+        UserMembership entity = userMembershipRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("UserMembership not found with id: " + id));
+        entity.setStatus(status);
+        UserMembership saved = userMembershipRepository.save(entity);
+        return userMembershipMapper.toDto(saved);
     }
 }

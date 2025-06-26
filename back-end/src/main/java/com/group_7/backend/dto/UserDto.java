@@ -27,6 +27,8 @@ public class UserDto {
 
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate createdAt;
+
+    private SmokingProfileDto smokingProfile;
     // Không trả về password vì bảo mật
 
 }
