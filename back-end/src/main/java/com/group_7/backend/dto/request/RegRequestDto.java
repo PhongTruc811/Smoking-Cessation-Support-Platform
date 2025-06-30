@@ -1,6 +1,7 @@
 package com.group_7.backend.dto.request;
 
 import com.group_7.backend.entity.enums.UserGenderEnum;
+import com.group_7.backend.util.custom.ValidLetter;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -17,6 +18,7 @@ public class RegRequestDto {
 
     @NotBlank(message = "Full name must not be empty")
     @Size(min = 5, max = 50, message = "Full name must be between 5 and 50 characters")
+    @ValidLetter(message = "Full name must contain only letters, spaces")
     private String fullName;
 
     @NotBlank(message = "Password must not be empty")

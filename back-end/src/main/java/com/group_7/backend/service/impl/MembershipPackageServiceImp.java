@@ -65,7 +65,9 @@ public class MembershipPackageServiceImp implements IMembershipPackageService {
     public void delete(Long id) {
         MembershipPackage entity = membershipPackageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("MembershipPackage not found with id: " + id));
-        membershipPackageRepository.delete(entity);
+        entity.setActive(false);
+        membershipPackageRepository.save(entity);
+        //membershipPackageRepository.delete(entity);
     }
 
     @Override

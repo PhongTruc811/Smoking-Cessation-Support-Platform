@@ -51,17 +51,6 @@ public class QuitPlanServiceImp implements IQuitPlanService {
                 .collect(Collectors.toList());
     }
 
-    //@Override
-    @Transactional
-    @PreAuthorize("#userId == authentication.principal.id or hasAuthority('ROLE_ADMIN')")
-    public QuitPlanDto create2(QuitPlanDto dto) {
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
-        QuitPlan entity = quitPlanMapper.toEntity(dto, user);
-        QuitPlan saved = quitPlanRepository.save(entity);
-        return quitPlanMapper.toDto(saved);
-    }
-
     @Override
     @Transactional
     @PreAuthorize("#userId == authentication.principal.id or hasAuthority('ROLE_COACH')")

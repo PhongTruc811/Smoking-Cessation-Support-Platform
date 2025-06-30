@@ -1,7 +1,11 @@
 package com.group_7.backend.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.group_7.backend.dto.UserDto;
+import com.group_7.backend.dto.response.JwtResponseDto;
 import com.group_7.backend.entity.User;
 import com.group_7.backend.entity.enums.UserRoleEnum;
+import com.group_7.backend.mapper.UserMapper;
 import com.group_7.backend.repository.UserRepository;
 import com.group_7.backend.util.JwtTokenProvider;
 import jakarta.servlet.ServletException;
@@ -23,6 +27,11 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -49,11 +58,13 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         }
 
         // Tạo JWT token
-        String jwt = jwtTokenProvider.generateToken(user.getUsername(), user.getRole().name());
-
-        // Trả JWT về FE
+        String jwtToken = jwtTokenProvider.generateToken(user.getUsername(), user.getRole().name());
+        UserDto newUser = userMapper.toDto(userRepository.findByUsername(user.getUsername()).get());
+        // Trả JWT về FE, hiển thị form json như khi Login bình thường
         response.setContentType("application/json");
-        response.getWriter().write("{\"token\": \"" + jwt + "\"}");
+        response.setStatus(HttpServletResponse.SC_OK);
+        objectMapper.writeValue(response.getWriter(), new JwtResponseDto("success","Login with Google successfully!", jwtToken, newUser));
+
     }
 }
 

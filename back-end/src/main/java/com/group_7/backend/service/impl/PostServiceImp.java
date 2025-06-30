@@ -71,7 +71,8 @@ public class PostServiceImp implements IPostService {
     public void delete(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));
-        postRepository.delete(post);
+        post.setIsPublished(false);
+        postRepository.save(post);
     }
 
     @Override
