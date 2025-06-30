@@ -2,11 +2,13 @@ package com.group_7.backend.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group_7.backend.dto.UserDto;
+import com.group_7.backend.dto.UserMembershipDto;
 import com.group_7.backend.dto.response.JwtResponseDto;
 import com.group_7.backend.entity.User;
 import com.group_7.backend.entity.enums.UserRoleEnum;
 import com.group_7.backend.mapper.UserMapper;
 import com.group_7.backend.repository.UserRepository;
+import com.group_7.backend.service.IUserMembershipService;
 import com.group_7.backend.util.JwtTokenProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,6 +34,9 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private IUserMembershipService userMembershipService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -59,11 +64,12 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
         // Tạo JWT token
         String jwtToken = jwtTokenProvider.generateToken(user.getUsername(), user.getRole().name());
-        UserDto newUser = userMapper.toDto(userRepository.findByUsername(user.getUsername()).get());
+        UserDto loginUser = userMapper.toDto(userRepository.findByUsername(user.getUsername()).get());
+        UserMembershipDto userMembershipDto = userMembershipService.getCurrentMembershipForLogin(user.getUserId());
         // Trả JWT về FE, hiển thị form json như khi Login bình thường
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
-        objectMapper.writeValue(response.getWriter(), new JwtResponseDto("success","Login with Google successfully!", jwtToken, newUser));
+        objectMapper.writeValue(response.getWriter(), new JwtResponseDto("success","Login with Google successfully!", jwtToken, loginUser, userMembershipDto));
 
     }
 }

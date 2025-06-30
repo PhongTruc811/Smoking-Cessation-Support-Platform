@@ -9,5 +9,6 @@ import java.util.List;
 public interface IUserMembershipService extends ICRUDService<UserMembershipDto, UserMembershipDto, Long> {
     List<UserMembershipDto> getByUserId(Long userId);
     UserMembershipDto getCurrentMembership(Long userId);
+    UserMembershipDto getCurrentMembershipForLogin(Long userId);
     UserMembershipDto updateStatus(Long id, MembershipStatusEnum status);
 }

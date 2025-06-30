@@ -1,5 +1,6 @@
 package com.group_7.backend.dto.response;
 
+import com.group_7.backend.dto.UserMembershipDto;
 import com.group_7.backend.dto.request.RegRequestDto;
 import com.group_7.backend.dto.UserDto;
 import lombok.AllArgsConstructor;
@@ -13,16 +14,18 @@ public class JwtResponseDto extends ResponseDto {
     private String accessToken;
     private String tokenType = "Bearer";
     private UserDto user;
+    private UserMembershipDto currentUserMembership;
 
     public JwtResponseDto(String accessToken, UserDto user) {
         this.accessToken = accessToken;
         this.user = user;
     }
 
-    public JwtResponseDto(String status, String message, String accessToken, UserDto user) {
+    public JwtResponseDto(String status, String message, String accessToken, UserDto user, UserMembershipDto currentUserMembership) {
         super(status, message);
         this.accessToken = accessToken;
         this.user = user;
+        this.currentUserMembership = currentUserMembership;
     }
 
 }

@@ -5,6 +5,7 @@ import com.group_7.backend.dto.request.LoginRequestDto;
 import com.group_7.backend.dto.request.RegRequestDto;
 import com.group_7.backend.dto.response.JwtResponseDto;
 import com.group_7.backend.dto.response.ResponseDto;
+import com.group_7.backend.service.IUserMembershipService;
 import com.group_7.backend.service.IUserService;
 import com.group_7.backend.util.JwtTokenProvider;
 import jakarta.validation.Valid;
@@ -19,10 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final IUserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final IUserMembershipService userMembershipService;
 
-    public AuthController(IUserService userService, JwtTokenProvider jwtTokenProvider) {
+    public AuthController(IUserService userService, JwtTokenProvider jwtTokenProvider, IUserMembershipService userMembershipService) {
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.userMembershipService = userMembershipService;
     }
 
     /*trả về JWT token + user info khi đăng nhập thành công*/
@@ -35,7 +38,8 @@ public class AuthController {
                     .body(new ResponseDto("success","Login failed: Invalid credentials"));
         }
         String token= jwtTokenProvider.generateToken(user.getUsername(), user.getRole().name());
-        return ResponseEntity.ok(new JwtResponseDto("success","Login successfully!",token,user));//Trả về JwtResponse chứa token và user info
+        UserMembershipDto currentMembership = userMembershipService.getCurrentMembershipForLogin(user.getUserId());
+        return ResponseEntity.ok(new JwtResponseDto("success","Login successfully!",token,user, currentMembership));//Trả về JwtResponse chứa token và user info
     }
 
     @PostMapping("/register")

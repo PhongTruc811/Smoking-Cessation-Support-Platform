@@ -6,7 +6,6 @@ import com.group_7.backend.entity.enums.UserRoleEnum;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter

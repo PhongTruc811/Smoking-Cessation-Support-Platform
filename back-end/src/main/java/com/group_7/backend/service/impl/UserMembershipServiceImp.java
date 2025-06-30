@@ -90,6 +90,12 @@ public class UserMembershipServiceImp implements IUserMembershipService {
     }
 
     @Override
+    public UserMembershipDto getCurrentMembershipForLogin(Long userId) {
+        UserMembership current = userMembershipRepository.findTopByUserUserIdAndStatusOrderByStartDateDesc(userId, MembershipStatusEnum.ACTIVE).orElse(null);
+        return userMembershipMapper.toDto(current);
+    }
+
+    @Override
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public UserMembershipDto getById(Long id) {
         UserMembership entity = userMembershipRepository.findById(id)
