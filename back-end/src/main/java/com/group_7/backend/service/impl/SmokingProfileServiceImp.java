@@ -50,7 +50,7 @@ public class SmokingProfileServiceImp implements ISmokingProfileService {
 
     @Override
     @Transactional
-    @PreAuthorize("#userId == authentication.principal.id")
+    @PreAuthorize("#dto.userId == authentication.principal.id")
     public SmokingProfileDto update(Long id, SmokingProfileDto dto) {
         SmokingProfile profile = smokingProfileRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("SmokingProfile not found with id: " + id));
@@ -75,7 +75,7 @@ public class SmokingProfileServiceImp implements ISmokingProfileService {
 
     @Override
     @Transactional
-    @PreAuthorize("#userId == authentication.principal.id")
+    @PreAuthorize("#dto.userId == authentication.principal.id")
     public SmokingProfileDto create(SmokingProfileDto dto) {
         if (smokingProfileRepository.existsByUserUserId(dto.getUserId())) {
             throw new IllegalArgumentException("Smoking profile for this user already exists");

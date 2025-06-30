@@ -2,9 +2,12 @@ package com.group_7.backend.controller;
 
 import com.group_7.backend.dto.SmokingProfileDto;
 import com.group_7.backend.dto.response.ResponseDto;
+import com.group_7.backend.entity.CustomUserDetail;
 import com.group_7.backend.service.ISmokingProfileService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,6 +21,9 @@ public class SmokingProfileController {
 
     @PostMapping
     public ResponseEntity<ResponseDto> createSmokingProfile(@Valid @RequestBody SmokingProfileDto smokingProfileDto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetail customUserDetail = (CustomUserDetail) auth.getPrincipal();
+        smokingProfileDto.setUserId(customUserDetail.getId());
         return ResponseEntity.ok(
                 new ResponseDto("success", "Smoking profile created successfully",
                         smokingProfileService.create(smokingProfileDto))
