@@ -27,7 +27,7 @@ public class UserMembership {
     private long id;
 
     @Column(name = "StartDate")
-    private LocalDate startDate;//Không cần set datenow vì service sẽ xử lí cho start và end Date
+    private LocalDate startDate;//Không cần set datenow, service sẽ xử lí cho start và end Date
 
     @Column(name = "EndDate")
     private LocalDate endDate;

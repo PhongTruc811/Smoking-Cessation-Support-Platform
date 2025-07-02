@@ -142,4 +142,17 @@ public class UserMembershipServiceImp implements IUserMembershipService {
         UserMembership saved = userMembershipRepository.save(entity);
         return userMembershipMapper.toDto(saved);
     }
+
+    @Override
+    @Transactional
+    public void updateAllActiveMemberships() {
+        LocalDate today = LocalDate.now();
+        List<UserMembership> memberships = userMembershipRepository.findAllByStatus(MembershipStatusEnum.ACTIVE);
+        for (UserMembership membership : memberships) {
+            if (membership.getEndDate() != null && !membership.getEndDate().isAfter(today)) {
+                membership.setStatus(MembershipStatusEnum.EXPIRED);
+                userMembershipRepository.save(membership);
+            }
+        }
+    }
 }
