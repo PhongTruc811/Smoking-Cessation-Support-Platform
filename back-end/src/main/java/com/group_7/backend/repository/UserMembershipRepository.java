@@ -13,4 +13,6 @@ public interface UserMembershipRepository extends JpaRepository<UserMembership, 
     List<UserMembership> findByUserUserId(Long userId);
 
     Optional <UserMembership> findTopByUserUserIdAndStatusOrderByStartDateDesc(Long userId, MembershipStatusEnum status);
+
+    List<UserMembership> findAllByStatus(MembershipStatusEnum membershipStatusEnum);
 }

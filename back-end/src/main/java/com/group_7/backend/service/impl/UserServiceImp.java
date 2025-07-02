@@ -133,7 +133,6 @@ public class UserServiceImp implements IUserService {
         user.setCreatedAt(LocalDate.now());
         //Mặc định role của user mới là MEMBER
         user.setRole(UserRoleEnum.MEMBER);
-
         // Mã hóa mật khẩu (later)
         // passwordEncoder.encode(request.getPassword());
         user.setPassword(request.getPassword());

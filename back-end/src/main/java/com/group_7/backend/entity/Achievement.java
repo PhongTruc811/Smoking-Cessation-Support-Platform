@@ -1,10 +1,10 @@
 package com.group_7.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -25,4 +25,7 @@ public class Achievement {
 
     @Column(name = "ImageUrl")
     private String imageUrl;
+
+    @ManyToMany(mappedBy = "achievements")
+    private Set<User> users = new HashSet<>();
 }

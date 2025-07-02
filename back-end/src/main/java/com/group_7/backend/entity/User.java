@@ -71,6 +71,19 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Like> likes = new HashSet<>();
 
+    //Các thành tích của USER
+    @ManyToMany
+    @JoinTable(
+            name = "UserAchievements",
+            joinColumns = @JoinColumn(name = "UserId"),
+            inverseJoinColumns = @JoinColumn(name = "AchievementId")
+    )
+    private Set<Achievement> achievements = new HashSet<>();
+
+    // Quan hệ với UserRecord
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserRecord userRecord;
+
     public void addQuitPlan(QuitPlan quitPlan) {
         this.quitPlans.add(quitPlan);
     }
