@@ -1,4 +1,6 @@
 package com.group_7.backend.service;
 
-public interface IAchievementService {
+import com.group_7.backend.dto.AchievementDto;
+
+public interface IAchievementService extends ICRUDService<AchievementDto, AchievementDto, Long>{
 }

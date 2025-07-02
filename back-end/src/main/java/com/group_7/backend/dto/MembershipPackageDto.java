@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MembershipPackageDto {
-    private long id;
+    private Long id;
 
     @NotBlank(message = "Package name must not be blank")
     private String packageName;

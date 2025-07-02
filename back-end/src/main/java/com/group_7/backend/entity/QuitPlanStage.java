@@ -18,7 +18,7 @@ public class QuitPlanStage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "StageID")
-    private long stageId;
+    private Long stageId;
 
     @Column(name = "StageNumber")
     private int stageNumber;
@@ -33,7 +33,7 @@ public class QuitPlanStage {
     private int duration;
 
     @Column(name = "IsCompleted")
-    private Boolean isCompleted = false;
+    private boolean isCompleted = false;
 
     @OneToOne(mappedBy = "quitPlanStage", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private QuitProgressLog quitProgressLog;

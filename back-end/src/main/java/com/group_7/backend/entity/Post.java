@@ -33,7 +33,7 @@ public class Post {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "IsPublished")
-    private Boolean isPublished = true;
+    private boolean isPublished = true;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Comment> comments = new HashSet<>();

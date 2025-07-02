@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserMembershipDto {
-    private long id;
+    private Long id;
     private LocalDate startDate;
     private LocalDate endDate;
     private MembershipStatusEnum status;
@@ -23,8 +23,8 @@ public class UserMembershipDto {
     private String paymentMethod;
 
     @NotNull(message = "User ID must not be null")
-    private long userId;
+    private Long userId;
 
     @NotNull(message = "Membership package ID must not be null")
-    private long membershipPackageId;
+    private Long membershipPackageId;
 }

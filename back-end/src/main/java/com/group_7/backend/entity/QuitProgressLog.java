@@ -18,7 +18,7 @@ public class QuitProgressLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "LogID")
-    private long logId;
+    private Long logId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "StageID", referencedColumnName = "StageID", nullable = false, unique = true)
@@ -28,7 +28,7 @@ public class QuitProgressLog {
     private LocalDate createdAt = LocalDate.now();
 
     @Column(name = "CigarettesSmoked")
-    private Integer cigarettesSmoked = 0;
+    private int cigarettesSmoked = 0;
 
     @Column(name = "Notes", columnDefinition = "NVARCHAR(MAX)")
     private String notes = null;

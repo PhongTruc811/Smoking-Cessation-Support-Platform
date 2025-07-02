@@ -60,7 +60,7 @@ public class PostServiceImp implements IPostService {
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
-        post.setIsPublished(dto.getIsPublished());
+        post.setPublished(dto.isPublished());
         Post saved = postRepository.save(post);
         return postMapper.toDto(saved);
     }
@@ -71,7 +71,7 @@ public class PostServiceImp implements IPostService {
     public void delete(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));
-        post.setIsPublished(false);
+        post.setPublished(false);
         postRepository.save(post);
     }
 

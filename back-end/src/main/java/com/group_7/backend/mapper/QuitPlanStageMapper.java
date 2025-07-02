@@ -17,7 +17,7 @@ public class QuitPlanStageMapper {
         dto.setDescription(entity.getDescription());
         dto.setStartDate(entity.getStartDate());
         dto.setDuration(entity.getDuration());
-        dto.setIsCompleted(entity.getIsCompleted());
+        dto.setCompleted(entity.isCompleted());
         return dto;
     }
 

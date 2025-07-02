@@ -23,5 +23,5 @@ public class PostDto {
     private String content;
 
     private LocalDateTime createdAt;
-    private Boolean isPublished;
+    private boolean isPublished;
 }

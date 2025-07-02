@@ -18,10 +18,10 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuitPlanDto {
-    private long id;
+    private Long id;
 
     @Positive(message = "User ID must be a positive number")
-    private long userId;
+    private Long userId;
 
     @NotBlank(message = "Reason must not be blank")
     @Size(min = 10, message = "Reason must be at least 10 characters")

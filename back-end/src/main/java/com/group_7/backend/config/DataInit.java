@@ -113,7 +113,7 @@ public class DataInit implements ApplicationRunner {
         SmokingProfile sp1 = new SmokingProfile();
         sp1.setUser(user1);
         sp1.setCigarettesPerDay(10);
-        sp1.setCostPerPack(25000.0);
+        sp1.setCostPerPack(new BigDecimal("25000"));
         sp1.setWeekSmoked(5);
         sp1.setNote("Hút thường ngày");
         smokingProfileRepository.save(sp1);
@@ -121,7 +121,7 @@ public class DataInit implements ApplicationRunner {
         SmokingProfile sp2 = new SmokingProfile();
         sp2.setUser(coach1);
         sp2.setCigarettesPerDay(5);
-        sp2.setCostPerPack(35000.0);
+        sp2.setCostPerPack(new BigDecimal("35000"));
         sp2.setWeekSmoked(2);
         sp2.setNote("Chỉ hút khi stress");
         smokingProfileRepository.save(sp2);

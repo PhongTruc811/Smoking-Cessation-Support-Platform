@@ -76,7 +76,7 @@ public class UserServiceImp implements IUserService {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public UserDto changeStatus(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        user.setStatus(!user.getStatus());
+        user.setStatus(!user.isStatus());
         userRepository.save(user);
         return userMapper.toDto(user);
     }

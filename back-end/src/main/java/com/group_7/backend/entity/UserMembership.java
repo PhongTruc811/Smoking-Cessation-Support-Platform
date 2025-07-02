@@ -24,7 +24,7 @@ public class UserMembership {
     @Id
     @Column(name = "UserMembershipID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "StartDate")
     private LocalDate startDate;//Không cần set datenow, service sẽ xử lí cho start và end Date

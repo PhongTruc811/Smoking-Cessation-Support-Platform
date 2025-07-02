@@ -3,6 +3,8 @@ package com.group_7.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -12,7 +14,7 @@ public class UserRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "UserRecordID")
-    private long userRecordId;
+    private Long userRecordId;
 
     @OneToOne
     @JoinColumn(name = "UserId", referencedColumnName = "UserID")
@@ -20,5 +22,5 @@ public class UserRecord {
 
     private int totalQuitDays;
     private int totalQuitSmokes;
-    private double totalSaveMoney;
+    private BigDecimal totalSaveMoney;
 }

@@ -15,7 +15,7 @@ public class Achievement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "AchievementID")
-    private long achievementId;
+    private Long achievementId;
 
     @Column(name = "Name")
     private String name;
@@ -26,6 +26,6 @@ public class Achievement {
     @Column(name = "ImageUrl")
     private String imageUrl;
 
-    @ManyToMany(mappedBy = "achievements")
-    private Set<User> users = new HashSet<>();
+    @OneToMany(mappedBy = "achievement", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserAchievement> userAchievements = new HashSet<>();
 }

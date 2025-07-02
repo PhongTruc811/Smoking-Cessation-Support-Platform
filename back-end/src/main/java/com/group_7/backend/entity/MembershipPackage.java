@@ -21,7 +21,7 @@ public class MembershipPackage {
     @Id
     @Column(name = "PackageID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "PackageName", columnDefinition = "NVARCHAR(100)")
     private String packageName;
@@ -43,13 +43,5 @@ public class MembershipPackage {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE}, // Không dùng ALL vì không xóa lịch sử đăng ký khi xóa pack
             fetch = FetchType.LAZY)
     private Set<UserMembership> userMemberships = new HashSet<>();
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MembershipPackage that = (MembershipPackage) o;
-        return id != 0 && id == that.id;
-    }
 
 }

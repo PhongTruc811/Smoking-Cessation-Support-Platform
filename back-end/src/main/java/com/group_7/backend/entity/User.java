@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,7 +22,7 @@ public class User {
     @Id
     @Column(name = "UserID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long userId;
+    private Long userId;
 
     @Column(name = "Username",nullable = false, unique = true, length = 30)
     private String username;
@@ -41,7 +40,7 @@ public class User {
     private LocalDate dob;
 
     @Column(name = "Status")
-    private Boolean status = true;
+    private boolean status = true;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Gender", length = 10)
@@ -72,13 +71,8 @@ public class User {
     private Set<Like> likes = new HashSet<>();
 
     //Các thành tích của USER
-    @ManyToMany
-    @JoinTable(
-            name = "UserAchievements",
-            joinColumns = @JoinColumn(name = "UserId"),
-            inverseJoinColumns = @JoinColumn(name = "AchievementId")
-    )
-    private Set<Achievement> achievements = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserAchievement> userAchievements = new HashSet<>();
 
     // Quan hệ với UserRecord
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

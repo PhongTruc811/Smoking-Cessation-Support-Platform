@@ -39,7 +39,8 @@ public class AuthController {
         }
         String token= jwtTokenProvider.generateToken(user.getUsername(), user.getRole().name());
         UserMembershipDto currentMembership = userMembershipService.getCurrentMembershipForLogin(user.getUserId());
-        return ResponseEntity.ok(new JwtResponseDto("success","Login successfully!",token,user, currentMembership));//Trả về JwtResponse chứa token và user info
+        return ResponseEntity.ok(
+                new JwtResponseDto("success","Login successfully!",token,user, currentMembership));//Trả về JwtResponse chứa token và user info
     }
 
     @PostMapping("/register")

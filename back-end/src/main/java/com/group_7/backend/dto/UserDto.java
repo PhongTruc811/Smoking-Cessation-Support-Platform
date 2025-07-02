@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-    private long userId;
+    private Long userId;
     private String username;
     private String fullName;
     private String email;
@@ -21,7 +21,7 @@ public class UserDto {
     private LocalDate dob;
 
     private UserGenderEnum gender;
-    private Boolean status;
+    private boolean status;
     private UserRoleEnum role;
 
     @JsonFormat(pattern = "dd-MM-yyyy")

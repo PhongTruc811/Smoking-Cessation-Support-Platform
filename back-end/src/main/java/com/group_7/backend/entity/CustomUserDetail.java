@@ -36,7 +36,7 @@ public class CustomUserDetail implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return user.getStatus();
+        return user.isStatus();
     }
 
     @Override

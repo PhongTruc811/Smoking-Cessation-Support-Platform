@@ -9,26 +9,28 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.NumberFormat;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class SmokingProfileDto {
-    private long smokingProfileId;
-    private long userId;
+    private Long smokingProfileId;
+    private Long userId;
 
     @NotNull(message = "Cigarettes per day must not be null")
     @Positive(message = "Cigarettes per day must be greater than 0")
-    private Integer cigarettesPerDay;
+    private int cigarettesPerDay;
 
     @NotNull(message = "Cost per pack must not be null")
     @Positive(message = "Cost per pack must be greater than 0")
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
-    private Double costPerPack;
+    private BigDecimal costPerPack;
 
     @NotNull(message = "Weeks smoked must not be null")
     @Positive(message = "Weeks smoked must be greater than 0")
-    private Integer weekSmoked;
+    private int weekSmoked;
 
     @Size(max = 500, message = "Mô tả không được vượt quá 500 ký tự")
     private String note;

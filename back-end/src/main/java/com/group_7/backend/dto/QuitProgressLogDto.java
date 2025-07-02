@@ -13,17 +13,17 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuitProgressLogDto {
-    private long logId;
+    private Long logId;
 
     @NotNull(message = "Stage ID must not be empty")
     @Positive(message = "Stage ID must be a positive number")
-    private long stageId;
+    private Long stageId;
 
     private LocalDate createdAt;
 
     @NotNull(message = "Cigarettes smoked must not be empty")
     @PositiveOrZero(message = "Cigarettes smoked must be zero or a positive number")
-    private Integer cigarettesSmoked;
+    private int cigarettesSmoked;
 
     @Size(max = 500, message = "Notes must not exceed 500 characters")
     private String notes;

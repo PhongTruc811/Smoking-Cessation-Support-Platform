@@ -26,7 +26,7 @@ public class QuitPlan {
     @Id
     @Column(name = "PlanID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     // Quan hệ N-1 tới User
     @ManyToOne(fetch = FetchType.LAZY)

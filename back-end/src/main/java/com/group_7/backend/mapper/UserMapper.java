@@ -26,7 +26,7 @@ public class UserMapper {
         dto.setEmail(user.getEmail());
         dto.setDob(user.getDob());
         dto.setGender(user.getGender());
-        dto.setStatus(user.getStatus());
+        dto.setStatus(user.isStatus());
         dto.setRole(user.getRole());
         dto.setCreatedAt(user.getCreatedAt());
         dto.setSmokingProfile(smokingProfileMapper.toDto(user.getSmokingProfile()));
@@ -43,7 +43,7 @@ public class UserMapper {
         user.setEmail(dto.getEmail());
         user.setDob(dto.getDob());
         user.setGender(dto.getGender());
-        user.setStatus(dto.getStatus());
+        user.setStatus(dto.isStatus());
         user.setRole(dto.getRole());
         return user;
     }

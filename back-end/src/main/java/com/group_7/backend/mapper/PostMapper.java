@@ -17,7 +17,7 @@ public class PostMapper {
         dto.setTitle(entity.getTitle());
         dto.setContent(entity.getContent());
         dto.setCreatedAt(entity.getCreatedAt());
-        dto.setIsPublished(entity.getIsPublished());
+        dto.setPublished(entity.isPublished());
         return dto;
     }
 

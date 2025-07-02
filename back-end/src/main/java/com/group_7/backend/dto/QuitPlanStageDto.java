@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuitPlanStageDto {
-    private long stageId;
+    private Long stageId;
 
     @NotNull(message = "Stage number must not be null")
     @Min(value = 1, message = "StageNumber must be at least 1 ")
@@ -30,9 +30,9 @@ public class QuitPlanStageDto {
     @NotNull(message = "Duration must not be null")
     @Min(value = 1, message = "Duration must be at least 1 day")
     @Max(value = 1000, message = "Duration must be at most 1000 days")
-    private Integer duration;
+    private int duration;
 
-    private Boolean isCompleted;
+    private boolean isCompleted;
 
 
     private QuitProgressLogDto quitProgressLog;
