@@ -100,7 +100,7 @@ public class UserServiceImp implements IUserService {
         if (userOpt.isEmpty()) {
             userOpt = userRepository.findByEmail(usernameOrEmail);
         }
-        if (userOpt.isEmpty()) throw new ResourceNotFoundException("User not found");
+        if (userOpt.isEmpty()) throw new ResourceNotFoundException("User does not exist, please check username/email before login 😗");
 
         User user = userOpt.get();
 
