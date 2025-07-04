@@ -27,4 +27,14 @@ public class UserMembershipDto {
 
     @NotNull(message = "Membership package ID must not be null")
     private Long membershipPackageId;
+
+    @Override
+    public String toString() {
+        return "UserMembershipDto{" +
+                "userId=" + userId +
+                ", membershipPackageId=" + membershipPackageId +
+                ", paymentMethod='" + paymentMethod + '\'' +
+                // Thêm các trường khác nếu có
+                '}';
+    }
 }

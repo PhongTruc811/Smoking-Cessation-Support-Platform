@@ -1,6 +1,7 @@
 package com.group_7.backend.service.impl;
 
 import com.group_7.backend.dto.UserMembershipDto;
+import com.group_7.backend.entity.MembershipPackage;
 import com.group_7.backend.entity.enums.MembershipStatusEnum;
 import com.group_7.backend.repository.MembershipPackageRepository;
 import com.group_7.backend.service.IPaymentService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -40,14 +42,32 @@ public class VnPayService implements IPaymentService {
 
     @Override
     public String createPayment(UserMembershipDto userMembershipDto, HttpServletRequest request) throws UnsupportedEncodingException {
+        // --- SỬA LỖI BẮT ĐẦU TỪ ĐÂY ---
+
+        // 1. Lấy membershipPackageId từ DTO mà frontend gửi lên
+        Long packageId = userMembershipDto.getMembershipPackageId();
+        if (packageId == null) {
+            throw new IllegalArgumentException("MembershipPackageId is required.");
+        }
+
+        // 2. Dùng repository để tìm thông tin gói trong database
+        // Lưu ý: .findById trả về Optional, nên dùng .orElseThrow để xử lý nếu không tìm thấy
+        MembershipPackage membershipPackage = membershipPackageRepository.findById(packageId)
+                .orElseThrow(() -> new RuntimeException("Membership package not found with id: " + packageId));
+
+        // 3. Lấy giá tiền từ đối tượng đã tìm được và nhân với 100 cho VNPAY
+        long amount = membershipPackage.getPrice().multiply(BigDecimal.valueOf(100)).longValue();
+
+        // --- KẾT THÚC PHẦN SỬA LỖI ---
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
-        long amount = Integer.parseInt(request.getParameter("amount"))*100;
-        String bankCode = request.getParameter("bankCode");
+//        long amount = Integer.parseInt(request.getParameter("amount"))*100;
+//        String bankCode = request.getParameter("bankCode");
 
         String vnp_TxnRef = VnPayTools.getRandomNumber(8);
-        String vnp_IpAddr = VnPayTools.getIpAddress(request);
+        // Lấy địa chỉ IP của client một cách an toàn
+        String vnp_IpAddr = getClientIp(request); // <-- SỬ DỤNG PHƯƠNG THỨC MỚI
 
         String vnp_TmnCode = vnpTmnCode;
         Map<String, String> vnp_Params = new HashMap<>();
@@ -105,7 +125,13 @@ public class VnPayService implements IPaymentService {
             }
         }
         String queryUrl = query.toString();
-        String vnp_SecureHash = VnPayTools.hmacSHA512(VnPayTools.secretKey, hashData.toString());
+//        String vnp_SecureHash = VnPayTools.hmacSHA512(VnPayTools.secretKey, hashData.toString());
+//        queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+//        return vnpPayUrl + "?" + queryUrl;
+
+        // **QUAN TRỌNG**: Sử dụng vnpHashSecret được inject từ file properties, không dùng VnPayTools.secretKey
+        String vnp_SecureHash = VnPayTools.hmacSHA512(this.vnpHashSecret, hashData.toString());
+
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         return vnpPayUrl + "?" + queryUrl;
     }
@@ -161,5 +187,42 @@ public class VnPayService implements IPaymentService {
         } catch (Exception ex) {
             throw new RuntimeException("Lỗi khi mã hóa HmacSHA512", ex);
         }
+    }
+
+    /**
+     * Phương thức lấy địa chỉ IP của client một cách an toàn.
+     * Nó xử lý các trường hợp request đi qua proxy và môi trường dev (localhost).
+     * @param request HttpServletRequest từ controller.
+     * @return Chuỗi địa chỉ IP.
+     */
+    private String getClientIp(HttpServletRequest request) {
+        // Thử lấy IP từ header 'X-Forwarded-For' (nếu app chạy sau một proxy/load balancer)
+        String ipAddress = request.getHeader("X-Forwarded-For");
+
+        if (Objects.isNull(ipAddress) || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = request.getHeader("Proxy-Client-IP");
+        }
+        if (Objects.isNull(ipAddress) || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (Objects.isNull(ipAddress) || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = request.getRemoteAddr();
+            // Xử lý trường hợp đặc biệt của localhost IPv6
+            if ("0:0:0:0:0:0:0:1".equals(ipAddress)) {
+                ipAddress = "127.0.0.1";
+            }
+        }
+
+        // Nếu IP có thể chứa nhiều địa chỉ (do đi qua nhiều proxy), lấy địa chỉ đầu tiên
+        if (!Objects.isNull(ipAddress) && ipAddress.length() > 15 && ipAddress.indexOf(",") > 0) {
+            ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));
+        }
+
+        // Nếu sau tất cả các bước vẫn là null, gán một giá trị mặc định cho môi trường dev
+        if (Objects.isNull(ipAddress)) {
+            ipAddress = "127.0.0.1"; // Fallback IP for local development
+        }
+
+        return ipAddress;
     }
 }
