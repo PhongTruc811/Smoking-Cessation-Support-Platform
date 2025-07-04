@@ -17,6 +17,7 @@ public class PostMapper {
         dto.setTitle(entity.getTitle());
         dto.setContent(entity.getContent());
         dto.setCreatedAt(entity.getCreatedAt());
+        dto.setViewCount(entity.getViews());
         dto.setPublished(entity.isPublished());
         return dto;
     }
@@ -28,6 +29,7 @@ public class PostMapper {
         entity.setUser(user);
         entity.setTitle(dto.getTitle());
         entity.setContent(dto.getContent());
+        entity.setViews(dto.getViewCount());
         return entity;
     }
 }

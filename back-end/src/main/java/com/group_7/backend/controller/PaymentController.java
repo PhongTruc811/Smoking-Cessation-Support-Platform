@@ -3,6 +3,7 @@ package com.group_7.backend.controller;
 import com.group_7.backend.dto.UserMembershipDto;
 import com.group_7.backend.dto.response.ResponseDto;
 import com.group_7.backend.entity.enums.MembershipStatusEnum;
+import com.group_7.backend.service.IPaymentService;
 import com.group_7.backend.service.IUserMembershipService;
 import com.group_7.backend.service.impl.VnPayService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,11 +21,11 @@ public class PaymentController {
     @Autowired
     private IUserMembershipService userMembershipService;
     @Autowired
-    private VnPayService vnPayService;
+    private IPaymentService paymentService;
 
     @PostMapping("/create")
     public ResponseEntity<ResponseDto> createPayment(@RequestBody UserMembershipDto userMembershipDto, HttpServletRequest request) throws UnsupportedEncodingException {
-        String paymentUrl = vnPayService.createPayment(userMembershipDto,request);
+        String paymentUrl = paymentService.createPayment(userMembershipDto,request);
         return ResponseEntity.ok(
                 new ResponseDto("Success", "Payment URL generated successfully!",paymentUrl));
     }
@@ -37,7 +38,7 @@ public class PaymentController {
         String[] orderIds = params.get("vnp_TxnRef");
         Long orderId = orderIds != null && orderIds.length > 0 ? Long.parseLong(orderIds[0]) : null;
 
-        boolean isValid = vnPayService.verifyCallback(params);
+        boolean isValid = paymentService.verifyCallback(params);
 
         if(orderId == null) {
             throw new IllegalArgumentException("OrderId is missing!");

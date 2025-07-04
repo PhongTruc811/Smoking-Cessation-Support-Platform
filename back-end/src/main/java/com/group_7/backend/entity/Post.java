@@ -29,6 +29,9 @@ public class Post {
     @Column(name = "Content", columnDefinition = "NVARCHAR(MAX)", nullable = false)
     private String content;
 
+    @Column(name = "Views")
+    private int views;
+
     @Column(name = "CreatedAt", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
