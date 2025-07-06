@@ -10,4 +10,6 @@ public interface IPaymentService {
     String createPayment(UserMembershipDto userMembershipDto, HttpServletRequest request) throws UnsupportedEncodingException;
     boolean verifyCallback(Map<String, String[]> params);
     UserMembershipDto handleVnPayReturn(Map<String, String[]> params, Long orderId);
+    boolean handleIpn(HttpServletRequest request);
+
 }
