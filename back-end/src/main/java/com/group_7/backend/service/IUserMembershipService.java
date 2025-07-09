@@ -1,7 +1,6 @@
 package com.group_7.backend.service;
 
 import com.group_7.backend.dto.UserMembershipDto;
-import com.group_7.backend.entity.UserMembership;
 import com.group_7.backend.entity.enums.MembershipStatusEnum;
 import com.group_7.backend.service.ICRUDService;
 
@@ -13,7 +12,4 @@ public interface IUserMembershipService extends ICRUDService<UserMembershipDto, 
     UserMembershipDto getCurrentMembershipForLogin(Long userId);
     UserMembershipDto updateStatus(Long id, MembershipStatusEnum status);
     void updateAllActiveMemberships();
-    UserMembership createPendingMembership(UserMembershipDto dto); // Phương thức mới cho luồng thanh toán
-    UserMembership findEntityById(Long id);
-
 }

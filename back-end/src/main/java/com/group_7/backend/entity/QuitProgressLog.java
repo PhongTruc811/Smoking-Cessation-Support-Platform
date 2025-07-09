@@ -20,9 +20,9 @@ public class QuitProgressLog {
     @Column(name = "LogID")
     private Long logId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "StageID", referencedColumnName = "StageID", nullable = false, unique = true)
-    private QuitPlanStage quitPlanStage;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PlanID", nullable = false)
+    private QuitPlan quitPlan;
 
     @Column(name = "CreatedAt")
     private LocalDate createdAt = LocalDate.now();
@@ -33,7 +33,16 @@ public class QuitProgressLog {
     @Column(name = "Notes", columnDefinition = "NVARCHAR(MAX)")
     private String notes = null;
 
-    public void setQuitPlanStage(QuitPlanStage quitPlanStage) {
-        this.quitPlanStage = quitPlanStage;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        QuitProgressLog that = (QuitProgressLog) o;
+        return logId != null && logId.equals(that.logId);
+    }
+
+    @Override
+    public int hashCode() {
+        return logId != null ? logId.hashCode() : 0;
     }
 }

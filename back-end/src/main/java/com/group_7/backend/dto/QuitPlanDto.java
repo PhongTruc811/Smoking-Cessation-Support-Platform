@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +19,7 @@ import java.util.Set;
 public class QuitPlanDto {
     private Long id;
 
+    @NotNull(message = "User ID must not be null")
     @Positive(message = "User ID must be a positive number")
     private Long userId;
 
@@ -36,12 +36,12 @@ public class QuitPlanDto {
     private LocalDate targetEndDate;
 
     private LocalDate createdAt;
-
     private QuitPlanStatusEnum status;
 
-    @Valid
-    @NotEmpty(message = "Quit plan must have at least one stage")
-    private Set<QuitPlanStageDto> quitPlanStages;
+    @Min(value = 0, message = "Daily smoke count cannot be negative")
+    private int dailySmoke;
 
-    // TODO: Add custom validator to ensure that targetEndDate > startDate
+    private Set<QuitMethodOptionDto> methodOptions;
+    private List<QuitProgressLogDto> progressLogs;
+
 }

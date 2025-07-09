@@ -1,6 +1,7 @@
 package com.group_7.backend.controller;
 
 import com.group_7.backend.dto.SmokingProfileDto;
+import com.group_7.backend.dto.request.UserQuizAnswerRequestDto;
 import com.group_7.backend.dto.response.ResponseDto;
 import com.group_7.backend.entity.CustomUserDetail;
 import com.group_7.backend.service.ISmokingProfileService;
@@ -27,6 +28,17 @@ public class SmokingProfileController {
         return ResponseEntity.ok(
                 new ResponseDto("success", "Smoking profile created successfully",
                         smokingProfileService.create(smokingProfileDto))
+        );
+    }
+
+    @PostMapping("/quiz-answer")
+    public ResponseEntity<ResponseDto> submitSmokingProfile(@Valid @RequestBody UserQuizAnswerRequestDto userQuizAnswerRequestDto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetail customUserDetail = (CustomUserDetail) auth.getPrincipal();
+        userQuizAnswerRequestDto.setUserId(customUserDetail.getId());
+        return ResponseEntity.ok(
+                new ResponseDto("success", "Smoking profile created successfully",
+                        smokingProfileService.submitUserQuiz(userQuizAnswerRequestDto))
         );
     }
 

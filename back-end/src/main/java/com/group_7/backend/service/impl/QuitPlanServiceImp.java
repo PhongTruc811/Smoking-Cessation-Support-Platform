@@ -1,12 +1,14 @@
 package com.group_7.backend.service.impl;
 
+import com.group_7.backend.dto.QuitMethodOptionDto;
 import com.group_7.backend.dto.QuitPlanDto;
+import com.group_7.backend.entity.QuitMethodOption;
 import com.group_7.backend.entity.QuitPlan;
-import com.group_7.backend.entity.QuitPlanStage;
 import com.group_7.backend.entity.User;
 import com.group_7.backend.entity.enums.QuitPlanStatusEnum;
 import com.group_7.backend.exception.ResourceNotFoundException;
 import com.group_7.backend.mapper.QuitPlanMapper;
+import com.group_7.backend.repository.QuitMethodOptionRepository;
 import com.group_7.backend.repository.QuitPlanRepository;
 import com.group_7.backend.repository.UserRepository;
 import com.group_7.backend.service.IQuitPlanService;
@@ -16,20 +18,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class QuitPlanServiceImp implements IQuitPlanService {
 
     private final QuitPlanRepository quitPlanRepository;
+    private final QuitMethodOptionRepository quitMethodOptionRepository;
     private final UserRepository userRepository;
     private final QuitPlanMapper quitPlanMapper;
 
-    public QuitPlanServiceImp(QuitPlanRepository quitPlanRepository,
+    public QuitPlanServiceImp(QuitPlanRepository quitPlanRepository, QuitMethodOptionRepository quitMethodOptionRepository,
                               UserRepository userRepository,
                               QuitPlanMapper quitPlanMapper) {
         this.quitPlanRepository = quitPlanRepository;
+        this.quitMethodOptionRepository = quitMethodOptionRepository;
         this.userRepository = userRepository;
         this.quitPlanMapper = quitPlanMapper;
     }
@@ -96,42 +102,47 @@ public class QuitPlanServiceImp implements IQuitPlanService {
                 .collect(Collectors.toList());
     }
 
+    public List<QuitPlanDto> getByUserIdAndStatus(Long userId, QuitPlanStatusEnum status) {
+        return quitPlanRepository.findByUserUserIdAndStatus(userId, status)
+                .stream()
+                .map(quitPlanMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
     @Override
     @Transactional
-    @PreAuthorize("#userId == authentication.principal.id or hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("#dto.userId == authentication.principal.id or hasAuthority('ROLE_ADMIN')")
     public QuitPlanDto create(QuitPlanDto dto) {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
+        if (quitPlanRepository.existsByUserUserIdAndStatus(dto.getUserId(), QuitPlanStatusEnum.IN_PROGRESS)||
+                quitPlanRepository.existsByUserUserIdAndStatus(dto.getUserId(), QuitPlanStatusEnum.SCHEDULED)) {
+            throw new IllegalArgumentException("This user already have active quit plan!");
+        }
         QuitPlan entity = quitPlanMapper.toEntity(dto, user);
         if (entity.getStartDate().isEqual(LocalDate.now())) {
             entity.setStatus(QuitPlanStatusEnum.IN_PROGRESS);
         }
         else entity.setStatus(QuitPlanStatusEnum.SCHEDULED);
         //Gán startDate cho từng Stage và check valid date
-        AssignStageDates(entity);
 
-        QuitPlan saved = quitPlanRepository.save(entity);
-        return quitPlanMapper.toDto(saved);
+        Set<QuitMethodOption> saveMethodOptions = new HashSet<>();
+        if (dto.getMethodOptions() != null && !dto.getMethodOptions().isEmpty()) {
+            for (QuitMethodOptionDto optionDto : dto.getMethodOptions()) {
+                //Kiểm tra option được gửi qua request có hợp lệ
+                if (optionDto.getId() != null) {
+                    QuitMethodOption existingOption = quitMethodOptionRepository.findById(optionDto.getId())
+                            .orElseThrow(() -> new ResourceNotFoundException("QuitMethodOption not found ! Cannot link to a non-existent option."));
+                    saveMethodOptions.add(existingOption);
+                } else {
+                    throw new IllegalArgumentException("Cannot create new QuitMethodOption via QuitPlan creation. Please provide an existing option ID.");
+                }
+            }
+        }
+        entity.setMethodOptions(saveMethodOptions);
+
+        return quitPlanMapper.toDto(quitPlanRepository.save(entity));
     }
 
-    public static void AssignStageDates(QuitPlan plan) {
-        List<QuitPlanStage> stages = plan.getQuitPlanStages().stream()
-                .sorted(Comparator.comparingInt(QuitPlanStage::getStageNumber))
-                .toList();
 
-        LocalDate planStart = plan.getStartDate();
-        LocalDate planEnd = plan.getTargetEndDate();
-        int totalDays = (int) (planEnd.toEpochDay() - planStart.toEpochDay());
-
-        int sumDuration = stages.stream().mapToInt(QuitPlanStage::getDuration).sum();
-        if (sumDuration != totalDays) {
-            throw new IllegalArgumentException("Invalid date of quit smoking plan!");
-        }
-
-        // Gán startDate cho từng stage
-        for (QuitPlanStage stage : stages) {
-            stage.setStartDate(planStart);
-            planStart = planStart.plusDays(stage.getDuration());
-        }
-    }
 }

@@ -62,8 +62,7 @@ public class SecurityConfig {
                                 //"/api/**", //Chỉ để test api,
                                 "/login/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/api/payment/**"
+                                "/swagger-ui.html"
                         ).permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2AuthenticationSuccessHandler))

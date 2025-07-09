@@ -6,7 +6,6 @@ import com.group_7.backend.exception.ResourceNotFoundException;
 import com.group_7.backend.mapper.MembershipPackageMapper;
 import com.group_7.backend.repository.MembershipPackageRepository;
 import com.group_7.backend.service.IMembershipPackageService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

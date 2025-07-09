@@ -1,12 +1,16 @@
 package com.group_7.backend.config;
 
+import com.group_7.backend.dto.QuitMethodOptionDto;
+import com.group_7.backend.dto.QuitPlanDto;
+import com.group_7.backend.dto.quiz.*;
 import com.group_7.backend.entity.*;
-import com.group_7.backend.entity.enums.MembershipStatusEnum;
-import com.group_7.backend.entity.enums.QuitPlanStatusEnum;
-import com.group_7.backend.entity.enums.UserGenderEnum;
-import com.group_7.backend.entity.enums.UserRoleEnum;
+import com.group_7.backend.entity.enums.*;
+import com.group_7.backend.mapper.QuitMethodOptionMapper;
 import com.group_7.backend.repository.*;
 import com.group_7.backend.service.impl.EmailSenderService;
+import com.group_7.backend.service.impl.QuitMethodServiceImp;
+import com.group_7.backend.service.impl.QuitPlanServiceImp;
+import com.group_7.backend.service.impl.QuizServiceImp;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -14,6 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class DataInit implements ApplicationRunner {
@@ -23,11 +30,15 @@ public class DataInit implements ApplicationRunner {
     @Autowired private UserMembershipRepository userMembershipRepository;
     @Autowired private SmokingProfileRepository smokingProfileRepository;
     @Autowired private QuitPlanRepository quitPlanRepository;
-    @Autowired private QuitPlanStageRepository quitPlanStageRepository;
+    @Autowired private QuitMethodRepository quitMethodRepository;
+    @Autowired private QuitMethodOptionRepository quitMethodOptionRepository;
     @Autowired private PostRepository postRepository;
     @Autowired private CommentRepository commentRepository;
     @Autowired private LikeRepository likeRepository;
     @Autowired private EmailSenderService emailSenderService;
+    @Autowired private QuizServiceImp quizServiceImp;
+    @Autowired private QuitPlanServiceImp quitPlanServiceImp;
+    @Autowired private QuitMethodOptionMapper quitMethodOptionMapper;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -43,7 +54,7 @@ public class DataInit implements ApplicationRunner {
         }
         // Avoid duplicate seed
 
-        // 2. Users
+        //Users
         User user1 = new User();
         user1.setUsername("user1");
         user1.setFullName("Nguyễn Văn An");
@@ -77,7 +88,7 @@ public class DataInit implements ApplicationRunner {
         admin1.setRole(UserRoleEnum.ADMIN);
         userRepository.save(admin1);
 
-        // 4. MembershipPackages
+        //MembershipPackages
         MembershipPackage pkg1 = new MembershipPackage();
         pkg1.setPackageName("Gói cơ bản");
         pkg1.setDescription("Sử dụng các tính năng cơ bản");
@@ -92,7 +103,7 @@ public class DataInit implements ApplicationRunner {
         pkg2.setDurationInDays(90);
         membershipPackageRepository.save(pkg2);
 
-        // 5. UserMemberships
+        //UserMemberships
         UserMembership um1 = new UserMembership();
         um1.setUser(user1);
         um1.setMembershipPackage(pkg1);
@@ -109,66 +120,37 @@ public class DataInit implements ApplicationRunner {
         um2.setPaymentMethod("VNPay");
         userMembershipRepository.save(um2);
 
-        // 6. SmokingProfiles
+        //SmokingProfiles
         SmokingProfile sp1 = new SmokingProfile();
         sp1.setUser(user1);
-        sp1.setCigarettesPerDay(10);
+        sp1.setCigarettesPerDay("10");
         sp1.setCostPerPack(new BigDecimal("25000"));
         sp1.setWeekSmoked(5);
         sp1.setNote("Hút thường ngày");
         smokingProfileRepository.save(sp1);
 
-        SmokingProfile sp2 = new SmokingProfile();
-        sp2.setUser(coach1);
-        sp2.setCigarettesPerDay(5);
-        sp2.setCostPerPack(new BigDecimal("35000"));
-        sp2.setWeekSmoked(2);
-        sp2.setNote("Chỉ hút khi stress");
-        smokingProfileRepository.save(sp2);
+        //QuitMethod và QuitMethodOptions ---
+        QuitMethod nicotineMethod = new QuitMethod();
+        nicotineMethod.setMethodName("Nicotine Replacement Therapy (NRT)");
+        nicotineMethod.setMethodType(QuestionTypeEnum.SINGLE_CHOICE);
+        nicotineMethod = quitMethodRepository.save(nicotineMethod);
 
-        // 7. QuitPlans
-        QuitPlan plan1 = new QuitPlan();
-        plan1.setUser(user1);
-        plan1.setReason("Vì sức khỏe bản thân");
-        plan1.setStartDate(LocalDate.of(2025,5,1));
-        plan1.setTargetEndDate(LocalDate.of(2025,7,1));
-        plan1.setStatus(QuitPlanStatusEnum.IN_PROGRESS);
-        quitPlanRepository.save(plan1);
 
-        QuitPlan plan2 = new QuitPlan();
-        plan2.setUser(coach1);
-        plan2.setReason("Do gia đình động viên");
-        plan2.setStartDate(LocalDate.of(2025,6,1));
-        plan2.setTargetEndDate(LocalDate.of(2025,8,1));
-        plan2.setStatus(QuitPlanStatusEnum.IN_PROGRESS);
-        quitPlanRepository.save(plan2);
+        QuitMethodOption gumOption = new QuitMethodOption("Nicotine Gum", "Use nicotine gum when cravings hit.", "Remember to chew slowly for best results.");
+        gumOption.setQuitMethod(nicotineMethod);
 
-        // 8. QuitPlanStages
-        QuitPlanStage stage1 = new QuitPlanStage();
-        stage1.setQuitPlan(plan1);
-        stage1.setStageNumber(1);
-        stage1.setDescription("Giảm số điếu mỗi ngày");
-        stage1.setStartDate(LocalDate.of(2025,5,1));
-        stage1.setDuration(30);
-        quitPlanStageRepository.save(stage1);
+        QuitMethodOption patchOption = new QuitMethodOption("Nicotine Patch", "Apply a patch daily for steady nicotine release.", "Change patch daily and apply to a clean, hairless area.");
+        patchOption.setQuitMethod(nicotineMethod);
 
-        QuitPlanStage stage2 = new QuitPlanStage();
-        stage2.setQuitPlan(plan1);
-        stage2.setStageNumber(2);
-        stage2.setDescription("Không hút nữa");
-        stage2.setStartDate(LocalDate.of(2025,6,2));
-        stage2.setDuration(30);
-        quitPlanStageRepository.save(stage2);
+        QuitMethodOption lozengeOption = new QuitMethodOption("Nicotine Lozenge", "Dissolve lozenge slowly in mouth for nicotine absorption.", "Do not chew or swallow the lozenge.");
+        lozengeOption.setQuitMethod(nicotineMethod);
 
-        QuitPlanStage stage3 = new QuitPlanStage();
-        stage3.setQuitPlan(plan2);
-        stage3.setStageNumber(1);
-        stage3.setDescription("Chỉ hút sau 10h sáng");
-        stage3.setStartDate(LocalDate.of(2025,6,1));
-        stage3.setDuration(14);
-        quitPlanStageRepository.save(stage3);
+        nicotineMethod.getOptions().add(gumOption);
+        nicotineMethod.getOptions().add(patchOption);
+        nicotineMethod.getOptions().add(lozengeOption);
+        quitMethodRepository.save(nicotineMethod);
 
-        // 11. Posts
+        //Posts
         Post post1 = new Post();
         post1.setUser(user1);
         post1.setTitle("Hành trình cai thuốc");
@@ -181,7 +163,7 @@ public class DataInit implements ApplicationRunner {
         post2.setContent("Nên tìm bạn đồng hành để cai thuốc hiệu quả hơn.");
         postRepository.save(post2);
 
-        // 14. Comments
+        //Comments
         Comment cmt1 = new Comment();
         cmt1.setPost(post1);
         cmt1.setUser(coach1);
@@ -194,7 +176,7 @@ public class DataInit implements ApplicationRunner {
         cmt2.setContent("Rất đồng ý với chia sẻ của bạn.");
         commentRepository.save(cmt2);
 
-        // 15. Likes
+        //Likes
         Like like1 = new Like();
         like1.setUser(coach1);
         like1.setPost(post1);
@@ -205,6 +187,111 @@ public class DataInit implements ApplicationRunner {
         like2.setPost(post2);
         likeRepository.save(like2);
 
+        //Quiz Fagerström
+        QuizDto fagerstromQuiz = new QuizDto();
+        fagerstromQuiz.setQuizId("FGT_QUIZ001");
+        fagerstromQuiz.setName("Thang đo Fagerström về mức độ lệ thuộc nicotine");
+        fagerstromQuiz.setDescription("Bài trắc nghiệm đánh giá mức độ lệ thuộc nicotine bằng thang Fagerström (FTND)");
+
+        List<QuestionDto> questions = List.of(
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "Bạn hút điếu đầu tiên sau bao lâu kể từ khi thức dậy?",
+                        Set.of(
+                                new OptionDto(null, "Trong vòng 5 phút", 3),
+                                new OptionDto(null, "Từ 6 đến 30 phút", 2),
+                                new OptionDto(null, "Từ 31 đến 60 phút", 1),
+                                new OptionDto(null, "Sau 60 phút", 0)
+                        )
+                ),
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"Bạn có cảm thấy khó bỏ hút thuốc ở những nơi bị cấm không?",
+                        Set.of(
+                                new OptionDto(null, "Có", 1),
+                                new OptionDto(null, "Không", 0)
+                        )
+                ),
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"Điếu thuốc nào bạn cảm thấy khó bỏ nhất?",
+                        Set.of(
+                                new OptionDto(null, "Điếu đầu tiên trong ngày", 1),
+                                new OptionDto(null, "Các điếu còn lại", 0)
+                        )
+                ),
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"Bạn hút bao nhiêu điếu thuốc mỗi ngày?",
+                        Set.of(
+                                new OptionDto(null, "10 điếu hoặc ít hơn", 0),
+                                new OptionDto(null, "11–20 điếu", 1),
+                                new OptionDto(null, "21–30 điếu", 2),
+                                new OptionDto(null, "31 điếu trở lên", 3)
+                        )
+                ),
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"Bạn có hút thuốc nhiều hơn vào buổi sáng không?",
+                        Set.of(
+                                new OptionDto(null, "Có", 1),
+                                new OptionDto(null, "Không", 0)
+                        )
+                ),
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"Bạn có hút thuốc ngay cả khi bị ốm nằm trên giường?",
+                        Set.of(
+                                new OptionDto(null, "Có", 1),
+                                new OptionDto(null, "Không", 0)
+                        )
+                ),
+                new QuestionDto(null,QuestionTypeEnum.NUMBER_ANSWER,"Giá tiền mỗi gói thuốc (20 điếu)", ""),
+                new QuestionDto(null,QuestionTypeEnum.NUMBER_ANSWER,"Bạn đã hút thuốc được bao lâu (week)?",""),
+                new QuestionDto(null, QuestionTypeEnum.TEXT_ANSWER, "Ghi chú (nếu có):","")
+        );
+
+        fagerstromQuiz.setQuestions(questions);
+        quizServiceImp.createQuiz(fagerstromQuiz);
+
+        QuizDto feedbackQuiz = new QuizDto();
+        feedbackQuiz.setQuizId("SFB_QUIZ001");
+        feedbackQuiz.setName("Khảo sát Phản hồi Hệ thống");
+        feedbackQuiz.setDescription("Chúng tôi muốn lắng nghe ý kiến của bạn để cải thiện hệ thống.");
+
+        List<QuestionDto> questions2 = List.of(
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "Mức độ hài lòng chung của bạn với hệ thống là gì?",
+                        Set.of(
+                                new OptionDto(null, "Rất không hài lòng", 1),
+                                new OptionDto(null, "Không hài lòng", 2),
+                                new OptionDto(null, "Bình thường", 3),
+                                new OptionDto(null, "Hài lòng", 4),
+                                new OptionDto(null, "Rất hài lòng", 5)
+                        )
+                ),
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "Bạn thấy hệ thống có dễ sử dụng không?",
+                        Set.of(
+                                new OptionDto(null, "Rất khó sử dụng", 1),
+                                new OptionDto(null, "Khó sử dụng", 2),
+                                new OptionDto(null, "Trung bình", 3),
+                                new OptionDto(null, "Dễ sử dụng", 4),
+                                new OptionDto(null, "Rất dễ sử dụng", 5)
+                        )
+                ),
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "Tốc độ phản hồi của hệ thống có đáp ứng kỳ vọng của bạn không?",
+                        Set.of(
+                                new OptionDto(null, "Rất chậm", 1),
+                                new OptionDto(null, "Chậm", 2),
+                                new OptionDto(null, "Bình thường", 3),
+                                new OptionDto(null, "Nhanh", 4),
+                                new OptionDto(null, "Rất nhanh", 5)
+                        )
+                ),
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "Bạn có gặp phải lỗi hoặc sự cố nào khi sử dụng hệ thống không?",
+                        Set.of(
+                                new OptionDto(null, "Rất thường xuyên", 1),
+                                new OptionDto(null, "Thường xuyên", 2),
+                                new OptionDto(null, "Thỉnh thoảng", 3),
+                                new OptionDto(null, "Hiếm khi", 4),
+                                new OptionDto(null, "Chưa từng", 5)
+                        )
+                ),
+                new QuestionDto(null, QuestionTypeEnum.NUMBER_ANSWER, "Bạn sử dụng hệ thống này bao nhiêu giờ mỗi tuần?", ""),
+                new QuestionDto(null, QuestionTypeEnum.TEXT_ANSWER, "Tính năng nào của hệ thống bạn thấy hữu ích nhất?", ""),
+                new QuestionDto(null, QuestionTypeEnum.TEXT_ANSWER, "Có tính năng nào bạn muốn chúng tôi bổ sung hoặc cải thiện không?", ""),
+                new QuestionDto(null, QuestionTypeEnum.TEXT_ANSWER, "Xin vui lòng chia sẻ bất kỳ góp ý hoặc nhận xét nào khác của bạn.", "")
+        );
+
+        feedbackQuiz.setQuestions(questions2);
+        quizServiceImp.createQuiz(feedbackQuiz);
         System.out.println("=== ĐÃ SEED XONG DỮ LIỆU MẪU ===");
     }
 

@@ -1,5 +1,8 @@
 package com.group_7.backend.dto;
 
+import com.group_7.backend.entity.enums.NicotineAddictionEnum;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -10,6 +13,7 @@ import lombok.Setter;
 import org.springframework.format.annotation.NumberFormat;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -19,9 +23,9 @@ public class SmokingProfileDto {
     private Long smokingProfileId;
     private Long userId;
 
-    @NotNull(message = "Cigarettes per day must not be null")
-    @Positive(message = "Cigarettes per day must be greater than 0")
-    private int cigarettesPerDay;
+    @NotBlank(message = "Cigarettes per day must not be blank")
+    @Size(max=100, message = "Input must not exceed 100 characters")
+    private String cigarettesPerDay;
 
     @NotNull(message = "Cost per pack must not be null")
     @Positive(message = "Cost per pack must be greater than 0")
@@ -32,6 +36,13 @@ public class SmokingProfileDto {
     @Positive(message = "Weeks smoked must be greater than 0")
     private int weekSmoked;
 
-    @Size(max = 500, message = "Mô tả không được vượt quá 500 ký tự")
+    private NicotineAddictionEnum nicotineAddiction;
+
+    private int ftndScore;
+
+    @Size(max = 500, message = "Note must not exceed 500 characters")
     private String note;
+
+    private LocalDate createAt;
+    private LocalDate lastUpdateDate;
 }
