@@ -99,8 +99,8 @@ public class DataInit implements ApplicationRunner {
         MembershipPackage pkg2 = new MembershipPackage();
         pkg2.setPackageName("Gói hội viên");
         pkg2.setDescription("Hỗ trợ coach và thống kê nâng cao");
-        pkg2.setPrice(BigDecimal.valueOf(200000));
-        pkg2.setDurationInDays(90);
+        pkg2.setPrice(BigDecimal.valueOf(100000));
+        pkg2.setDurationInDays(30);
         membershipPackageRepository.save(pkg2);
 
         //UserMemberships
@@ -328,10 +328,11 @@ public class DataInit implements ApplicationRunner {
                 new QuestionDto(null, QuestionTypeEnum.TEXT_ANSWER, "Are there any features you'd like us to add or improve?", ""),
                 new QuestionDto(null, QuestionTypeEnum.TEXT_ANSWER, "Please share any other comments or feedback you may have.", "")
         );
-
-
         feedbackQuiz.setQuestions(questions2);
         quizServiceImp.createQuiz(feedbackQuiz);
+
+
+
         System.out.println("=== ĐÃ SEED XONG DỮ LIỆU MẪU ===");
     }
 
