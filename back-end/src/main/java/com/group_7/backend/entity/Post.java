@@ -30,7 +30,7 @@ public class Post {
     private String content;
 
     @Column(name = "Views")
-    private int views;
+    private int views = 0;
 
     @Column(name = "CreatedAt", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

@@ -8,4 +8,6 @@ import java.util.List;
 public interface IQuitPlanService extends ICRUDService<QuitPlanDto, QuitPlanDto, Long>{
     List<QuitPlanDto> getByUserId(Long userId);
     QuitPlanDto updateStatus(Long id, QuitPlanStatusEnum status);
+    QuitPlanDto getCurrentByUserIdAndStatus(Long userId);
+    List<QuitPlanDto> getByUserIdAndStatus(Long userId, QuitPlanStatusEnum status);
 }

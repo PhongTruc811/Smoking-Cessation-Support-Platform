@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface QuitPlanRepository extends JpaRepository<QuitPlan, Long> {
     List<QuitPlan> findByUserUserId(Long userId);
     List<QuitPlan> findByUserUserIdAndStatus(Long userId, QuitPlanStatusEnum status);
     boolean existsByUserUserIdAndStatus(Long userId, QuitPlanStatusEnum status);
+    Optional<QuitPlan> findTopByUserUserIdAndStatus(Long userId, QuitPlanStatusEnum status);
 }

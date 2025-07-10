@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -102,6 +99,23 @@ public class QuitPlanServiceImp implements IQuitPlanService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public QuitPlanDto getCurrentByUserIdAndStatus(Long userId) {
+        Optional<QuitPlan> inProgressPlan = quitPlanRepository.findTopByUserUserIdAndStatus(userId, QuitPlanStatusEnum.IN_PROGRESS);
+        if (inProgressPlan.isPresent()) {
+            return quitPlanMapper.toDto(inProgressPlan.get());
+        }
+
+        Optional<QuitPlan> scheduledPlan = quitPlanRepository.findTopByUserUserIdAndStatus(userId, QuitPlanStatusEnum.SCHEDULED);
+        if (scheduledPlan.isPresent()) {
+            return quitPlanMapper.toDto(scheduledPlan.get());
+        }
+
+        return null;
+    }
+
+    @Override
     public List<QuitPlanDto> getByUserIdAndStatus(Long userId, QuitPlanStatusEnum status) {
         return quitPlanRepository.findByUserUserIdAndStatus(userId, status)
                 .stream()

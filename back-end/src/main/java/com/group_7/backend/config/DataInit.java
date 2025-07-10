@@ -131,23 +131,64 @@ public class DataInit implements ApplicationRunner {
 
         //QuitMethod và QuitMethodOptions ---
         QuitMethod nicotineMethod = new QuitMethod();
-        nicotineMethod.setMethodName("Nicotine Replacement Therapy (NRT)");
+        nicotineMethod.setMethodName("Smoking Cessation Medications");
         nicotineMethod.setMethodType(QuestionTypeEnum.SINGLE_CHOICE);
         nicotineMethod = quitMethodRepository.save(nicotineMethod);
 
 
-        QuitMethodOption gumOption = new QuitMethodOption("Nicotine Gum", "Use nicotine gum when cravings hit.", "Remember to chew slowly for best results.");
+        QuitMethodOption gumOption = new QuitMethodOption(
+                "Nicotine Gum - NRT",
+                "<ul>" +
+                        "<li><strong>Function:</strong> Quickly reduces cravings by delivering nicotine through the oral mucosa.</li>" +
+                        "<li><strong>Usage:</strong> Chew the gum slowly, then place it between the cheek and gums to absorb nicotine.</li>" +
+                        "<li><strong>Note:</strong> Avoid drinking anything except water 15 minutes before and during chewing.</li>" +
+                        "<li><strong>Common side effects:</strong> Dry mouth, jaw pain, hiccups.</li>" +
+                        "</ul>",
+                ""
+        );
         gumOption.setQuitMethod(nicotineMethod);
 
-        QuitMethodOption patchOption = new QuitMethodOption("Nicotine Patch", "Apply a patch daily for steady nicotine release.", "Change patch daily and apply to a clean, hairless area.");
+        QuitMethodOption patchOption = new QuitMethodOption(
+                "Nicotine Patch - NRT",
+                "<ul>" +
+                        "<li><strong>Function:</strong> Provides a steady level of nicotine throughout the day to reduce cravings.</li>" +
+                        "<li><strong>Usage:</strong> Apply the patch to a hairless area in the morning; rotate application sites daily.</li>" +
+                        "<li><strong>Note:</strong> Remove the 24-hour patch before bedtime if it causes insomnia.</li>" +
+                        "<li><strong>Common side effects:</strong> Skin irritation, insomnia.</li>" +
+                        "</ul>",
+                ""
+        );
         patchOption.setQuitMethod(nicotineMethod);
 
-        QuitMethodOption lozengeOption = new QuitMethodOption("Nicotine Lozenge", "Dissolve lozenge slowly in mouth for nicotine absorption.", "Do not chew or swallow the lozenge.");
-        lozengeOption.setQuitMethod(nicotineMethod);
+        QuitMethodOption bupropionOption = new QuitMethodOption(
+                "Bupropion SR",
+                "<ul>" +
+                        "<li><strong>Function:</strong> Reduces withdrawal symptoms and cravings by affecting neurotransmitters.</li>" +
+                        "<li><strong>Usage:</strong> Start 1–2 weeks before the quit date. Take 150mg/day for 3 days, then 150mg twice daily.</li>" +
+                        "<li><strong>Note:</strong> If insomnia occurs, take the second dose earlier in the afternoon.</li>" +
+                        "<li><strong>Common side effects:</strong> Insomnia (35–40%), dry mouth.</li>" +
+                        "</ul>",
+                ""
+        );
+        bupropionOption.setQuitMethod(nicotineMethod);
+
+        QuitMethodOption vareniclineOption = new QuitMethodOption(
+                "Varenicline",
+                "<ul>" +
+                        "<li><strong>Function:</strong> Reduces the rewarding effects of smoking and decreases cravings by acting on nicotine receptors.</li>" +
+                        "<li><strong>Usage:</strong> Start 1 week before the quit date. Gradually increase from 0.5mg/day to 1mg twice daily.</li>" +
+                        "<li><strong>Note:</strong> Take after meals to reduce nausea and in the afternoon to avoid insomnia.</li>" +
+                        "<li><strong>Common side effects:</strong> Nausea, sleep disturbances. May affect mood and behavior.</li>" +
+                        "</ul>",
+                ""
+        );
+        vareniclineOption.setQuitMethod(nicotineMethod);
+
 
         nicotineMethod.getOptions().add(gumOption);
         nicotineMethod.getOptions().add(patchOption);
-        nicotineMethod.getOptions().add(lozengeOption);
+        nicotineMethod.getOptions().add(bupropionOption);
+        nicotineMethod.getOptions().add(vareniclineOption);
         quitMethodRepository.save(nicotineMethod);
 
         //Posts
@@ -187,108 +228,107 @@ public class DataInit implements ApplicationRunner {
         like2.setPost(post2);
         likeRepository.save(like2);
 
-        //Quiz Fagerström
         QuizDto fagerstromQuiz = new QuizDto();
         fagerstromQuiz.setQuizId("FGT_QUIZ001");
-        fagerstromQuiz.setName("Thang đo Fagerström về mức độ lệ thuộc nicotine");
-        fagerstromQuiz.setDescription("Bài trắc nghiệm đánh giá mức độ lệ thuộc nicotine bằng thang Fagerström (FTND)");
+        fagerstromQuiz.setName("Fagerström Test for Nicotine Dependence");
+        fagerstromQuiz.setDescription("A questionnaire to assess the level of nicotine dependence using the Fagerström Test for Nicotine Dependence (FTND).");
 
         List<QuestionDto> questions = List.of(
-                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "Bạn hút điếu đầu tiên sau bao lâu kể từ khi thức dậy?",
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "How soon after waking do you smoke your first cigarette?",
                         Set.of(
-                                new OptionDto(null, "Trong vòng 5 phút", 3),
-                                new OptionDto(null, "Từ 6 đến 30 phút", 2),
-                                new OptionDto(null, "Từ 31 đến 60 phút", 1),
-                                new OptionDto(null, "Sau 60 phút", 0)
+                                new OptionDto(null, "Within 5 minutes", 3),
+                                new OptionDto(null, "6–30 minutes", 2),
+                                new OptionDto(null, "31–60 minutes", 1),
+                                new OptionDto(null, "After 60 minutes", 0)
                         )
                 ),
-                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"Bạn có cảm thấy khó bỏ hút thuốc ở những nơi bị cấm không?",
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"Do you find it difficult to refrain from smoking in places where it is forbidden?",
                         Set.of(
-                                new OptionDto(null, "Có", 1),
-                                new OptionDto(null, "Không", 0)
+                                new OptionDto(null, "Yes", 1),
+                                new OptionDto(null, "No", 0)
                         )
                 ),
-                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"Điếu thuốc nào bạn cảm thấy khó bỏ nhất?",
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"Which cigarette would you hate most to give up?",
                         Set.of(
-                                new OptionDto(null, "Điếu đầu tiên trong ngày", 1),
-                                new OptionDto(null, "Các điếu còn lại", 0)
+                                new OptionDto(null, "The first one in the morning", 1),
+                                new OptionDto(null, "Any other", 0)
                         )
                 ),
-                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"Bạn hút bao nhiêu điếu thuốc mỗi ngày?",
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"How many cigarettes do you smoke per day?",
                         Set.of(
-                                new OptionDto(null, "10 điếu hoặc ít hơn", 0),
-                                new OptionDto(null, "11–20 điếu", 1),
-                                new OptionDto(null, "21–30 điếu", 2),
-                                new OptionDto(null, "31 điếu trở lên", 3)
+                                new OptionDto(null, "10 or less", 0),
+                                new OptionDto(null, "11–20", 1),
+                                new OptionDto(null, "21–30", 2),
+                                new OptionDto(null, "31 or more", 3)
                         )
                 ),
-                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"Bạn có hút thuốc nhiều hơn vào buổi sáng không?",
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"Do you smoke more frequently in the morning?",
                         Set.of(
-                                new OptionDto(null, "Có", 1),
-                                new OptionDto(null, "Không", 0)
+                                new OptionDto(null, "Yes", 1),
+                                new OptionDto(null, "No", 0)
                         )
                 ),
-                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"Bạn có hút thuốc ngay cả khi bị ốm nằm trên giường?",
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE,"Do you smoke even when you're ill and bedridden?",
                         Set.of(
-                                new OptionDto(null, "Có", 1),
-                                new OptionDto(null, "Không", 0)
+                                new OptionDto(null, "Yes", 1),
+                                new OptionDto(null, "No", 0)
                         )
                 ),
-                new QuestionDto(null,QuestionTypeEnum.NUMBER_ANSWER,"Giá tiền mỗi gói thuốc (20 điếu)", ""),
-                new QuestionDto(null,QuestionTypeEnum.NUMBER_ANSWER,"Bạn đã hút thuốc được bao lâu (week)?",""),
-                new QuestionDto(null, QuestionTypeEnum.TEXT_ANSWER, "Ghi chú (nếu có):","")
+                new QuestionDto(null, QuestionTypeEnum.NUMBER_ANSWER,"Price per pack (20 cigarettes)", ""),
+                new QuestionDto(null, QuestionTypeEnum.NUMBER_ANSWER,"How long have you been smoking? (in weeks)", ""),
+                new QuestionDto(null, QuestionTypeEnum.TEXT_ANSWER, "Notes:","")
         );
-
         fagerstromQuiz.setQuestions(questions);
         quizServiceImp.createQuiz(fagerstromQuiz);
 
         QuizDto feedbackQuiz = new QuizDto();
         feedbackQuiz.setQuizId("SFB_QUIZ001");
-        feedbackQuiz.setName("Khảo sát Phản hồi Hệ thống");
-        feedbackQuiz.setDescription("Chúng tôi muốn lắng nghe ý kiến của bạn để cải thiện hệ thống.");
+        feedbackQuiz.setName("System Feedback Survey");
+        feedbackQuiz.setDescription("We would like to hear your thoughts to improve the system.");
 
         List<QuestionDto> questions2 = List.of(
-                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "Mức độ hài lòng chung của bạn với hệ thống là gì?",
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "How satisfied are you with the system overall?",
                         Set.of(
-                                new OptionDto(null, "Rất không hài lòng", 1),
-                                new OptionDto(null, "Không hài lòng", 2),
-                                new OptionDto(null, "Bình thường", 3),
-                                new OptionDto(null, "Hài lòng", 4),
-                                new OptionDto(null, "Rất hài lòng", 5)
+                                new OptionDto(null, "Very dissatisfied", 1),
+                                new OptionDto(null, "Dissatisfied", 2),
+                                new OptionDto(null, "Neutral", 3),
+                                new OptionDto(null, "Satisfied", 4),
+                                new OptionDto(null, "Very satisfied", 5)
                         )
                 ),
-                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "Bạn thấy hệ thống có dễ sử dụng không?",
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "Do you find the system easy to use?",
                         Set.of(
-                                new OptionDto(null, "Rất khó sử dụng", 1),
-                                new OptionDto(null, "Khó sử dụng", 2),
-                                new OptionDto(null, "Trung bình", 3),
-                                new OptionDto(null, "Dễ sử dụng", 4),
-                                new OptionDto(null, "Rất dễ sử dụng", 5)
+                                new OptionDto(null, "Very difficult to use", 1),
+                                new OptionDto(null, "Difficult to use", 2),
+                                new OptionDto(null, "Average", 3),
+                                new OptionDto(null, "Easy to use", 4),
+                                new OptionDto(null, "Very easy to use", 5)
                         )
                 ),
-                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "Tốc độ phản hồi của hệ thống có đáp ứng kỳ vọng của bạn không?",
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "Is the system’s response speed meeting your expectations?",
                         Set.of(
-                                new OptionDto(null, "Rất chậm", 1),
-                                new OptionDto(null, "Chậm", 2),
-                                new OptionDto(null, "Bình thường", 3),
-                                new OptionDto(null, "Nhanh", 4),
-                                new OptionDto(null, "Rất nhanh", 5)
+                                new OptionDto(null, "Very slow", 1),
+                                new OptionDto(null, "Slow", 2),
+                                new OptionDto(null, "Average", 3),
+                                new OptionDto(null, "Fast", 4),
+                                new OptionDto(null, "Very fast", 5)
                         )
                 ),
-                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "Bạn có gặp phải lỗi hoặc sự cố nào khi sử dụng hệ thống không?",
+                new QuestionDto(null, QuestionTypeEnum.SINGLE_CHOICE, "Have you encountered any errors or issues while using the system?",
                         Set.of(
-                                new OptionDto(null, "Rất thường xuyên", 1),
-                                new OptionDto(null, "Thường xuyên", 2),
-                                new OptionDto(null, "Thỉnh thoảng", 3),
-                                new OptionDto(null, "Hiếm khi", 4),
-                                new OptionDto(null, "Chưa từng", 5)
+                                new OptionDto(null, "Very frequently", 1),
+                                new OptionDto(null, "Frequently", 2),
+                                new OptionDto(null, "Occasionally", 3),
+                                new OptionDto(null, "Rarely", 4),
+                                new OptionDto(null, "Never", 5)
                         )
                 ),
-                new QuestionDto(null, QuestionTypeEnum.NUMBER_ANSWER, "Bạn sử dụng hệ thống này bao nhiêu giờ mỗi tuần?", ""),
-                new QuestionDto(null, QuestionTypeEnum.TEXT_ANSWER, "Tính năng nào của hệ thống bạn thấy hữu ích nhất?", ""),
-                new QuestionDto(null, QuestionTypeEnum.TEXT_ANSWER, "Có tính năng nào bạn muốn chúng tôi bổ sung hoặc cải thiện không?", ""),
-                new QuestionDto(null, QuestionTypeEnum.TEXT_ANSWER, "Xin vui lòng chia sẻ bất kỳ góp ý hoặc nhận xét nào khác của bạn.", "")
+                new QuestionDto(null, QuestionTypeEnum.NUMBER_ANSWER, "How many hours per week do you use this system?", ""),
+                new QuestionDto(null, QuestionTypeEnum.TEXT_ANSWER, "Which feature do you find most useful?", ""),
+                new QuestionDto(null, QuestionTypeEnum.TEXT_ANSWER, "Are there any features you'd like us to add or improve?", ""),
+                new QuestionDto(null, QuestionTypeEnum.TEXT_ANSWER, "Please share any other comments or feedback you may have.", "")
         );
+
 
         feedbackQuiz.setQuestions(questions2);
         quizServiceImp.createQuiz(feedbackQuiz);

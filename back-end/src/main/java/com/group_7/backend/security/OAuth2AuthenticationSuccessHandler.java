@@ -1,6 +1,7 @@
 package com.group_7.backend.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.group_7.backend.dto.QuitPlanDto;
 import com.group_7.backend.dto.UserDto;
 import com.group_7.backend.dto.UserMembershipDto;
 import com.group_7.backend.dto.response.JwtResponseDto;
@@ -8,6 +9,7 @@ import com.group_7.backend.entity.User;
 import com.group_7.backend.entity.enums.UserRoleEnum;
 import com.group_7.backend.mapper.UserMapper;
 import com.group_7.backend.repository.UserRepository;
+import com.group_7.backend.service.IQuitPlanService;
 import com.group_7.backend.service.IUserMembershipService;
 import com.group_7.backend.util.JwtTokenProvider;
 import jakarta.servlet.ServletException;
@@ -20,6 +22,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 @Component
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -37,6 +40,9 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
     @Autowired
     private IUserMembershipService userMembershipService;
+
+    @Autowired
+    private IQuitPlanService quitPlanService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -69,7 +75,8 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         // Trả JWT về FE, hiển thị form json như khi Login bình thường
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
-        objectMapper.writeValue(response.getWriter(), new JwtResponseDto("success","Login with Google successfully!", jwtToken, loginUser, userMembershipDto));
+        objectMapper.writeValue(response.getWriter(), new JwtResponseDto("success","Login with Google successfully!", jwtToken, loginUser, userMembershipDto,
+                quitPlanService.getCurrentByUserIdAndStatus(user.getUserId())));
 
     }
 }
