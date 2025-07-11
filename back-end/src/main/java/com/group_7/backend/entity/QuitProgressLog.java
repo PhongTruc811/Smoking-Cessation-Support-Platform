@@ -28,7 +28,7 @@ public class QuitProgressLog {
     private LocalDate createdAt = LocalDate.now();
 
     @Column(name = "CigarettesSmoked")
-    private int cigarettesSmoked = 0;
+    private int cigarettesSmoked;
 
     @Column(name = "Notes", columnDefinition = "NVARCHAR(MAX)")
     private String notes = null;

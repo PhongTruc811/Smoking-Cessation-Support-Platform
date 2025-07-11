@@ -15,10 +15,11 @@ import java.time.LocalDate;
 public class QuitProgressLogDto {
     private Long logId;
 
-    @NotNull(message = "Stage ID must not be empty")
-    @Positive(message = "Stage ID must be a positive number")
-    private Long stageId;
+    @NotNull(message = "QuitPlan ID must not be empty")
+    @Positive(message = "QuitPlan ID must be a positive number")
+    private Long quitPlanId;
 
+    @NotNull(message = "Created Date must not be empty")
     private LocalDate createdAt;
 
     @NotNull(message = "Cigarettes smoked must not be empty")
