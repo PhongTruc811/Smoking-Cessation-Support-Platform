@@ -4,6 +4,6 @@ import com.group_7.backend.dto.PostDto;
 
 import java.util.List;
 
-public interface IPostService extends ICRUDService<PostDto, PostDto, Long>{
+public interface IPostService {
     List<PostDto> getByUserId(Long userId);
 }

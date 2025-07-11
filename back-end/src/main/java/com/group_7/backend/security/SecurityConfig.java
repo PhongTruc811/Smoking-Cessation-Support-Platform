@@ -60,6 +60,9 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/v3/api-docs/**",
                                 //"/api/**", //Chỉ để test api,
+                                "/api/posts/**",
+                                "/api/likes/**",
+                                "/api/comments/**",
                                 "/login/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"

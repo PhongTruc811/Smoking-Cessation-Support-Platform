@@ -27,21 +27,18 @@ public class PostServiceImp implements IPostService {
         this.postMapper = postMapper;
     }
 
-    @Override
     public PostDto getById(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));
         return postMapper.toDto(post);
     }
 
-    @Override
     public List<PostDto> getAll() {
         return postRepository.findAll().stream()
                 .map(postMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    @Override
     @Transactional
     //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public PostDto create(PostDto dto) {
@@ -52,7 +49,6 @@ public class PostServiceImp implements IPostService {
         return postMapper.toDto(saved);
     }
 
-    @Override
     @Transactional
     //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public PostDto update(Long postId, PostDto dto) {
@@ -64,8 +60,7 @@ public class PostServiceImp implements IPostService {
         Post saved = postRepository.save(post);
         return postMapper.toDto(saved);
     }
-
-    @Override
+    
     @Transactional
     //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void delete(Long postId) {
