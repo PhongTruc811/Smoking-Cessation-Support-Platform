@@ -2,9 +2,12 @@ package com.group_7.backend.controller;
 
 import com.group_7.backend.dto.QuitPlanDto;
 import com.group_7.backend.dto.response.ResponseDto;
+import com.group_7.backend.entity.CustomUserDetail;
 import com.group_7.backend.service.IQuitPlanService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,6 +30,15 @@ public class QuitPlanController {
     public ResponseEntity<ResponseDto> getQuitPlanById(@PathVariable Long id) {
         return ResponseEntity.ok(
                 new ResponseDto("success", "Quit plan fetched successfully", quitPlanService.getById(id))
+        );
+    }
+
+    @GetMapping("/current")
+    public ResponseEntity<ResponseDto> getCurrentQuitPlan() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetail customUserDetail = (CustomUserDetail) auth.getPrincipal();
+        return ResponseEntity.ok(
+                new ResponseDto("success", "Quit plan fetched successfully", quitPlanService.getCurrentByUserIdAndStatus(customUserDetail.getId()))
         );
     }
 
@@ -58,4 +70,6 @@ public class QuitPlanController {
                 new ResponseDto("success", "Quit plan deleted successfully", null)
         );
     }
+
+
 }

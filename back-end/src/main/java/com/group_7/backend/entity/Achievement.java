@@ -1,5 +1,6 @@
 package com.group_7.backend.entity;
 
+import com.group_7.backend.entity.enums.IconTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,18 +15,22 @@ import java.util.Set;
 public class Achievement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "AchievementID")
     private Long achievementId;
-
-    @Column(name = "Name")
     private String name;
-
-    @Column(name = "Description")
+    @Column(columnDefinition = "NVARCHAR(255)")
+    private String icon;
+    @Enumerated(EnumType.STRING)
+    private IconTypeEnum iconType;
+    private boolean locked;
     private String description;
+    private String category;
 
-    @Column(name = "ImageUrl")
-    private String imageUrl;
-
-    @OneToMany(mappedBy = "achievement", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserAchievement> userAchievements = new HashSet<>();
+    public Achievement(String name, String icon, IconTypeEnum iconType, boolean locked, String description, String category) {
+        this.name = name;
+        this.icon = icon;
+        this.iconType = iconType;
+        this.locked = locked;
+        this.description = description;
+        this.category = category;
+    }
 }

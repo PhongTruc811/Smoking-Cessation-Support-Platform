@@ -45,7 +45,6 @@ public class AchievementServiceImp implements IAchievementService {
                 .orElseThrow(() -> new ResourceNotFoundException("Achievement not found with id: " + id));
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
-        entity.setImageUrl(dto.getImageUrl());
         return achievementMapper.toDto(achievementRepository.save(entity));
     }
 

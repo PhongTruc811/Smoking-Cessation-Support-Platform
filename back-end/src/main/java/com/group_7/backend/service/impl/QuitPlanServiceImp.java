@@ -100,7 +100,6 @@ public class QuitPlanServiceImp implements IQuitPlanService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public QuitPlanDto getCurrentByUserIdAndStatus(Long userId) {
         Optional<QuitPlan> inProgressPlan = quitPlanRepository.findTopByUserUserIdAndStatus(userId, QuitPlanStatusEnum.IN_PROGRESS);
         if (inProgressPlan.isPresent()) {
@@ -157,6 +156,4 @@ public class QuitPlanServiceImp implements IQuitPlanService {
 
         return quitPlanMapper.toDto(quitPlanRepository.save(entity));
     }
-
-
 }

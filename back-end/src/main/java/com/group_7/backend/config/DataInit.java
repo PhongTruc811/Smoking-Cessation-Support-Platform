@@ -13,6 +13,9 @@ import com.group_7.backend.service.impl.QuitPlanServiceImp;
 import com.group_7.backend.service.impl.QuizServiceImp;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,9 +32,7 @@ public class DataInit implements ApplicationRunner {
     @Autowired private MembershipPackageRepository membershipPackageRepository;
     @Autowired private UserMembershipRepository userMembershipRepository;
     @Autowired private SmokingProfileRepository smokingProfileRepository;
-    @Autowired private QuitPlanRepository quitPlanRepository;
     @Autowired private QuitMethodRepository quitMethodRepository;
-    @Autowired private QuitMethodOptionRepository quitMethodOptionRepository;
     @Autowired private PostRepository postRepository;
     @Autowired private CommentRepository commentRepository;
     @Autowired private LikeRepository likeRepository;
@@ -39,6 +40,7 @@ public class DataInit implements ApplicationRunner {
     @Autowired private QuizServiceImp quizServiceImp;
     @Autowired private QuitPlanServiceImp quitPlanServiceImp;
     @Autowired private QuitMethodOptionMapper quitMethodOptionMapper;
+    @Autowired private AchievementRepository achievementRepository;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -331,9 +333,90 @@ public class DataInit implements ApplicationRunner {
         feedbackQuiz.setQuestions(questions2);
         quizServiceImp.createQuiz(feedbackQuiz);
 
+        // --- Time-based Achievements ---
+        Achievement ach1 = new Achievement();
+        ach1.setName("First 24 Hours");
+        ach1.setIcon("🏅");
+        ach1.setIconType(IconTypeEnum.EMOJI);
+        ach1.setLocked(false);
+        ach1.setDescription("You made it through the first day!");
+        ach1.setCategory("time");
+        achievementRepository.save(ach1);
 
+        Achievement ach2 = new Achievement();
+        ach2.setName("Three-Day Trial");
+        ach2.setIcon("🏅");
+        ach2.setIconType(IconTypeEnum.EMOJI);
+        ach2.setLocked(false);
+        ach2.setDescription("You've completed 3 days smoke-free!");
+        ach2.setCategory("time");
+        achievementRepository.save(ach2);
+
+        Achievement ach3 = new Achievement();
+        ach3.setName("Week One Warrior");
+        ach3.setIcon("🏅");
+        ach3.setIconType(IconTypeEnum.EMOJI);
+        ach3.setLocked(false);
+        ach3.setDescription("One full week without smoking.");
+        ach3.setCategory("time");
+        achievementRepository.save(ach3);
+
+        Achievement ach4 = new Achievement();
+        ach4.setName("One Year Legend");
+        ach4.setIcon("🏅");
+        ach4.setIconType(IconTypeEnum.EMOJI);
+        ach4.setLocked(true);
+        ach4.setDescription("A full year clean. You're legendary.");
+        ach4.setCategory("time");
+        achievementRepository.save(ach4);
+
+// --- Financial Achievements ---
+        Achievement ach5 = new Achievement();
+        ach5.setName("First 10,000 VND Saved");
+        ach5.setIcon("💰");
+        ach5.setIconType(IconTypeEnum.EMOJI);
+        ach5.setLocked(false);
+        ach5.setDescription("You've saved the first 10,000đ!");
+        ach5.setCategory("financial");
+        achievementRepository.save(ach5);
+
+        Achievement ach6 = new Achievement();
+        ach6.setName("Money Saver (100,000 VND)");
+        ach6.setIcon("💰");
+        ach6.setIconType(IconTypeEnum.EMOJI);
+        ach6.setLocked(true);
+        ach6.setDescription("You've saved over 100,000đ!");
+        ach6.setCategory("financial");
+        achievementRepository.save(ach6);
+
+        Achievement ach9 = new Achievement();
+        ach9.setName("250,000 VND Saved");
+        ach9.setIcon("💰");
+        ach9.setIconType(IconTypeEnum.EMOJI);
+        ach9.setLocked(true);
+        ach9.setDescription("You've saved over 250,000đ!");
+        ach9.setCategory("financial");
+        achievementRepository.save(ach9);
+
+// --- Health Achievements ---
+        Achievement ach7 = new Achievement();
+        ach7.setName("Breathe Easy");
+        ach7.setIcon("❤️");
+        ach7.setIconType(IconTypeEnum.EMOJI);
+        ach7.setLocked(false);
+        ach7.setDescription("Your lungs already feel the difference.");
+        ach7.setCategory("health");
+        achievementRepository.save(ach7);
+
+        Achievement ach8 = new Achievement();
+        ach8.setName("Heart Helper");
+        ach8.setIcon("❤️");
+        ach8.setIconType(IconTypeEnum.EMOJI);
+        ach8.setLocked(true);
+        ach8.setDescription("Heart attack risk drops significantly.");
+        ach8.setCategory("health");
+        achievementRepository.save(ach8);
 
         System.out.println("=== ĐÃ SEED XONG DỮ LIỆU MẪU ===");
     }
-
 }

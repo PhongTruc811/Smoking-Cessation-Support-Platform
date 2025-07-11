@@ -8,12 +8,15 @@ import org.springframework.stereotype.Component;
 public class AchievementMapper {
     public AchievementDto toDto(Achievement entity) {
         if (entity == null) return null;
-        return new AchievementDto(
-                entity.getAchievementId(),
-                entity.getName(),
-                entity.getDescription(),
-                entity.getImageUrl()
-        );
+        AchievementDto dto= new AchievementDto();
+        dto.setAchievementId(entity.getAchievementId());
+        dto.setDescription(entity.getDescription());
+        dto.setName(entity.getName());
+        dto.setIcon(entity.getIcon());
+        dto.setIconType(entity.getIconType());
+        dto.setLocked(entity.isLocked());
+        dto.setCategory(entity.getCategory());
+        return dto;
     }
 
     public Achievement toEntity(AchievementDto dto) {
@@ -21,7 +24,9 @@ public class AchievementMapper {
         Achievement entity = new Achievement();
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
-        entity.setImageUrl(dto.getImageUrl());
+        entity.setIcon(dto.getIcon());
+        entity.setIconType(dto.getIconType());
+        entity.setCategory(dto.getCategory());
         return entity;
     }
 }
