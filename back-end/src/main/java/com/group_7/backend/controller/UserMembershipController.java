@@ -17,11 +17,11 @@ public class UserMembershipController {
         this.userMembershipService = userMembershipService;
     }
 
-    @PostMapping("/purchase")
-    public ResponseEntity<ResponseDto> purchaseMembership(@Valid @RequestBody UserMembershipDto dto) {
-        UserMembershipDto purchased = userMembershipService.create(dto);
-        return ResponseEntity.ok(new ResponseDto("success", "Membership purchased successfully", purchased));
-    }
+//    @PostMapping("/purchase")
+//    public ResponseEntity<ResponseDto> purchaseMembership(@Valid @RequestBody UserMembershipDto dto) {
+//        UserMembershipDto purchased = userMembershipService.create(dto);
+//        return ResponseEntity.ok(new ResponseDto("success", "Membership purchased successfully", purchased));
+//    }
 
     @GetMapping("/user/{userId}/memberships")
     public ResponseEntity<ResponseDto> getMembershipsByUser(@PathVariable Long userId) {
@@ -42,6 +42,14 @@ public class UserMembershipController {
         return ResponseEntity.ok(
                 new ResponseDto("success", "User membership fetched successfully", userMembershipService.getById(id))
         );
+    }
+
+    @PostMapping("/initiate-purchase")
+    public ResponseEntity<ResponseDto> initiatePurchase(@Valid @RequestBody UserMembershipDto dto) {
+        // Service sẽ tạo một bản ghi UserMembership với status PENDING
+        // và trả về bản ghi đó (quan trọng là phải có ID)
+        UserMembershipDto pendingMembership = userMembershipService.findOrCreatePendingMembership(dto);
+        return ResponseEntity.ok(new ResponseDto("success", "Membership purchase initiated or retrieved", pendingMembership));
     }
 
     @GetMapping

@@ -1,15 +1,19 @@
 package com.group_7.backend.service.impl;
 
 import com.group_7.backend.dto.UserMembershipDto;
-import com.group_7.backend.entity.MembershipPackage;
+import com.group_7.backend.entity.UserMembership;
 import com.group_7.backend.entity.enums.MembershipStatusEnum;
-import com.group_7.backend.repository.MembershipPackageRepository;
+import com.group_7.backend.exception.ResourceNotFoundException;
+import com.group_7.backend.repository.UserMembershipRepository;
 import com.group_7.backend.service.IPaymentService;
+import com.group_7.backend.service.IUserMembershipService; // Import service interface
 import com.group_7.backend.util.VnPayTools;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -22,6 +26,9 @@ import java.util.*;
 
 @Service
 public class VnPayService implements IPaymentService {
+    private static final Logger log = LoggerFactory.getLogger(VnPayService.class);
+
+
     @Value("${vnpay.tmnCode}")
     private String vnpTmnCode;
 
@@ -34,53 +41,49 @@ public class VnPayService implements IPaymentService {
     @Value("${vnpay.returnUrl}")
     private String vnpReturnUrl;
 
-    @Autowired
-    private UserMembershipServiceImp userMembershipService;
+    // --- SỬA LỖI INJECT DEPENDENCY TẠI ĐÂY ---
+    private final IUserMembershipService userMembershipService;
+    private final UserMembershipRepository userMembershipRepository;
 
-    @Autowired
-    private MembershipPackageRepository membershipPackageRepository;
+    // Sử dụng Constructor Injection
+    public VnPayService(IUserMembershipService userMembershipService,
+                        UserMembershipRepository userMembershipRepository) {
+        this.userMembershipService = userMembershipService;
+        this.userMembershipRepository = userMembershipRepository;
+    }
+
+
 
     @Override
-    public String createPayment(UserMembershipDto userMembershipDto, HttpServletRequest request) throws UnsupportedEncodingException {
-        // --- SỬA LỖI BẮT ĐẦU TỪ ĐÂY ---
+    public String createPayment(Long userMembershipId, HttpServletRequest request) throws UnsupportedEncodingException {
+        // 1. Tìm bản ghi UserMembership từ ID được cung cấp
+        UserMembership userMembership = userMembershipRepository.findById(userMembershipId)
+                .orElseThrow(() -> new ResourceNotFoundException("UserMembership not found with id: " + userMembershipId));
 
-        // 1. Lấy membershipPackageId từ DTO mà frontend gửi lên
-        Long packageId = userMembershipDto.getMembershipPackageId();
-        if (packageId == null) {
-            throw new IllegalArgumentException("MembershipPackageId is required.");
-        }
+        // 2. Lấy thông tin giá tiền từ gói membership liên quan
+        long amount = userMembership.getMembershipPackage().getPrice().multiply(BigDecimal.valueOf(100)).longValue();
 
-        // 2. Dùng repository để tìm thông tin gói trong database
-        // Lưu ý: .findById trả về Optional, nên dùng .orElseThrow để xử lý nếu không tìm thấy
-        MembershipPackage membershipPackage = membershipPackageRepository.findById(packageId)
-                .orElseThrow(() -> new RuntimeException("Membership package not found with id: " + packageId));
+        // 3. Tạo một chuỗi ngẫu nhiên ngắn
+        String randomSuffix = UUID.randomUUID().toString().substring(0, 8);
 
-        // 3. Lấy giá tiền từ đối tượng đã tìm được và nhân với 100 cho VNPAY
-        long amount = membershipPackage.getPrice().multiply(BigDecimal.valueOf(100)).longValue();
+        // 4. Tạo vnp_TxnRef độc nhất bằng cách nối ID và chuỗi ngẫu nhiên
+        String vnp_TxnRef = userMembershipId + "-" + randomSuffix;
 
-        // --- KẾT THÚC PHẦN SỬA LỖI ---
+
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
-//        long amount = Integer.parseInt(request.getParameter("amount"))*100;
-//        String bankCode = request.getParameter("bankCode");
-
-        String vnp_TxnRef = VnPayTools.getRandomNumber(8);
-        // Lấy địa chỉ IP của client một cách an toàn
-        String vnp_IpAddr = getClientIp(request); // <-- SỬ DỤNG PHƯƠNG THỨC MỚI
-
+        String vnp_IpAddr = getClientIp(request);
         String vnp_TmnCode = vnpTmnCode;
+
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
         vnp_Params.put("vnp_Amount", String.valueOf(amount));
         vnp_Params.put("vnp_CurrCode", "VND");
-//        if (bankCode != null && !bankCode.isEmpty()) {
-//            vnp_Params.put("vnp_BankCode", bankCode);
-//        }
-        vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef); //TODO: xóa
+        vnp_Params.put("vnp_TxnRef", vnp_TxnRef); // <-- Dùng ID của UserMembership
+        vnp_Params.put("vnp_OrderInfo", "Thanh toan goi Premium cho User ID:" + userMembership.getUser().getUserId());
         vnp_Params.put("vnp_OrderType", orderType);
 
         String locate = request.getParameter("language");
@@ -101,23 +104,24 @@ public class VnPayService implements IPaymentService {
         String vnp_ExpireDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
-        List fieldNames = new ArrayList(vnp_Params.keySet());
+        // --- Sắp xếp và tạo chuỗi hash ---
+        List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
         Collections.sort(fieldNames);
         StringBuilder hashData = new StringBuilder();
         StringBuilder query = new StringBuilder();
-        Iterator itr = fieldNames.iterator();
+        Iterator<String> itr = fieldNames.iterator();
         while (itr.hasNext()) {
-            String fieldName = (String) itr.next();
-            String fieldValue = (String) vnp_Params.get(fieldName);
+            String fieldName = itr.next();
+            String fieldValue = vnp_Params.get(fieldName);
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
                 //Build hash data
                 hashData.append(fieldName);
                 hashData.append('=');
-                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
                 //Build query
-                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8.toString()));
                 query.append('=');
-                query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                query.append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
                 if (itr.hasNext()) {
                     query.append('&');
                     hashData.append('&');
@@ -125,50 +129,58 @@ public class VnPayService implements IPaymentService {
             }
         }
         String queryUrl = query.toString();
-//        String vnp_SecureHash = VnPayTools.hmacSHA512(VnPayTools.secretKey, hashData.toString());
-//        queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
-//        return vnpPayUrl + "?" + queryUrl;
-
         // **QUAN TRỌNG**: Sử dụng vnpHashSecret được inject từ file properties, không dùng VnPayTools.secretKey
         String vnp_SecureHash = VnPayTools.hmacSHA512(this.vnpHashSecret, hashData.toString());
-
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+
         return vnpPayUrl + "?" + queryUrl;
     }
 
     @Override
     public boolean verifyCallback(Map<String, String[]> params) {
-        Map<String, String> fields = new HashMap<>();
-        for (Map.Entry<String, String[]> entry : params.entrySet()) {
-            fields.put(entry.getKey(), entry.getValue()[0]);
+        String vnp_SecureHash = "";
+        if (params.containsKey("vnp_SecureHash")) {
+            vnp_SecureHash = params.get("vnp_SecureHash")[0];
         }
-        String vnpSecureHash = fields.remove("vnp_SecureHash");
-        fields.remove("vnp_SecureHashType");
 
-        List<String> fieldNames = new ArrayList<>(fields.keySet());
-        Collections.sort(fieldNames);
-        StringBuilder hashData = new StringBuilder();
-        for (int i = 0; i < fieldNames.size(); i++) {
-            String fieldName = fieldNames.get(i);
-            String value = fields.get(fieldName);
-            if (value != null && value.length() > 0) {
-                hashData.append(fieldName).append('=').append(value);
-                if (i < fieldNames.size() - 1) {
-                    hashData.append('&');
-                }
+        // Dùng một TreeMap để tự động sắp xếp các key theo thứ tự alphabet
+        Map<String, String> fields = new TreeMap<>();
+        for (Map.Entry<String, String[]> entry : params.entrySet()) {
+            String fieldName = entry.getKey();
+            String fieldValue = entry.getValue()[0];
+            // Bỏ qua các trường hash và type
+            if (!fieldName.equals("vnp_SecureHash") && !fieldName.equals("vnp_SecureHashType")) {
+                fields.put(fieldName, fieldValue);
             }
         }
-        String checkHash = hmacSHA512(vnpHashSecret, hashData.toString());
-        return checkHash.equalsIgnoreCase(vnpSecureHash);
+
+        // Tạo chuỗi hashData
+        StringBuilder hashData = new StringBuilder();
+        for (Map.Entry<String, String> entry : fields.entrySet()) {
+            if (hashData.length() > 0) {
+                hashData.append('&');
+            }
+            // GIỮ NGUYÊN GIÁ TRỊ GỐC MÀ VNPAY GỬI, KHÔNG ENCODE LẠI
+            hashData.append(entry.getKey()).append('=').append(entry.getValue());
+        }
+
+        String checkHash = hmacSHA512(this.vnpHashSecret, hashData.toString());
+
+        // Ghi log để debug
+         log.info("Received vnp_SecureHash: {}", vnp_SecureHash);
+         log.info("Generated checkHash: {}", checkHash);
+         log.info("HashData string: {}", hashData.toString());
+
+        return checkHash.equalsIgnoreCase(vnp_SecureHash);
     }
 
     @Override
     public UserMembershipDto handleVnPayReturn(Map<String, String[]> params, Long orderId) {
         boolean isValid = verifyCallback(params); // kiểm tra chữ ký hash
         if (isValid) {
-            return userMembershipService.updateStatus(orderId,MembershipStatusEnum.ACTIVE);
+            return userMembershipService.updateStatus(orderId, MembershipStatusEnum.ACTIVE);
         } else {
-            return userMembershipService.updateStatus(orderId,MembershipStatusEnum.FAILED);
+            return userMembershipService.updateStatus(orderId, MembershipStatusEnum.FAILED);
         }
     }
 
@@ -185,7 +197,7 @@ public class VnPayService implements IPaymentService {
             }
             return hash.toString();
         } catch (Exception ex) {
-            throw new RuntimeException("Lỗi khi mã hóa HmacSHA512", ex);
+            throw new RuntimeException("Error while hashing HmacSHA512", ex);
         }
     }
 
@@ -199,30 +211,21 @@ public class VnPayService implements IPaymentService {
         // Thử lấy IP từ header 'X-Forwarded-For' (nếu app chạy sau một proxy/load balancer)
         String ipAddress = request.getHeader("X-Forwarded-For");
 
-        if (Objects.isNull(ipAddress) || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("Proxy-Client-IP");
         }
-        if (Objects.isNull(ipAddress) || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (Objects.isNull(ipAddress) || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getRemoteAddr();
-            // Xử lý trường hợp đặc biệt của localhost IPv6
             if ("0:0:0:0:0:0:0:1".equals(ipAddress)) {
                 ipAddress = "127.0.0.1";
             }
         }
-
-        // Nếu IP có thể chứa nhiều địa chỉ (do đi qua nhiều proxy), lấy địa chỉ đầu tiên
-        if (!Objects.isNull(ipAddress) && ipAddress.length() > 15 && ipAddress.indexOf(",") > 0) {
-            ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));
+        if (ipAddress != null && ipAddress.contains(",")) {
+            ipAddress = ipAddress.split(",")[0];
         }
-
-        // Nếu sau tất cả các bước vẫn là null, gán một giá trị mặc định cho môi trường dev
-        if (Objects.isNull(ipAddress)) {
-            ipAddress = "127.0.0.1"; // Fallback IP for local development
-        }
-
         return ipAddress;
     }
 }

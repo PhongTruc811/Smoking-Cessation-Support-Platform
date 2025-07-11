@@ -12,4 +12,7 @@ public interface IUserMembershipService extends ICRUDService<UserMembershipDto, 
     UserMembershipDto getCurrentMembershipForLogin(Long userId);
     UserMembershipDto updateStatus(Long id, MembershipStatusEnum status);
     void updateAllActiveMemberships();
+    UserMembershipDto updateStatusForIpn(Long id, MembershipStatusEnum status);
+    UserMembershipDto findOrCreatePendingMembership(UserMembershipDto dto);
+
 }

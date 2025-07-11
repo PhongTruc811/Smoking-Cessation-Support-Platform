@@ -42,33 +42,76 @@ public class UserMembershipServiceImp implements IUserMembershipService {
 
     @Override
     @Transactional
-    public UserMembershipDto create(UserMembershipDto dto) {
-        //Kiểm tra user hay gói membership đã có
+    public UserMembershipDto findOrCreatePendingMembership(UserMembershipDto dto) {
+//        // 1. Kiểm tra xem có giao dịch ACTIVE nào không. Nếu có, không cho phép.
+//        boolean hasActive = userMembershipRepository.existsByUserUserIdAndStatusIn(dto.getUserId(), List.of(MembershipStatusEnum.ACTIVE));
+//        if (hasActive) {
+//            throw new IllegalStateException("This user already has an active membership.");
+//        }
+//
+//        // 2. Tìm xem có giao dịch PENDING nào cho gói này không.
+//        Optional<UserMembership> existingPending = userMembershipRepository
+//                .findByUserUserIdAndMembershipPackageIdAndStatus(dto.getUserId(), dto.getMembershipPackageId(), MembershipStatusEnum.PENDING);
+//
+//        // 3. Nếu có, trả về chính nó để tái sử dụng
+//        if (existingPending.isPresent()) {
+//            return userMembershipMapper.toDto(existingPending.get());
+//        }
+
+        // 4. Nếu không có, tạo một bản ghi PENDING mới
         User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + dto.getUserId()));
         MembershipPackage membershipPackage = membershipPackageRepository.findById(dto.getMembershipPackageId())
-                .orElseThrow(() -> new ResourceNotFoundException("MembershipPackage not found with id: " + dto.getMembershipPackageId()));
-        //Kiểm tra user đã có gói membership kích hoạt
-        Optional<UserMembership> checkUser = userMembershipRepository.findTopByUserUserIdAndStatusOrderByStartDateDesc(dto.getUserId(), MembershipStatusEnum.ACTIVE);
-        if (checkUser!=null) throw new IllegalArgumentException("This user currently have active membership");
+                .orElseThrow(() -> new ResourceNotFoundException("Package not found: " + dto.getMembershipPackageId()));
 
-        UserMembership userMembership = new UserMembership();
-        userMembership.setUser(user);
-        userMembership.setMembershipPackage(membershipPackage);
-        userMembership.setStartDate(LocalDate.now());
-        userMembership.setPaymentMethod(dto.getPaymentMethod());
-        userMembership.setStatus(MembershipStatusEnum.PENDING);
+        UserMembership newUserMembership = new UserMembership();
+        newUserMembership.setUser(user);
+        newUserMembership.setMembershipPackage(membershipPackage);
+        newUserMembership.setStartDate(LocalDate.now());
+        newUserMembership.setPaymentMethod(dto.getPaymentMethod());
+        newUserMembership.setStatus(MembershipStatusEnum.ACTIVE);
 
-        // Chỉnh ngày hết hạn
         if (membershipPackage.getDurationInDays() > 0) {
-            LocalDate endDate = userMembership.getStartDate().plusDays(membershipPackage.getDurationInDays());
-            userMembership.setEndDate(endDate);
+            LocalDate endDate = newUserMembership.getStartDate().plusDays(membershipPackage.getDurationInDays());
+            newUserMembership.setEndDate(endDate);
         }
 
-        UserMembership saved = userMembershipRepository.save(userMembership);
-        return userMembershipMapper.
-                toDto(saved);
+        UserMembership saved = userMembershipRepository.save(newUserMembership);
+        return userMembershipMapper.toDto(saved);
     }
+
+
+//    @Override
+//    @Transactional
+//    public UserMembershipDto create(UserMembershipDto dto) {
+//        //Kiểm tra user hay gói membership đã có
+//        User user = userRepository.findById(dto.getUserId())
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
+//        MembershipPackage membershipPackage = membershipPackageRepository.findById(dto.getMembershipPackageId())
+//                .orElseThrow(() -> new ResourceNotFoundException("MembershipPackage not found with id: " + dto.getMembershipPackageId()));
+//        // Nếu user đã có gói ACTIVE, không cho tạo thêm.
+//        Optional<UserMembership> activeCheck = userMembershipRepository.findTopByUserUserIdAndStatusOrderByStartDateDesc(dto.getUserId(), MembershipStatusEnum.ACTIVE);
+//        if (activeCheck.isPresent()) {
+//            throw new IllegalStateException("This user already has an active membership.");
+//        }
+//
+//        UserMembership userMembership = new UserMembership();
+//        userMembership.setUser(user);
+//        userMembership.setMembershipPackage(membershipPackage);
+//        userMembership.setStartDate(LocalDate.now());
+//        userMembership.setPaymentMethod(dto.getPaymentMethod());
+//        userMembership.setStatus(MembershipStatusEnum.PENDING);
+//
+//        // Chỉnh ngày hết hạn
+//        if (membershipPackage.getDurationInDays() > 0) {
+//            LocalDate endDate = userMembership.getStartDate().plusDays(membershipPackage.getDurationInDays());
+//            userMembership.setEndDate(endDate);
+//        }
+//
+//        UserMembership saved = userMembershipRepository.save(userMembership);
+//        return userMembershipMapper.
+//                toDto(saved);
+//    }
 
     @Override
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -154,5 +197,32 @@ public class UserMembershipServiceImp implements IUserMembershipService {
                 userMembershipRepository.save(membership);
             }
         }
+    }
+
+    @Override
+    public UserMembershipDto updateStatusForIpn(Long id, MembershipStatusEnum status) {
+        // Logic y hệt, nhưng không có @PreAuthorize
+        UserMembership entity = userMembershipRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("UserMembership not found for IPN update with id: " + id));
+
+        // Logic bổ sung: chỉ cập nhật nếu trạng thái đang là PENDING để tránh ghi đè
+        if (entity.getStatus() == MembershipStatusEnum.PENDING) {
+            entity.setStatus(status);
+            // Nếu kích hoạt thành công, cập nhật lại ngày bắt đầu và ngày kết thúc
+            if (status == MembershipStatusEnum.ACTIVE) {
+                entity.setStartDate(LocalDate.now());
+                int duration = entity.getMembershipPackage().getDurationInDays();
+                entity.setEndDate(LocalDate.now().plusDays(duration));
+            }
+            UserMembership saved = userMembershipRepository.save(entity);
+            return userMembershipMapper.toDto(saved);
+        }
+        // Nếu không phải PENDING (ví dụ đã ACTIVE/EXPIRED), thì không làm gì và trả về trạng thái hiện tại
+        return userMembershipMapper.toDto(entity);
+    }
+
+    @Override
+    public UserMembershipDto create(UserMembershipDto t) {
+        return null;
     }
 }

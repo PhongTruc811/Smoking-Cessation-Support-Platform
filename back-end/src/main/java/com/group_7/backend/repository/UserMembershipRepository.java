@@ -15,4 +15,8 @@ public interface UserMembershipRepository extends JpaRepository<UserMembership, 
     Optional <UserMembership> findTopByUserUserIdAndStatusOrderByStartDateDesc(Long userId, MembershipStatusEnum status);
 
     List<UserMembership> findAllByStatus(MembershipStatusEnum membershipStatusEnum);
+    boolean existsByUserUserIdAndStatusIn(Long userId, List<MembershipStatusEnum> statuses);
+
+    // Thêm phương thức này
+    Optional<UserMembership> findByUserUserIdAndMembershipPackageIdAndStatus(Long userId, Long packageId, MembershipStatusEnum status);
 }

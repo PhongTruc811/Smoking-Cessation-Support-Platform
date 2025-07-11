@@ -7,7 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 public interface IPaymentService {
-    String createPayment(UserMembershipDto userMembershipDto, HttpServletRequest request) throws UnsupportedEncodingException;
+    String createPayment(Long userMembershipId, HttpServletRequest request) throws UnsupportedEncodingException;
     boolean verifyCallback(Map<String, String[]> params);
     UserMembershipDto handleVnPayReturn(Map<String, String[]> params, Long orderId);
 }
