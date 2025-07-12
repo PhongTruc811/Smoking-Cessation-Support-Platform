@@ -11,7 +11,13 @@ import com.group_7.backend.service.IPostService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,4 +82,22 @@ public class PostServiceImp implements IPostService {
                 .map(postMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    public Map<String, Object> getStats() {
+        Map<String, Object> stats = new HashMap<>();
+
+        // Start of the current week (Monday, 00:00)
+        LocalDateTime startOfWeek = LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay();
+
+        long activeMembers = postRepository.countActiveMembers();
+        long postsThisWeek = postRepository.countPostsThisWeek(startOfWeek);
+        long totalPosts = postRepository.count();
+
+        stats.put("activeMembers", activeMembers);
+        stats.put("postsThisWeek", postsThisWeek);
+        stats.put("totalPosts", totalPosts);
+
+        return stats;
+    }
+
 }
