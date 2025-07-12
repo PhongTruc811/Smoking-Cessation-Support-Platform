@@ -58,4 +58,8 @@ public class LikeServiceImp implements ILikeService {
     public int countLikes(Long postId) {
         return likeRepository.countByPostPostId(postId);
     }
+    @Override
+    public boolean hasUserLiked(Long postId, Long userId) {
+    return likeRepository.existsByPostPostIdAndUserUserId(postId, userId);
+}
 }

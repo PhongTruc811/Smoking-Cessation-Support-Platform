@@ -37,4 +37,12 @@ public class LikeController {
                 new ResponseDto("success", "Like count fetched successfully", count)
         );
     }
+
+    @GetMapping("/status")
+    public ResponseEntity<ResponseDto> likeStatus(@RequestParam Long postId, @RequestParam Long userId) {
+        boolean liked = likeService.hasUserLiked(postId, userId);
+        return ResponseEntity.ok(
+                new ResponseDto("success", "Like status fetched successfully", liked)
+        );
+    }
 }

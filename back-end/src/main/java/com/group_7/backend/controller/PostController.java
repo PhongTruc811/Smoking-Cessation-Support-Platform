@@ -58,4 +58,10 @@ public class PostController {
                 new ResponseDto("success", "Post deleted successfully", null)
         );
     }
+    @GetMapping("/stats")
+    public ResponseEntity<ResponseDto> getStats() {
+        return ResponseEntity.ok(
+                new ResponseDto("success", "Stats fetched successfully", postService.getStats())
+        );
+    }
 }

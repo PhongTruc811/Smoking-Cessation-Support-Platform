@@ -4,4 +4,5 @@ public interface ILikeService {
     void like(Long postId, Long userId);
     void unlike(Long postId, Long userId);
     int countLikes(Long postId);
+    boolean hasUserLiked(Long postId, Long userId);
 }
