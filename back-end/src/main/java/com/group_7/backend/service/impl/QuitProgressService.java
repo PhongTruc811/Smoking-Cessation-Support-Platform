@@ -22,16 +22,19 @@ public class QuitProgressService implements IQuitProgressLogService {
     private final QuitProgressLogRepository quitProgressLogRepository;
     private final QuitPlanRepository quitPlanRepository;
     private final QuitProgressLogMapper quitProgressLogMapper;
+    private final QuitPlanServiceImp quitPlanServiceImp;
 
     @Autowired
     public QuitProgressService(
             QuitProgressLogRepository quitProgressLogRepository,
             QuitPlanRepository quitPlanRepository,
-            QuitProgressLogMapper quitProgressLogMapper
+            QuitProgressLogMapper quitProgressLogMapper,
+            QuitPlanServiceImp quitPlanServiceImp
     ) {
         this.quitProgressLogRepository = quitProgressLogRepository;
         this.quitPlanRepository = quitPlanRepository;
         this.quitProgressLogMapper = quitProgressLogMapper;
+        this.quitPlanServiceImp = quitPlanServiceImp;
     }
 
     @Override
@@ -43,6 +46,9 @@ public class QuitProgressService implements IQuitProgressLogService {
         if (quitProgressLogRepository.existsByCreatedAtAndQuitPlan_Id(dto.getCreatedAt(), plan.getId())) {
             throw new IllegalArgumentException("Progress Log for this date already exists!");
         }
+
+        //Cập nhật số điếu thuốc giảm (tăng)
+        quitPlanServiceImp.updateTotalSmoke(plan.getId(),plan.getDailySmoke()-dto.getCigarettesSmoked());
 
         QuitProgressLog log = quitProgressLogMapper.toEntity(dto, plan);
         QuitProgressLog saved = quitProgressLogRepository.save(log);
@@ -68,10 +74,11 @@ public class QuitProgressService implements IQuitProgressLogService {
     public QuitProgressLogDto update(Long id, QuitProgressLogDto dto) {
         QuitProgressLog log = quitProgressLogRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("QuitProgressLog not found with id: " + id));
-
+        //Cập nhật số điếu thuốc giảm (tăng)
+        int record=log.getCigarettesSmoked() - dto.getCigarettesSmoked();
         log.setCigarettesSmoked(dto.getCigarettesSmoked());
         log.setNotes(dto.getNotes());
-
+        quitPlanServiceImp.updateTotalSmoke(dto.getQuitPlanId(), record);
         QuitProgressLog saved = quitProgressLogRepository.save(log);
         return quitProgressLogMapper.toDto(saved);
     }

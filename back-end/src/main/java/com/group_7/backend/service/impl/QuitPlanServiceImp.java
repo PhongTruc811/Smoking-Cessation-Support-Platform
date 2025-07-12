@@ -2,6 +2,7 @@ package com.group_7.backend.service.impl;
 
 import com.group_7.backend.dto.QuitMethodOptionDto;
 import com.group_7.backend.dto.QuitPlanDto;
+import com.group_7.backend.entity.CustomUserDetail;
 import com.group_7.backend.entity.QuitMethodOption;
 import com.group_7.backend.entity.QuitPlan;
 import com.group_7.backend.entity.User;
@@ -13,8 +14,11 @@ import com.group_7.backend.repository.QuitPlanRepository;
 import com.group_7.backend.repository.UserRepository;
 import com.group_7.backend.service.IQuitPlanService;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -56,11 +60,10 @@ public class QuitPlanServiceImp implements IQuitPlanService {
 
     @Override
     @Transactional
-    @PreAuthorize("#userId == authentication.principal.id or hasAuthority('ROLE_COACH')")
+    @PreAuthorize("#dto.userId == authentication.principal.id or hasAuthority('ROLE_COACH')")
     public QuitPlanDto update(Long id, QuitPlanDto dto) {
         QuitPlan plan = quitPlanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("QuitPlan not found with id: " + id));
-        plan.setReason(dto.getReason());
         plan.setStartDate(dto.getStartDate());
         plan.setTargetEndDate(dto.getTargetEndDate());
         plan.setStatus(dto.getStatus());
@@ -80,16 +83,28 @@ public class QuitPlanServiceImp implements IQuitPlanService {
         return quitPlanMapper.toDto(saved);
     }
 
+    public QuitPlanDto updateTotalSmoke(Long id, int newSmoke) {
+        QuitPlan plan = quitPlanRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("QuitPlan not found with id: " + id));
+        System.out.println(plan.getTotalSmoke()+"+"+newSmoke);
+        plan.setTotalSmoke(plan.getTotalSmoke()+newSmoke);
+        return quitPlanMapper.toDto(quitPlanRepository.save(plan));
+    }
+
     @Override
     @Transactional
-    @PreAuthorize("#userId == authentication.principal.id")
     public void delete(Long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetail customUserDetail = (CustomUserDetail) auth.getPrincipal();
         QuitPlan entity = quitPlanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("QuitPlan not found with id: " + id));
+        if (customUserDetail.getId()!=entity.getUser().getUserId()){
+            throw new ResourceAccessException("You do not have permission to delete this quit plan");
+        }
         entity.setStatus(QuitPlanStatusEnum.CANCELLED);
         quitPlanRepository.save(entity);
     }
-
+    
     @Override
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_COACH')")
     public List<QuitPlanDto> getByUserId(Long userId) {

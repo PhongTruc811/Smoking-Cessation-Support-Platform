@@ -40,7 +40,7 @@ public class QuitPlanMapper {
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setStatus(entity.getStatus());
         dto.setDailySmoke(entity.getDailySmoke());
-
+        dto.setTotalSmoke(entity.getTotalSmoke());
         if (entity.getMethodOptions() != null) {
             dto.setMethodOptions(
                     entity.getMethodOptions().stream()

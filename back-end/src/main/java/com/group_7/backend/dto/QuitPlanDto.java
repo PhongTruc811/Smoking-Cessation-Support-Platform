@@ -41,6 +41,7 @@ public class QuitPlanDto {
     @Min(value = 0, message = "Daily smoke count cannot be negative")
     private int dailySmoke;
 
+    private int totalSmoke;
     private Set<QuitMethodOptionDto> methodOptions;
     private List<QuitProgressLogDto> progressLogs;
 

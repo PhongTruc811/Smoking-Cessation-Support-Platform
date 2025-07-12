@@ -48,6 +48,9 @@ public class QuitPlan {
     @Column(name = "DailySmoke")
     private int dailySmoke;
 
+    @Column(name = "TotalSmoke")
+    private int totalSmoke=0;
+
     //------------------------------------------------------------------------------
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
