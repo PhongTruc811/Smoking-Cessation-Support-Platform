@@ -57,7 +57,7 @@ public class AdminDashboardService implements IAdminDashboardService {
 
         // Posts
         long totalPosts = postRepository.count();
-        long postsThisWeek = postRepository.countPostsSince(LocalDateTime.now().minusDays(7));
+        long postsThisWeek = postRepository.countPostsThisWeek(LocalDateTime.now().minusDays(7));
 
         // Comments
         long totalComments = commentRepository.count();
