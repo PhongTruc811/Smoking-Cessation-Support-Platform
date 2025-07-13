@@ -3,6 +3,8 @@ package com.group_7.backend.repository;
 import com.group_7.backend.entity.UserMembership;
 import com.group_7.backend.entity.enums.MembershipStatusEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,4 +21,10 @@ public interface UserMembershipRepository extends JpaRepository<UserMembership, 
 
     // Thêm phương thức này
     Optional<UserMembership> findByUserUserIdAndMembershipPackageIdAndStatus(Long userId, Long packageId, MembershipStatusEnum status);
+
+    long countByStatus(MembershipStatusEnum status);
+
+    // Safe count for demo (returns 0 if status doesn't exist)
+    @Query("SELECT COUNT(m) FROM UserMembership m WHERE m.status = :status")
+    long countByStatusSafe(@Param("status") MembershipStatusEnum status);
 }
