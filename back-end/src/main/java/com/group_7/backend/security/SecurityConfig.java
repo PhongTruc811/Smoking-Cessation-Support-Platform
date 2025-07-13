@@ -59,7 +59,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/v3/api-docs/**",
-                                //"/api/**", //Chỉ để test api,
+                               // "/api/**", //Chỉ để test api,
                                 "/api/posts/**",
                                 "/api/likes/**",
                                 "/api/comments/**",
@@ -67,7 +67,8 @@ public class SecurityConfig {
                                 "/api/payment/vnpay-return", // Endpoint return cũng nên được phép để xử lý
                                 "/login/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/swagger-ui.html",
+                                "/ws-chat/**" // Để truy cập WebSocket
                         ).permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2AuthenticationSuccessHandler))

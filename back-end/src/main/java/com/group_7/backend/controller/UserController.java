@@ -5,6 +5,7 @@ import com.group_7.backend.dto.request.PasswordRequestDto;
 import com.group_7.backend.dto.request.UserRequestDto;
 import com.group_7.backend.dto.response.ResponseDto;
 import com.group_7.backend.entity.CustomUserDetail;
+import com.group_7.backend.entity.enums.UserRoleEnum;
 import com.group_7.backend.service.IUserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,7 @@ public class UserController {
         );
     }
 
+
     @PutMapping("/{id}/update-profile")
     public ResponseEntity<ResponseDto> updateUser(@PathVariable long id,@Valid @RequestBody UserRequestDto userDto) {
         return ResponseEntity.ok(
@@ -71,5 +73,12 @@ public class UserController {
     public ResponseEntity<ResponseDto> changePassword(@PathVariable long id,@Valid @RequestBody PasswordRequestDto passwordDto) {
         userService.changePassword(id, passwordDto);
         return ResponseEntity.ok(new ResponseDto("success","User updated successfully",null));
+    }
+
+    @GetMapping("/role/{role}")
+    public ResponseEntity<ResponseDto> getAllByRole(@PathVariable UserRoleEnum role) {
+        return ResponseEntity.ok(
+                new ResponseDto("success", "Users with role " + role + " fetched successfully", userService.getAllByRole(role))
+        );
     }
 }
