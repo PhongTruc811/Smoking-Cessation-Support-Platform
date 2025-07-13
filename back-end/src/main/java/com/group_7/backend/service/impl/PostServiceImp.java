@@ -40,7 +40,7 @@ public class PostServiceImp implements IPostService {
     }
 
     public List<PostDto> getAll() {
-        return postRepository.findAll().stream()
+        return postRepository.findByIsPublished(true).stream()
                 .map(postMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -74,6 +74,20 @@ public class PostServiceImp implements IPostService {
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));
         post.setPublished(false);
         postRepository.save(post);
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public PostDto restore(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));
+
+        // Đơn giản là đặt lại trạng thái published thành true
+        post.setPublished(true);
+
+        Post saved = postRepository.save(post);
+        return postMapper.toDto(saved);
     }
 
     @Override

@@ -21,4 +21,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // Count posts created since the start of this week (Monday)
     @Query("SELECT COUNT(p) FROM Post p WHERE p.createdAt >= :startOfWeek")
     long countPostsThisWeek(@Param("startOfWeek") LocalDateTime startOfWeek);
+
+    List<Post> findByIsPublished(boolean isPublished);
+
 }

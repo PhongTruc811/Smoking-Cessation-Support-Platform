@@ -5,6 +5,7 @@ import com.group_7.backend.dto.response.ResponseDto;
 import com.group_7.backend.service.IPostService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -58,6 +59,15 @@ public class PostController {
                 new ResponseDto("success", "Post deleted successfully", null)
         );
     }
+
+    @PostMapping("/{id}/restore")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')") // Bảo vệ endpoint
+    public ResponseEntity<ResponseDto> restorePost(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                new ResponseDto("success", "Post restored successfully", postService.restore(id))
+        );
+    }
+
     @GetMapping("/stats")
     public ResponseEntity<ResponseDto> getStats() {
         return ResponseEntity.ok(

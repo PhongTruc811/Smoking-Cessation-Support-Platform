@@ -13,4 +13,6 @@ public interface IPostService {
     PostDto update(Long id, PostDto postDto);
     void delete(Long id);
     Map<String, Object> getStats();
+    PostDto restore(Long id); // <-- Thêm phương thức mới
+
 }
