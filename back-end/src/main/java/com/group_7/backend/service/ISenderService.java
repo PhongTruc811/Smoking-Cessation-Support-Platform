@@ -6,4 +6,5 @@ public interface ISenderService {
     void sendMessage(String receiver, String subject,String body);
     void sendMessage(String receiver, String subject, String body, String fileName) throws MessagingException;
     void sendMessageToAll( String subject, String body, String fileName) throws MessagingException;
+    void sendMessageToAllIndividually(String subject, String body, String fileName);
 }
