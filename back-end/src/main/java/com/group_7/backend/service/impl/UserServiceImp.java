@@ -50,6 +50,14 @@ public class UserServiceImp implements IUserService {
     }
 
     @Override
+    public List<UserDto> getAllByRole(UserRoleEnum role) {
+        return userRepository.findByRole(role)
+                .stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional
     @PreAuthorize("#userId == authentication.principal.id")
     public UserDto update(Long userId, UserRequestDto userDto) {
