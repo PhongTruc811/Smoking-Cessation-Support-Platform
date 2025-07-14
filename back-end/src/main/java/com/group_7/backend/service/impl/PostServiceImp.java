@@ -8,6 +8,7 @@ import com.group_7.backend.mapper.PostMapper;
 import com.group_7.backend.repository.PostRepository;
 import com.group_7.backend.repository.UserRepository;
 import com.group_7.backend.service.IPostService;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,6 +89,16 @@ public class PostServiceImp implements IPostService {
 
         Post saved = postRepository.save(post);
         return postMapper.toDto(saved);
+    }
+
+    // --- PHƯƠNG THỨC MỚI DÀNH RIÊNG CHO ADMIN ---
+    @Override
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public List<PostDto> adminGetAll() {
+        // Dùng findAll() để lấy TẤT CẢ, không lọc
+        return postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
+                .map(postMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override

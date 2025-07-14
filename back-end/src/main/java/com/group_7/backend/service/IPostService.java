@@ -14,5 +14,6 @@ public interface IPostService {
     void delete(Long id);
     Map<String, Object> getStats();
     PostDto restore(Long id); // <-- Thêm phương thức mới
+    List<PostDto> adminGetAll(); // <-- Phương thức mới cho Admin
 
 }
