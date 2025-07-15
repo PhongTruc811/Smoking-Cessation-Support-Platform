@@ -1,6 +1,7 @@
 package com.group_7.backend.mapper;
 
 import com.group_7.backend.dto.UserDto;
+import com.group_7.backend.dto.UserMembershipDto;
 import com.group_7.backend.entity.User;
 import com.group_7.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +47,27 @@ public class UserMapper {
         user.setStatus(dto.isStatus());
         user.setRole(dto.getRole());
         return user;
+    }
+
+    public UserDto toDtoWithMembership(User user, UserMembershipDto membershipDto) {
+        if (user == null) return null;
+
+        // Bắt đầu tạo DTO từ đầu
+        UserDto userDto = new UserDto();
+        userDto.setUserId(user.getUserId());
+        userDto.setUsername(user.getUsername());
+        userDto.setFullName(user.getFullName());
+        userDto.setEmail(user.getEmail());
+        userDto.setDob(user.getDob());
+        userDto.setGender(user.getGender());
+        userDto.setStatus(user.isStatus());
+        userDto.setRole(user.getRole());
+        userDto.setCreatedAt(user.getCreatedAt());
+        userDto.setSmokingProfile(smokingProfileMapper.toDto(user.getSmokingProfile()));
+
+        // Gán thông tin membership
+        userDto.setCurrentUserMembership(membershipDto);
+
+        return userDto;
     }
 }

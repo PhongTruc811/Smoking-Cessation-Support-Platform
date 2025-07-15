@@ -30,4 +30,5 @@ public class UserDto {
     private SmokingProfileDto smokingProfile;
     // Không trả về password vì bảo mật
 
+    private UserMembershipDto currentUserMembership;
 }
