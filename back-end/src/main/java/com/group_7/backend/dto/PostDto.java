@@ -24,6 +24,9 @@ public class PostDto {
     @NotBlank
     private String content;
 
+    
+    private String authorName;
+
     private int viewCount;
     private LocalDateTime createdAt;
     private boolean isPublished;

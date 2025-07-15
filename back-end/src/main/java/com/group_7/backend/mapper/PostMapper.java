@@ -19,6 +19,10 @@ public class PostMapper {
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setViewCount(entity.getViews());
         dto.setPublished(entity.isPublished());
+        // Set author's full name for display
+        if (entity.getUser() != null) {
+            dto.setAuthorName(entity.getUser().getFullName());
+        }
         return dto;
     }
 
