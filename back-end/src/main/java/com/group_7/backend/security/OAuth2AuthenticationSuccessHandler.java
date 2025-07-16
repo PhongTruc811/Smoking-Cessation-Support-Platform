@@ -53,11 +53,11 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
         String email = oAuth2User.getAttribute("email");
         // Kiểm tra user đã tồn tại chưa
-        Optional<User> userOpt_email = userRepository.findByEmail(email);
+        Optional<User> userOpt = userRepository.findByEmail(email);
 
         User user;
-        if (userOpt_email.isPresent()) {
-            user = userOpt_email.get();
+        if (userOpt.isPresent()) {
+            user = userOpt.get();
         } else {
             System.out.println(oAuth2User);
             // Lần đầu đăng nhập - lưu vào DB
@@ -73,13 +73,12 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
         // Tạo JWT token
         String jwtToken = jwtTokenProvider.generateToken(user.getUsername(), user.getRole().name());
-        UserDto loginUser = userMapper.toDto(userRepository.findByUsername(user.getUsername()).get());
+        UserDto loginUser = userMapper.toDto(userRepository.findByEmail(user.getEmail()).get());
         UserMembershipDto userMembershipDto = userMembershipService.getCurrentMembershipForLogin(user.getUserId());
         // Trả JWT về FE, hiển thị form json như khi Login bình thường
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
 
-        // chat gpt
         JwtResponseDto jwtResponseDto = new JwtResponseDto(
                 "success",
                 "Login with Google successfully!",
