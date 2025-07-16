@@ -12,6 +12,7 @@ public interface IUserService extends IBaseService<UserDto, UserRequestDto,Long>
     UserDto changeStatus(Long userId);
     UserDto authenticate(String usernameOrEmail, String password);
     UserDto register(RegRequestDto request);
+    UserDto findUserByUsername(String username);
     void changePassword(Long userId, PasswordRequestDto request);
 
     List<UserDto> getAllByRole(UserRoleEnum role);

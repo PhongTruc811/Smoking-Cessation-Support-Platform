@@ -151,4 +151,11 @@ public class UserServiceImp implements IUserService {
         return userMapper.toDto(savedUser);
     }
 
+    @Override
+    public UserDto findUserByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return userMapper.toDto(user);
+    }
+
 }

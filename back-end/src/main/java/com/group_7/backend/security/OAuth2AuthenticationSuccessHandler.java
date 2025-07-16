@@ -22,6 +22,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 @Component
@@ -48,13 +50,14 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        String name = oAuth2User.getAttribute("name");
 
+        String email = oAuth2User.getAttribute("email");
         // Kiểm tra user đã tồn tại chưa
-        Optional<User> userOpt = userRepository.findByUsername(name);
+        Optional<User> userOpt_email = userRepository.findByEmail(email);
+
         User user;
-        if (userOpt.isPresent()) {
-            user = userOpt.get();
+        if (userOpt_email.isPresent()) {
+            user = userOpt_email.get();
         } else {
             System.out.println(oAuth2User);
             // Lần đầu đăng nhập - lưu vào DB
@@ -75,9 +78,24 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         // Trả JWT về FE, hiển thị form json như khi Login bình thường
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
-        objectMapper.writeValue(response.getWriter(), new JwtResponseDto("success","Login with Google successfully!", jwtToken, loginUser, userMembershipDto,
-                quitPlanService.getCurrentByUserIdAndStatus(user.getUserId())));
 
+        // chat gpt
+        JwtResponseDto jwtResponseDto = new JwtResponseDto(
+                "success",
+                "Login with Google successfully!",
+                jwtToken,
+                loginUser,
+                userMembershipDto,
+                quitPlanService.getCurrentByUserIdAndStatus(user.getUserId())
+        );
+
+        String jsonData = objectMapper.writeValueAsString(jwtResponseDto);
+
+        // Encode JSON để truyền an toàn qua URL
+        String encodedData = URLEncoder.encode(jsonData, StandardCharsets.UTF_8);
+        String redirectUrl = "http://localhost:5173/oauth2-redirect?token=" + jwtToken;
+
+        response.sendRedirect(redirectUrl);
     }
 }
 

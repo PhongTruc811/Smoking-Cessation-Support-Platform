@@ -10,11 +10,11 @@ import com.group_7.backend.service.IUserMembershipService;
 import com.group_7.backend.service.IUserService;
 import com.group_7.backend.util.JwtTokenProvider;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -54,6 +54,21 @@ public class AuthController {
         UserDto user = userService.register(request);
         return ResponseEntity.ok(
                 new ResponseDto("success", "User registered successfully", user)
+        );
+    }
+
+    @GetMapping("/googleLogin")
+    public ResponseEntity<?> getGoogleLoginInfo(@AuthenticationPrincipal UserDetails userDetails) {
+
+        if(userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+        UserDto user = userService.findUserByUsername(userDetails.getUsername());
+
+        UserMembershipDto currentMembership = userMembershipService.getCurrentMembershipForLogin(user.getUserId());
+        QuitPlanDto currentQuitPlan = quitPlanService.getCurrentByUserIdAndStatus(user.getUserId());
+        return ResponseEntity.ok(
+                new JwtResponseDto("success", "Get current user info who Sign in with Google", "", user, currentMembership, currentQuitPlan)
         );
     }
 }
