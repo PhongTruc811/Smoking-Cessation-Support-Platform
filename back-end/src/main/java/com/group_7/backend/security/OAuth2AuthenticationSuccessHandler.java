@@ -6,6 +6,7 @@ import com.group_7.backend.dto.UserDto;
 import com.group_7.backend.dto.UserMembershipDto;
 import com.group_7.backend.dto.response.JwtResponseDto;
 import com.group_7.backend.entity.User;
+import com.group_7.backend.entity.enums.UserGenderEnum;
 import com.group_7.backend.entity.enums.UserRoleEnum;
 import com.group_7.backend.mapper.UserMapper;
 import com.group_7.backend.repository.UserRepository;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 @Component
@@ -65,7 +67,8 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             user.setUsername(oAuth2User.getAttribute("name"));
             user.setEmail(oAuth2User.getAttribute("email"));
             user.setFullName(oAuth2User.getAttribute("name"));
-
+            user.setDob(LocalDate.of(2000, 1, 1));
+            user.setGender(UserGenderEnum.OTHER);
             user.setStatus(true);
             user.setRole(UserRoleEnum.MEMBER);
             userRepository.save(user);

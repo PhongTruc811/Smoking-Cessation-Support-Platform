@@ -7,10 +7,7 @@ import com.group_7.backend.entity.*;
 import com.group_7.backend.entity.enums.*;
 import com.group_7.backend.mapper.QuitMethodOptionMapper;
 import com.group_7.backend.repository.*;
-import com.group_7.backend.service.impl.EmailSenderService;
-import com.group_7.backend.service.impl.QuitMethodServiceImp;
-import com.group_7.backend.service.impl.QuitPlanServiceImp;
-import com.group_7.backend.service.impl.QuizServiceImp;
+import com.group_7.backend.service.impl.*;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,13 +38,11 @@ public class DataInit implements ApplicationRunner {
     @Autowired private QuitPlanServiceImp quitPlanServiceImp;
     @Autowired private QuitMethodOptionMapper quitMethodOptionMapper;
     @Autowired private AchievementRepository achievementRepository;
+    @Autowired
+    private UserServiceImp userServiceImp;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-//        System.out.println("Gửi email:");
-//       emailSenderService.sendMessage("phongtruc811@gmail.com","AntiSmokingPlatform", "Chúc mừng bạn đã đạt được chuỗi 17 ngày không hút thuốc");
-//        emailSenderService.sendMessage("duongvuthaian@gmail.com","AQUA IS THE BEST", "GODDESS BLESSING!!!!!!");
-
 
         System.out.println("=== BẮT ĐẦU SEED DỮ LIỆU MẪU ===");
         if (userRepository.count() > 0) {
