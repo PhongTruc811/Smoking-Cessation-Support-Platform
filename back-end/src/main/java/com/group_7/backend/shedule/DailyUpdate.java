@@ -31,6 +31,7 @@ public class DailyUpdate {
     @Scheduled(cron = "0 0/5 * * * ?") // Mỗi 5 phút
     public void quickStatusUpdate() {
         //userMembershipService.updateAllActiveMemberships();
-
+        String subject = "🌟 Keep Going! Your Smoke-Free Journey Matters";
+        //senderService.sendMessage("aquatestsmoking@gmail.com",subject, null);
     }
 }
