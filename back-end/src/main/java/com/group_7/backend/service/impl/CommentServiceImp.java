@@ -59,11 +59,22 @@ public class CommentServiceImp implements ICommentService {
     @Override
     @Transactional
     public CommentDto create(CommentDto dto) {
+        // Get user and post
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
+        
         Post post = postRepository.findById(dto.getPostId())
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + dto.getPostId()));
-        Comment entity = commentMapper.toEntity(dto, user, post);
+        
+        // Get parent comment if this is a reply
+        Comment parentComment = null;
+        if (dto.getParentCommentId() != null) {
+            parentComment = commentRepository.findById(dto.getParentCommentId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Parent comment not found with id: " + dto.getParentCommentId()));
+        }
+        
+        // Create entity with parent comment
+        Comment entity = commentMapper.toEntity(dto, user, post, parentComment);
         Comment saved = commentRepository.save(entity);
         return commentMapper.toDto(saved);
     }

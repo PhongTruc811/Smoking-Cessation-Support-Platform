@@ -23,12 +23,13 @@ public class CommentMapper {
     }
 
     // DTO -> Entity (cần truyền User, Post, ParentComment nếu có)
-    public Comment toEntity(CommentDto dto, User user, Post post) {
+    public Comment toEntity(CommentDto dto, User user, Post post, Comment parentComment) {
         if (dto == null) return null;
         Comment entity = new Comment();
         entity.setCommentId(dto.getCommentId());
         entity.setUser(user);
         entity.setPost(post);
+        entity.setParentComment(parentComment); // ✅ Add this line
         entity.setContent(dto.getContent());
         return entity;
     }
