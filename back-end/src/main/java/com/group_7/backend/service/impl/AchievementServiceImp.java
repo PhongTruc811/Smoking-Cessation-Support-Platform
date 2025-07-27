@@ -38,6 +38,25 @@ public class AchievementServiceImp implements IAchievementService {
     }
 
     @Override
+    public List<AchievementDto> getByCategory(String category) {
+        return achievementRepository.findByCategory(category)
+                .stream().map(achievementMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AchievementDto> getPublicAchievements() {
+        return achievementRepository.findByLockedFalse()
+                .stream().map(achievementMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> getAllCategories() {
+        return achievementRepository.findAllCategories();
+    }
+
+    @Override
     @Transactional
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public AchievementDto update(Long id, AchievementDto dto) {
@@ -45,6 +64,13 @@ public class AchievementServiceImp implements IAchievementService {
                 .orElseThrow(() -> new ResourceNotFoundException("Achievement not found with id: " + id));
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
+        entity.setIcon(dto.getIcon());
+        entity.setIconType(dto.getIconType());
+        entity.setLocked(dto.isLocked());
+        entity.setCategory(dto.getCategory());
+        entity.setRuleType(dto.getRuleType());
+        entity.setTargetValue(dto.getTargetValue());
+        entity.setComparisonOperator(dto.getComparisonOperator());
         return achievementMapper.toDto(achievementRepository.save(entity));
     }
 
