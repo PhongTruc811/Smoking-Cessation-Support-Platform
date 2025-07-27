@@ -16,6 +16,10 @@ public class AchievementMapper {
         dto.setIconType(entity.getIconType());
         dto.setLocked(entity.isLocked());
         dto.setCategory(entity.getCategory());
+        // Add new dynamic rule fields
+        dto.setRuleType(entity.getRuleType());
+        dto.setTargetValue(entity.getTargetValue());
+        dto.setComparisonOperator(entity.getComparisonOperator());
         return dto;
     }
 
@@ -27,6 +31,11 @@ public class AchievementMapper {
         entity.setIcon(dto.getIcon());
         entity.setIconType(dto.getIconType());
         entity.setCategory(dto.getCategory());
+        entity.setLocked(dto.isLocked());
+        // Add new dynamic rule fields
+        entity.setRuleType(dto.getRuleType());
+        entity.setTargetValue(dto.getTargetValue());
+        entity.setComparisonOperator(dto.getComparisonOperator());
         return entity;
     }
 }

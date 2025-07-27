@@ -24,6 +24,16 @@ public class Achievement {
     private boolean locked;
     private String description;
     private String category;
+    
+    // NEW FIELDS FOR DYNAMIC RULES
+    @Column(name = "rule_type")
+    private String ruleType; // "DAYS_SMOKE_FREE", "MONEY_SAVED", "CIGARETTES_AVOIDED"
+    
+    @Column(name = "target_value")
+    private Integer targetValue; // The threshold to achieve
+    
+    @Column(name = "comparison_operator") 
+    private String comparisonOperator; // ">=", ">", "=", "<=", "<"
 
     public Achievement(String name, String icon, IconTypeEnum iconType, boolean locked, String description, String category) {
         this.name = name;
@@ -32,5 +42,19 @@ public class Achievement {
         this.locked = locked;
         this.description = description;
         this.category = category;
+    }
+
+    public Achievement(String name, String icon, IconTypeEnum iconType, boolean locked, 
+                      String description, String category, String ruleType, 
+                      Integer targetValue, String comparisonOperator) {
+        this.name = name;
+        this.icon = icon;
+        this.iconType = iconType;
+        this.locked = locked;
+        this.description = description;
+        this.category = category;
+        this.ruleType = ruleType;
+        this.targetValue = targetValue;
+        this.comparisonOperator = comparisonOperator;
     }
 }

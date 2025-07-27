@@ -20,6 +20,8 @@ public class UserAchievementMapper {
         UserAchievementDto dto = new UserAchievementDto();
         dto.setId(entity.getId());
         dto.setUserId(entity.getUser().getUserId());
+        dto.setAchievementId(entity.getAchievement().getAchievementId()); // Add this line
+        dto.setCreatedAt(entity.getCreatedAt()); // Add this line
         dto.setAchievement(achievementMapper.toDto(entity.getAchievement()));
         return dto;
     }
