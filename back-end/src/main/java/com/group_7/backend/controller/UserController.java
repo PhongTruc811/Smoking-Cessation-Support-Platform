@@ -12,16 +12,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import com.group_7.backend.service.OnlineUserService;
 
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
     private final IUserService userService;
+    private final OnlineUserService onlineUserService;
 
-    public UserController(IUserService userService) {
+    public UserController(IUserService userService, OnlineUserService onlineUserService) {
         this.userService = userService;
+        this.onlineUserService = onlineUserService;
     }
 
     @GetMapping("/{id}")
@@ -79,6 +85,17 @@ public class UserController {
     public ResponseEntity<ResponseDto> getAllByRole(@PathVariable UserRoleEnum role) {
         return ResponseEntity.ok(
                 new ResponseDto("success", "Users with role " + role + " fetched successfully", userService.getAllByRole(role))
+        );
+    }
+    
+    @GetMapping("/online")
+    public ResponseEntity<ResponseDto> getOnlineUsers() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("onlineUsers", onlineUserService.getOnlineUsers());
+        data.put("count", onlineUserService.getOnlineUserCount());
+        
+        return ResponseEntity.ok(
+                new ResponseDto("success", "Online users fetched successfully", data)
         );
     }
 }

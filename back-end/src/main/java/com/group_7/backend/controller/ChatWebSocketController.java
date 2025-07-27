@@ -39,7 +39,9 @@ public class ChatWebSocketController {
     public void read(@Payload ReadReceipt receipt) {
         // ReadReceipt: fromUserId, toUserId
         chatService.markMessagesAsRead(receipt.getFromUserId(), receipt.getToUserId());
-        messagingTemplate.convertAndSend("/topic/chat." + receipt.getFromUserId(), receipt);
+        //messagingTemplate.convertAndSend("/topic/chat." + receipt.getFromUserId(), receipt);
+        messagingTemplate.convertAndSend("/topic/chat." + receipt.getToUserId(), receipt);
+
     }
 
     // --- DTOs for typing and read ---

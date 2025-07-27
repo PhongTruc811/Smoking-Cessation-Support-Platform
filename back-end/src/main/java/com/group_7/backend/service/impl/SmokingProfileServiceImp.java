@@ -41,7 +41,7 @@ public class SmokingProfileServiceImp implements ISmokingProfileService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_COACH') or hasAuthority('ROLE_ADMIN')")
     public SmokingProfileDto getById(Long id) {
         SmokingProfile entity = smokingProfileRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("SmokingProfile not found with id: " + id));

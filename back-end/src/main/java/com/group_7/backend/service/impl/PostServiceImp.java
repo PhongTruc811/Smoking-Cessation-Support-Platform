@@ -63,7 +63,7 @@ public class PostServiceImp implements IPostService {
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
-        post.setPublished(dto.isPublished());
+        //post.setPublished(dto.isPublished());
         Post saved = postRepository.save(post);
         return postMapper.toDto(saved);
     }
