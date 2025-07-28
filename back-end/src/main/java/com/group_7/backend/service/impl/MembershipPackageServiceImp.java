@@ -49,6 +49,18 @@ public class MembershipPackageServiceImp implements IMembershipPackageService {
         MembershipPackage packageEntity = membershipPackageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("MembershipPackage not found with id: " + id));
 
+        // Chỉ kiểm tra khi Admin đang cố gắng DEACTIVATE (vô hiệu hóa) một gói
+        boolean isDeactivating = !dto.isActive() && packageEntity.isActive();
+
+        if (isDeactivating) {
+            long activePackagesCount = membershipPackageRepository.countByIsActive(true);
+            if (activePackagesCount <= 1) {
+                // Nếu chỉ còn 1 (hoặc 0) gói active, không cho phép vô hiệu hóa gói cuối cùng này
+                throw new IllegalStateException("Cannot deactivate the last active package. At least one package must be active.");
+            }
+        }
+
+        // Nếu kiểm tra qua, tiếp tục cập nhật thông tin
         packageEntity.setPrice(dto.getPrice());
         packageEntity.setDescription(dto.getDescription());
         packageEntity.setDurationInDays(dto.getDurationInDays());
@@ -64,6 +76,11 @@ public class MembershipPackageServiceImp implements IMembershipPackageService {
     public void delete(Long id) {
         MembershipPackage entity = membershipPackageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("MembershipPackage not found with id: " + id));
+        // --- THÊM LOGIC KIỂM TRA TƯƠNG TỰ VÀO ĐÂY ---
+        long activePackagesCount = membershipPackageRepository.countByIsActive(true);
+        if (entity.isActive() && activePackagesCount <= 1) {
+            throw new IllegalStateException("Cannot deactivate the last active package. At least one package must be active.");
+        }
         entity.setActive(false);
         membershipPackageRepository.save(entity);
         //membershipPackageRepository.delete(entity);
@@ -73,7 +90,12 @@ public class MembershipPackageServiceImp implements IMembershipPackageService {
     @Transactional
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public MembershipPackageDto create(MembershipPackageDto dto) {
+        // Cho phép tạo gói mới thoải mái
         MembershipPackage entity = membershipPackageMapper.toEntity(dto);
+
+        // Mặc định tạo gói mới là INACTIVE để Admin phải chủ động kích hoạt
+        entity.setActive(false);
+
         return membershipPackageMapper.toDto(membershipPackageRepository.save(entity));
     }
 

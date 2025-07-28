@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MembershipPackageRepository extends JpaRepository<MembershipPackage, Long> {
+    long countByIsActive(boolean isActive);
+
 }

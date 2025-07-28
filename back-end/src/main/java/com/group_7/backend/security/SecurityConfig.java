@@ -63,6 +63,7 @@ public class SecurityConfig {
                                 "/api/posts/**",
                                 "/api/likes/**",
                                 "/api/comments/**",
+                                "/api/membershippackage",
                                 "/api/payment/vnpay-ipn", // CHO PHÉP TRUY CẬP CÔNG KHAI
                                 "/api/payment/vnpay-return", // Endpoint return cũng nên được phép để xử lý
                                 "/login/**",

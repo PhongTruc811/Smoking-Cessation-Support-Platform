@@ -27,4 +27,7 @@ public interface UserMembershipRepository extends JpaRepository<UserMembership, 
     // Safe count for demo (returns 0 if status doesn't exist)
     @Query("SELECT COUNT(m) FROM UserMembership m WHERE m.status = :status")
     long countByStatusSafe(@Param("status") MembershipStatusEnum status);
+
+    @Query("SELECT um FROM UserMembership um JOIN FETCH um.user WHERE um.user.userId IN :userIds AND um.status = 'ACTIVE'")
+    List<UserMembership> findAllActiveMembershipsForUsers(@Param("userIds") List<Long> userIds);
 }
