@@ -87,13 +87,13 @@ public class UserController {
                 new ResponseDto("success", "Users with role " + role + " fetched successfully", userService.getAllByRole(role))
         );
     }
-    
-    @GetMapping("/online")
+
+    @GetMapping("/status/online")
     public ResponseEntity<ResponseDto> getOnlineUsers() {
         Map<String, Object> data = new HashMap<>();
         data.put("onlineUsers", onlineUserService.getOnlineUsers());
         data.put("count", onlineUserService.getOnlineUserCount());
-        
+
         return ResponseEntity.ok(
                 new ResponseDto("success", "Online users fetched successfully", data)
         );

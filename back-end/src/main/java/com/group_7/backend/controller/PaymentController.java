@@ -98,6 +98,7 @@ public class PaymentController {
     @GetMapping("/vnpay-return")
     public RedirectView handleVnPayReturn(HttpServletRequest request) {
         String returnUrl = "http://localhost:5173/payment-return"; // URL của Frontend
+        //String returnUrl = "https://anti-smoking-fe.vercel.app/payment-return";
         String queryString = request.getQueryString();
         return new RedirectView(returnUrl + (queryString != null ? "?" + queryString : ""));
     }
