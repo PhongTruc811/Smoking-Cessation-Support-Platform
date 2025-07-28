@@ -38,8 +38,8 @@ public class DataInit implements ApplicationRunner {
     @Autowired private QuitPlanServiceImp quitPlanServiceImp;
     @Autowired private QuitMethodOptionMapper quitMethodOptionMapper;
     @Autowired private AchievementRepository achievementRepository;
-    @Autowired
-    private UserServiceImp userServiceImp;
+    @Autowired private UserRecordRepository userRecordRepository; // ADD THIS
+    @Autowired private UserServiceImp userServiceImp;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -53,7 +53,7 @@ public class DataInit implements ApplicationRunner {
 
         //Users
         User user1 = new User();
-        user1.setUsername("user1");
+        user1.setUsername("vanan");
         user1.setFullName("Nguyễn Văn An");
         user1.setEmail("vana@gmail.com");
         user1.setPassword("123456");
@@ -64,9 +64,9 @@ public class DataInit implements ApplicationRunner {
         userRepository.save(user1);
 
         User coach1 = new User();
-        coach1.setUsername("coach1");
+        coach1.setUsername("binhtran");
         coach1.setFullName("Trần Thị Bình");
-        coach1.setEmail("thib@gmail.com");
+        coach1.setEmail("tranthib@gmail.com");
         coach1.setPassword("123456");
         coach1.setDob(LocalDate.of(1985, 9, 10));
         coach1.setGender(UserGenderEnum.FEMALE);
@@ -85,13 +85,41 @@ public class DataInit implements ApplicationRunner {
         admin1.setRole(UserRoleEnum.ADMIN);
         userRepository.save(admin1);
 
+        // ADD MORE TEST USERS FOR ACHIEVEMENT TESTING
+        User testUser1 = new User();
+        testUser1.setUsername("dochi");
+        testUser1.setFullName("Đỗ Hữu Chí");
+        testUser1.setEmail("dochi@gmail.com");
+        testUser1.setPassword("123456");
+        testUser1.setDob(LocalDate.of(1992, 3, 15));
+        testUser1.setGender(UserGenderEnum.MALE);
+        testUser1.setStatus(true);
+        testUser1.setRole(UserRoleEnum.MEMBER);
+        userRepository.save(testUser1);
+
+        User testUser2 = new User();
+        testUser2.setUsername("vanlam");
+        testUser2.setFullName("Nguyễn Văn Lâm");
+        testUser2.setEmail("vanlam@gmail.com");
+        testUser2.setPassword("123456");
+        testUser2.setDob(LocalDate.of(1988, 7, 22));
+        testUser2.setGender(UserGenderEnum.MALE);
+        testUser2.setStatus(true);
+        testUser2.setRole(UserRoleEnum.MEMBER);
+        userRepository.save(testUser2);
+
+        User testUser3 = new User();
+        testUser3.setUsername("hoadang");
+        testUser3.setFullName("Đặng Ngọc Hoa");
+        testUser3.setEmail("ngochoa@gmail.com");
+        testUser3.setPassword("123456");
+        testUser3.setDob(LocalDate.of(1985, 11, 8));
+        testUser3.setGender(UserGenderEnum.FEMALE);
+        testUser3.setStatus(true);
+        testUser3.setRole(UserRoleEnum.MEMBER);
+        userRepository.save(testUser3);
+
         //MembershipPackages
-        MembershipPackage pkg1 = new MembershipPackage();
-        pkg1.setPackageName("Gói cơ bản");
-        pkg1.setDescription("Sử dụng các tính năng cơ bản");
-        pkg1.setPrice(BigDecimal.ZERO);
-        pkg1.setDurationInDays(30);
-        membershipPackageRepository.save(pkg1);
 
         MembershipPackage pkg2 = new MembershipPackage();
         pkg2.setPackageName("Gói hội viên");
@@ -101,30 +129,14 @@ public class DataInit implements ApplicationRunner {
         membershipPackageRepository.save(pkg2);
 
         //UserMemberships
-        UserMembership um1 = new UserMembership();
-        um1.setUser(user1);
-        um1.setMembershipPackage(pkg1);
-        um1.setStartDate(LocalDate.now());
-        um1.setStatus(MembershipStatusEnum.ACTIVE);
-        um1.setPaymentMethod("VNPay");
-        userMembershipRepository.save(um1);
 
         UserMembership um2 = new UserMembership();
-        um2.setUser(coach1);
+        um2.setUser(user1);
         um2.setMembershipPackage(pkg2);
         um2.setStartDate(LocalDate.now());
         um2.setStatus(MembershipStatusEnum.ACTIVE);
         um2.setPaymentMethod("VNPay");
         userMembershipRepository.save(um2);
-
-        //SmokingProfiles
-        SmokingProfile sp1 = new SmokingProfile();
-        sp1.setUser(user1);
-        sp1.setCigarettesPerDay("10");
-        sp1.setCostPerPack(new BigDecimal("25000"));
-        sp1.setWeekSmoked(5);
-        sp1.setNote("Hút thường ngày");
-        smokingProfileRepository.save(sp1);
 
         //QuitMethod và QuitMethodOptions ---
         QuitMethod nicotineMethod = new QuitMethod();
@@ -328,90 +340,136 @@ public class DataInit implements ApplicationRunner {
         feedbackQuiz.setQuestions(questions2);
         quizServiceImp.createQuiz(feedbackQuiz);
 
-        // --- Time-based Achievements ---
-        Achievement ach1 = new Achievement();
-        ach1.setName("First 24 Hours");
-        ach1.setIcon("🏅");
-        ach1.setIconType(IconTypeEnum.EMOJI);
-        ach1.setLocked(false);
-        ach1.setDescription("You made it through the first day!");
-        ach1.setCategory("time");
-        achievementRepository.save(ach1);
+        // Initialize dynamic rule-based achievements
+        initializeAchievements();
 
-        Achievement ach2 = new Achievement();
-        ach2.setName("Three-Day Trial");
-        ach2.setIcon("🏅");
-        ach2.setIconType(IconTypeEnum.EMOJI);
-        ach2.setLocked(false);
-        ach2.setDescription("You've completed 3 days smoke-free!");
-        ach2.setCategory("time");
-        achievementRepository.save(ach2);
-
-        Achievement ach3 = new Achievement();
-        ach3.setName("Week One Warrior");
-        ach3.setIcon("🏅");
-        ach3.setIconType(IconTypeEnum.EMOJI);
-        ach3.setLocked(false);
-        ach3.setDescription("One full week without smoking.");
-        ach3.setCategory("time");
-        achievementRepository.save(ach3);
-
-        Achievement ach4 = new Achievement();
-        ach4.setName("One Year Legend");
-        ach4.setIcon("🏅");
-        ach4.setIconType(IconTypeEnum.EMOJI);
-        ach4.setLocked(true);
-        ach4.setDescription("A full year clean. You're legendary.");
-        ach4.setCategory("time");
-        achievementRepository.save(ach4);
-
-// --- Financial Achievements ---
-        Achievement ach5 = new Achievement();
-        ach5.setName("First 10,000 VND Saved");
-        ach5.setIcon("💰");
-        ach5.setIconType(IconTypeEnum.EMOJI);
-        ach5.setLocked(false);
-        ach5.setDescription("You've saved the first 10,000đ!");
-        ach5.setCategory("financial");
-        achievementRepository.save(ach5);
-
-        Achievement ach6 = new Achievement();
-        ach6.setName("Money Saver (100,000 VND)");
-        ach6.setIcon("💰");
-        ach6.setIconType(IconTypeEnum.EMOJI);
-        ach6.setLocked(true);
-        ach6.setDescription("You've saved over 100,000đ!");
-        ach6.setCategory("financial");
-        achievementRepository.save(ach6);
-
-        Achievement ach9 = new Achievement();
-        ach9.setName("250,000 VND Saved");
-        ach9.setIcon("💰");
-        ach9.setIconType(IconTypeEnum.EMOJI);
-        ach9.setLocked(true);
-        ach9.setDescription("You've saved over 250,000đ!");
-        ach9.setCategory("financial");
-        achievementRepository.save(ach9);
-
-// --- Health Achievements ---
-        Achievement ach7 = new Achievement();
-        ach7.setName("Breathe Easy");
-        ach7.setIcon("❤️");
-        ach7.setIconType(IconTypeEnum.EMOJI);
-        ach7.setLocked(false);
-        ach7.setDescription("Your lungs already feel the difference.");
-        ach7.setCategory("health");
-        achievementRepository.save(ach7);
-
-        Achievement ach8 = new Achievement();
-        ach8.setName("Heart Helper");
-        ach8.setIcon("❤️");
-        ach8.setIconType(IconTypeEnum.EMOJI);
-        ach8.setLocked(true);
-        ach8.setDescription("Heart attack risk drops significantly.");
-        ach8.setCategory("health");
-        achievementRepository.save(ach8);
+        // ADD USER RECORDS FOR ACHIEVEMENT TESTING
+        initializeUserRecords(user1, testUser1, testUser2, testUser3);
 
         System.out.println("=== ĐÃ SEED XONG DỮ LIỆU MẪU ===");
+    }
+
+    // ADD THIS NEW METHOD FOR USER RECORDS
+    private void initializeUserRecords(User user1, User testUser1, User testUser2, User testUser3) {
+        if (userRecordRepository.count() == 0) {
+            System.out.println("=== Initializing UserRecords for Achievement Testing ===");
+
+            // Original user - moderate progress
+            UserRecord record1 = new UserRecord();
+            record1.setUser(user1);
+            record1.setTotalQuitDays(21); // 3 weeks
+            record1.setTotalQuitSmokes(210); // 21 days * 10 cigarettes/day
+            record1.setTotalSaveMoney(new BigDecimal("157000.0")); // 21 days * 7.5$/day
+            userRecordRepository.save(record1);
+
+            // Test User 1 - Beginner (should earn basic achievements)
+            UserRecord record2 = new UserRecord();
+            record2.setUser(testUser1);
+            record2.setTotalQuitDays(5); // 5 days
+            record2.setTotalQuitSmokes(75); // 5 days * 15 cigarettes/day
+            record2.setTotalSaveMoney(new BigDecimal("37500.00")); // 5 days * 7500/day
+            userRecordRepository.save(record2);
+
+            // Test User 2 - Advanced (should earn many achievements)
+            UserRecord record3 = new UserRecord();
+            record3.setUser(testUser2);
+            record3.setTotalQuitDays(45); // 6+ weeks
+            record3.setTotalQuitSmokes(900); // 45 days * 20 cigarettes/day
+            record3.setTotalSaveMoney(new BigDecimal("450000.00")); // 45 days * 10000/day
+            userRecordRepository.save(record3);
+
+            // Test User 3 - Expert (should earn most achievements)
+            UserRecord record4 = new UserRecord();
+            record4.setUser(testUser3);
+            record4.setTotalQuitDays(120); // 4 months
+            record4.setTotalQuitSmokes(3000); // 120 days * 25 cigarettes/day
+            record4.setTotalSaveMoney(new BigDecimal("1200000.00")); // 120 days * 10.000/day
+            userRecordRepository.save(record4);
+
+            System.out.println("=== UserRecords initialized successfully ===");
+            System.out.println("Test User IDs for Achievement API testing:");
+            System.out.println("- Beginner (5 days): " + testUser1.getUserId());
+            System.out.println("- Advanced (45 days): " + testUser2.getUserId());
+            System.out.println("- Expert (120 days): " + testUser3.getUserId());
+        }
+    }
+
+    private void initializeAchievements() {
+        if (achievementRepository.count() == 0) {
+            List<Achievement> achievements = List.of(
+                    // Time-based achievements with dynamic rules
+                    new Achievement("First Day", "🎯", IconTypeEnum.EMOJI, false,
+                            "Your first day smoke-free!", "time",
+                            "DAYS_SMOKE_FREE", 1, ">="),
+
+                    new Achievement("Three Days Strong", "📅", IconTypeEnum.EMOJI, false,
+                            "Three days without smoking!", "time",
+                            "DAYS_SMOKE_FREE", 3, ">="),
+
+                    new Achievement("First Week", "📅", IconTypeEnum.EMOJI, false,
+                            "One week without smoking!", "time",
+                            "DAYS_SMOKE_FREE", 7, ">="),
+
+                    new Achievement("First Month", "🗓️", IconTypeEnum.EMOJI, false,
+                            "30 days smoke-free milestone!", "time",
+                            "DAYS_SMOKE_FREE", 30, ">="),
+
+                    new Achievement("3 Months Champion", "🌟", IconTypeEnum.EMOJI, false,
+                            "Quarter year achievement!", "time",
+                            "DAYS_SMOKE_FREE", 90, ">="),
+
+                    new Achievement("6 Months Hero", "🏆", IconTypeEnum.EMOJI, false,
+                            "Half year smoke-free!", "time",
+                            "DAYS_SMOKE_FREE", 180, ">="),
+
+                    new Achievement("One Year Legend", "👑", IconTypeEnum.EMOJI, false,
+                            "A full year clean. You're legendary!", "time",
+                            "DAYS_SMOKE_FREE", 365, ">="),
+
+                    // Financial achievements with dynamic rules (in VND)
+                    new Achievement("First 10,000 VND Saved", "💰", IconTypeEnum.EMOJI, false,
+                            "You've saved your first 10,000 VND!", "financial",
+                            "MONEY_SAVED", 10000, ">="),
+
+                    new Achievement("50,000 VND Saver", "💵", IconTypeEnum.EMOJI, false,
+                            "You've saved 50,000 VND!", "financial",
+                            "MONEY_SAVED", 50000, ">="),
+
+                    new Achievement("100,000 VND Milestone", "💵", IconTypeEnum.EMOJI, false,
+                            "Milestone reached: 100,000 VND saved!", "financial",
+                            "MONEY_SAVED", 100000, ">="),
+
+                    new Achievement("500,000 VND Saving", "💵", IconTypeEnum.EMOJI, false,
+                            "You've saved 500,000 VND – halfway to a million!", "financial",
+                            "MONEY_SAVED", 500000, ">="),
+
+                    new Achievement("1,000,000 VND Champion", "💵", IconTypeEnum.EMOJI, false,
+                            "You've saved 1,000,000 VND – you're a true savings champion!", "financial",
+                            "MONEY_SAVED", 1000000, ">="),
+
+                    // Health achievements (cigarettes avoided)
+                    new Achievement("First 20 Cigarettes Avoided", "🚭", IconTypeEnum.EMOJI, false,
+                            "You've avoided your first pack!", "health",
+                            "CIGARETTES_AVOIDED", 20, ">="),
+
+                    new Achievement("100 Cigarettes Avoided", "🚭", IconTypeEnum.EMOJI, false,
+                            "You've avoided 100 cigarettes!", "health",
+                            "CIGARETTES_AVOIDED", 100, ">="),
+
+                    new Achievement("500 Cigarettes Avoided", "🏆", IconTypeEnum.EMOJI, false,
+                            "500 cigarettes not smoked!", "health",
+                            "CIGARETTES_AVOIDED", 500, ">="),
+
+                    new Achievement("1000 Cigarettes Avoided", "👑", IconTypeEnum.EMOJI, false,
+                            "One thousand cigarettes avoided!", "health",
+                            "CIGARETTES_AVOIDED", 1000, ">="),
+
+                    new Achievement("5000 Cigarettes Avoided", "🌟", IconTypeEnum.EMOJI, false,
+                            "Five thousand cigarettes not smoked!", "health",
+                            "CIGARETTES_AVOIDED", 5000, ">=")
+            );
+
+            achievementRepository.saveAll(achievements);
+        }
     }
 }

@@ -2,16 +2,12 @@ package com.group_7.backend.service.impl;
 
 import com.group_7.backend.dto.QuitMethodOptionDto;
 import com.group_7.backend.dto.QuitPlanDto;
-import com.group_7.backend.entity.CustomUserDetail;
-import com.group_7.backend.entity.QuitMethodOption;
-import com.group_7.backend.entity.QuitPlan;
-import com.group_7.backend.entity.User;
+import com.group_7.backend.entity.*;
 import com.group_7.backend.entity.enums.QuitPlanStatusEnum;
 import com.group_7.backend.exception.ResourceNotFoundException;
+import com.group_7.backend.mapper.QuitMethodOptionMapper;
 import com.group_7.backend.mapper.QuitPlanMapper;
-import com.group_7.backend.repository.QuitMethodOptionRepository;
-import com.group_7.backend.repository.QuitPlanRepository;
-import com.group_7.backend.repository.UserRepository;
+import com.group_7.backend.repository.*;
 import com.group_7.backend.service.IQuitPlanService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -20,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,15 +28,19 @@ public class QuitPlanServiceImp implements IQuitPlanService {
     private final QuitPlanRepository quitPlanRepository;
     private final QuitMethodOptionRepository quitMethodOptionRepository;
     private final UserRepository userRepository;
+    private final UserRecordRepository userRecordRepository;
     private final QuitPlanMapper quitPlanMapper;
+    private final SmokingProfileRepository smokingProfileRepository;
 
     public QuitPlanServiceImp(QuitPlanRepository quitPlanRepository, QuitMethodOptionRepository quitMethodOptionRepository,
-                              UserRepository userRepository,
-                              QuitPlanMapper quitPlanMapper) {
+                              UserRepository userRepository, UserRecordRepository userRecordRepository,
+                              QuitPlanMapper quitPlanMapper, SmokingProfileRepository smokingProfileRepository) {
         this.quitPlanRepository = quitPlanRepository;
         this.quitMethodOptionRepository = quitMethodOptionRepository;
         this.userRepository = userRepository;
+        this.userRecordRepository = userRecordRepository;
         this.quitPlanMapper = quitPlanMapper;
+        this.smokingProfileRepository = smokingProfileRepository;
     }
 
     @Override
@@ -86,8 +88,18 @@ public class QuitPlanServiceImp implements IQuitPlanService {
     public QuitPlanDto updateTotalSmoke(Long id, int newSmoke) {
         QuitPlan plan = quitPlanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("QuitPlan not found with id: " + id));
+        UserRecord userRecord = userRecordRepository.findByUserUserId(plan.getUser().getUserId());
+        SmokingProfile smokingProfile= smokingProfileRepository.findByUserUserId(plan.getUser().getUserId());
+
         System.out.println(plan.getTotalSmoke()+"+"+newSmoke);
         plan.setTotalSmoke(plan.getTotalSmoke()+newSmoke);
+        userRecord.setTotalQuitSmokes(userRecord.getTotalQuitSmokes()+newSmoke);
+        BigDecimal newSaveMoney = BigDecimal.valueOf(newSmoke)//Tiền tiết kiệm sau khi update
+                .multiply(smokingProfile.getCostPerPack())
+                .divide(BigDecimal.valueOf(20), 2, RoundingMode.HALF_UP);
+        userRecord.setTotalSaveMoney(userRecord.getTotalSaveMoney().add(newSaveMoney));
+
+        userRecordRepository.save(userRecord);
         return quitPlanMapper.toDto(quitPlanRepository.save(plan));
     }
 
