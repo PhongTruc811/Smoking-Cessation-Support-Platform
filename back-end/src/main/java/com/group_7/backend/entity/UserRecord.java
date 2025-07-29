@@ -20,7 +20,11 @@ public class UserRecord {
     @JoinColumn(name = "UserId", referencedColumnName = "UserID")
     private User user;
 
-    private int totalQuitDays;
-    private int totalQuitSmokes;
-    private BigDecimal totalSaveMoney;
+    private int totalQuitDays=0;
+    private int totalQuitSmokes=0;
+    private BigDecimal totalSaveMoney= BigDecimal.ZERO;
+
+    public UserRecord(User user) {
+        this.user = user;
+    }
 }

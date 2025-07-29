@@ -95,8 +95,8 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
         // Encode JSON để truyền an toàn qua URL
         String encodedData = URLEncoder.encode(jsonData, StandardCharsets.UTF_8);
-        //String redirectUrl = "http://localhost:5173/oauth2-redirect?token=" + jwtToken;
-        String redirectUrl = "https://anti-smoking-fe.vercel.app/oauth2-redirect?token=" + jwtToken;
+        String redirectUrl = "http://localhost:5173/oauth2-redirect?token=" + jwtToken;
+        //String redirectUrl = "https://anti-smoking-fe.vercel.app/oauth2-redirect?token=" + jwtToken;
 
         response.sendRedirect(redirectUrl);
     }

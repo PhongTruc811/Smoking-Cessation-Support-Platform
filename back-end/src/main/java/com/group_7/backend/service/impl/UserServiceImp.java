@@ -5,9 +5,11 @@ import com.group_7.backend.dto.request.RegRequestDto;
 import com.group_7.backend.dto.UserDto;
 import com.group_7.backend.dto.request.UserRequestDto;
 import com.group_7.backend.entity.User;
+import com.group_7.backend.entity.UserRecord;
 import com.group_7.backend.entity.enums.UserRoleEnum;
 import com.group_7.backend.exception.ResourceNotFoundException;
 import com.group_7.backend.mapper.UserMapper;
+import com.group_7.backend.repository.UserRecordRepository;
 import com.group_7.backend.repository.UserRepository;
 import com.group_7.backend.service.IUserService;
 import com.group_7.backend.util.JwtTokenProvider;
@@ -27,13 +29,15 @@ public class UserServiceImp implements IUserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserMapper userMapper;
+    private final UserRecordRepository recordRepository;
 
     public UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                          JwtTokenProvider jwtTokenProvider, UserMapper userMapper) {
+                          JwtTokenProvider jwtTokenProvider, UserMapper userMapper, UserRecordRepository recordRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userMapper = userMapper;
+        this.recordRepository = recordRepository;
     }
 
     @Override
@@ -144,7 +148,8 @@ public class UserServiceImp implements IUserService {
         // Mã hóa mật khẩu (later)
         // passwordEncoder.encode(request.getPassword());
         user.setPassword(request.getPassword());
-
+        UserRecord newUserRecord= new UserRecord(user);
+        recordRepository.save(newUserRecord);
         // Lưu DB
         User savedUser = userRepository.save(user);
 
